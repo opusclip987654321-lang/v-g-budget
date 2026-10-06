@@ -2,10 +2,11 @@
 import {createContext,useContext} from 'react';
 import type {Ingredient,Recipe} from './catalog';
 import type {UserState,Plan,Entry,PantryItem,ShopItem} from './planner';
-export type View='dashboard'|'menus'|'recettes'|'placard'|'courses'|'club'|'defis'|'compte'|'offre'|'admin';
+import type {ServiceInfo} from './service-info';
+export type View='bienvenue'|'dashboard'|'menus'|'recettes'|'placard'|'courses'|'club'|'defis'|'compte'|'offre'|'admin';
 export type AppContextType={
  state:UserState;user:{id:string;name:string;email:string}|null;loaded:boolean;admin:boolean;catalog:{recipes:Recipe[];ingredients:Ingredient[]};allRecipes:Recipe[];activePlan:Plan;items:ShopItem[];week:string;
- commit:(update:(state:UserState)=>UserState,message?:string)=>void;modifyPlan:(update:(plan:Plan)=>Plan,message?:string)=>void;generate:()=>void;setWeek:(week:string)=>void;navigate:(view:View)=>void;
+ commit:(update:(state:UserState)=>UserState,message?:string)=>boolean;modifyPlan:(update:(plan:Plan)=>Plan,message?:string)=>void;generate:()=>void;setWeek:(week:string)=>void;navigate:(view:View)=>void;toggleCooked:(id:string,servings?:number)=>void;startOnboarding:()=>void;reuseWeek:()=>void;serviceInfo:ServiceInfo;
  openRecipe:(id:string)=>void;openPreferences:()=>void;openPantry:(item?:PantryItem)=>void;replaceEntry:(entry:Entry)=>void;login:()=>void;
  billingReady:boolean;subscriptionStatus:string;interested:boolean;setInterested:(value:boolean)=>void;reload:()=>Promise<void>;busy:boolean;
 };

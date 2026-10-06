@@ -1,6 +1,6 @@
 import { getChatGPTUser } from '@/app/chatgpt-auth';
-import { db,currentUser,memberFor,isAdmin,adminUser,catalog,readSetting,writeSetting,billingReady,body,json,failure,ApiError,runtime } from '@/lib/server';
-import { stateSchema,postSchema,recipeSchema } from '@/lib/validation';
+import { db,currentUser,memberFor,isAdmin,adminUser,catalog,readSetting,writeSetting,billingReady,body,json,failure,ApiError,runtime,serviceInfo,commerceReady } from '@/lib/server';
+import { stateSchema,postSchema,recipeSchema,serviceSchema } from '@/lib/validation';
 import { ingredients,challenges,type Recipe } from '@/lib/catalog';
 import { blankState } from '@/lib/planner';
 export const dynamic='force-dynamic';
@@ -9,17 +9,17 @@ export async function GET(request:Request){try{
  const url=new URL(request.url);const action=url.searchParams.get('action')??'bootstrap';
  if(action==='bootstrap'){
   const user=await getChatGPTUser();const data=await catalog();
-  if(!user)return json({state:blankState(),revision:0,admin:false,user:null,catalog:data,billingReady:billingReady(),subscriptionStatus:'none',interested:false});
+  if(!user)return json({state:blankState(),revision:0,admin:false,user:null,catalog:data,billingReady:await commerceReady(),serviceInfo:await serviceInfo(),subscriptionStatus:'none',interested:false});
   const member=await memberFor(user);const interested=await db().prepare('SELECT owner FROM waitlist WHERE owner=?').bind(user.userId).first();
-  return json({state:JSON.parse(member.state),revision:member.revision,admin:await isAdmin(user.userId),user:{id:user.userId,name:member.nickname,email:user.email},catalog:data,billingReady:billingReady(),subscriptionStatus:member.subscription_status,interested:!!interested});
+  return json({state:stateSchema.parse(JSON.parse(member.state)),revision:member.revision,admin:await isAdmin(user.userId),user:{id:user.userId,name:member.nickname,email:user.email},catalog:data,billingReady:await commerceReady(),serviceInfo:await serviceInfo(),subscriptionStatus:member.subscription_status,interested:!!interested});
  }
  if(action==='posts'){
-  const user=await getChatGPTUser();const rows=await db().prepare("SELECT p.id,p.owner,p.content,p.category,p.photo,p.created_at,m.nickname,(SELECT COUNT(*) FROM likes l WHERE l.post=p.id) AS likes,(SELECT COUNT(*) FROM comments c WHERE c.post=p.id) AS comment_count FROM posts p JOIN members m ON m.id=p.owner WHERE p.status='visible' ORDER BY p.created_at DESC LIMIT 100").all();
+  const user=await currentUser();const rows=await db().prepare("SELECT p.id,p.owner,p.content,p.category,p.photo,p.created_at,m.nickname,(SELECT COUNT(*) FROM likes l WHERE l.post=p.id) AS likes,(SELECT COUNT(*) FROM comments c WHERE c.post=p.id) AS comment_count FROM posts p JOIN members m ON m.id=p.owner WHERE p.status='visible' ORDER BY p.created_at DESC LIMIT 100").all();
   const liked=user?(await db().prepare('SELECT post FROM likes WHERE owner=?').bind(user.userId).all<{post:string}>()).results.map(x=>x.post):[];
   return json({posts:rows.results.map(x=>({...x,liked:liked.includes(x.id as string)}))});
  }
  if(action==='comments'){
-  const post=url.searchParams.get('post')??'';const rows=await db().prepare("SELECT c.id,c.owner,c.content,c.created_at,m.nickname FROM comments c JOIN members m ON m.id=c.owner JOIN posts p ON p.id=c.post WHERE c.post=? AND p.status='visible' ORDER BY c.created_at ASC LIMIT 100").bind(post).all();return json({comments:rows.results});
+  await currentUser();const post=url.searchParams.get('post')??'';const rows=await db().prepare("SELECT c.id,c.owner,c.content,c.created_at,m.nickname FROM comments c JOIN members m ON m.id=c.owner JOIN posts p ON p.id=c.post WHERE c.post=? AND p.status='visible' ORDER BY c.created_at ASC LIMIT 100").bind(post).all();return json({comments:rows.results});
  }
  if(action==='export'){
   const user=await currentUser();const member=await memberFor(user);const posts=await db().prepare('SELECT content,category,created_at FROM posts WHERE owner=?').bind(user.userId).all();const comments=await db().prepare('SELECT post,content,created_at FROM comments WHERE owner=?').bind(user.userId).all();return json({exportedAt:new Date().toISOString(),profile:JSON.parse(member.state),email:member.email,posts:posts.results,comments:comments.results});
@@ -29,18 +29,19 @@ export async function GET(request:Request){try{
   const reports=await db().prepare('SELECT r.id,r.post,r.reason,r.created_at,p.content,p.status,m.nickname FROM reports r JOIN posts p ON p.id=r.post JOIN members m ON m.id=p.owner ORDER BY r.created_at DESC LIMIT 100').all();
   const members=await db().prepare('SELECT id,nickname,subscription_status,created_at FROM members ORDER BY created_at DESC LIMIT 100').all();
   const waiting=await db().prepare('SELECT m.nickname,m.email,w.created_at FROM waitlist w JOIN members m ON m.id=w.owner ORDER BY w.created_at DESC').all();
-  return json({counts:counts.map(x=>Number(x.results[0]?.count??0)),reports:reports.results,members:members.results,waitlist:waiting.results,catalog:await catalog(),billingReady:billingReady()});
+  return json({counts:counts.map(x=>Number(x.results[0]?.count??0)),reports:reports.results,members:members.results,waitlist:waiting.results,catalog:await catalog(),billingReady:await commerceReady(),serviceInfo:await serviceInfo()});
  }
  throw new ApiError(404,'Cette page est introuvable.');
 }catch(e){return failure(e);}}
 
 export async function POST(request:Request){try{
  const input=await body(request);const action=input.action;const user=await currentUser();const member=await memberFor(user);
+ if(action==='service-info'){await adminUser();await writeSetting('service_info',serviceSchema.parse(input.info));return json({saved:true});}
  if(action==='state'){
   const state=stateSchema.parse(input.state);const data=await catalog();const ingredientIds=new Set(ingredients.map(i=>i.id));const recipeIds=new Set([...data.recipes.map(r=>r.id),...Object.keys(data.config.overrides)]);
   const allRecipes=new Set([...recipeIds,...(await import('@/lib/catalog')).recipes.map(r=>r.id)]);
-  if(state.pantry.some(x=>!ingredientIds.has(x.id))||new Set(state.pantry.map(x=>x.id)).size!==state.pantry.length||state.profile.excluded.some(x=>!ingredientIds.has(x))||Object.keys(state.prices).some(id=>!ingredientIds.has(id))||state.checked.some(id=>!ingredientIds.has(id))||state.favorites.some(id=>!allRecipes.has(id))||state.plans.some(p=>p.entries.some(e=>!allRecipes.has(e.recipeId)))||state.joinedChallenges.some(id=>!challenges.some(c=>c.id===id))||state.completedChallenges.some(id=>!challenges.some(c=>c.id===id))||state.activePlanId&&!state.plans.some(p=>p.id===state.activePlanId))throw new ApiError(400,'Une recette ou un ingrédient est inconnu.');
-  if(billingReady()&&!['active','trialing'].includes(member.subscription_status)&&!await isAdmin(user.userId)&&(state.plans.length>1||state.favorites.length>10||state.pantry.length>10))throw new ApiError(403,'L’offre Découverte conserve une semaine, dix favoris et dix ingrédients.');
+  if(state.pantry.some(x=>!ingredientIds.has(x.id))||new Set(state.pantry.map(x=>x.id)).size!==state.pantry.length||state.profile.excluded.some(x=>!ingredientIds.has(x))||Object.keys(state.prices).some(id=>!ingredientIds.has(id))||state.checked.some(id=>!ingredientIds.has(id))||Object.values(state.checkedByWeek).some(ids=>ids.some(id=>!ingredientIds.has(id)))||Object.keys(state.packSizes).some(id=>!ingredientIds.has(id))||state.purchases.some(p=>!ingredientIds.has(p.ingredientId))||state.plans.some(p=>p.entries.some(e=>e.consumed?.some(x=>!ingredientIds.has(x.id))))||state.challengeAwards.some(a=>!challenges.some(c=>c.id===a.id))||state.favorites.some(id=>!allRecipes.has(id))||state.plans.some(p=>p.entries.some(e=>!allRecipes.has(e.recipeId)))||state.joinedChallenges.some(id=>!challenges.some(c=>c.id===id))||state.completedChallenges.some(id=>!challenges.some(c=>c.id===id))||state.activePlanId&&!state.plans.some(p=>p.id===state.activePlanId))throw new ApiError(400,'Une recette ou un ingrédient est inconnu.');
+  if(await commerceReady()&&!['active','trialing'].includes(member.subscription_status)&&!await isAdmin(user.userId)&&(state.plans.length>1||state.favorites.length>10||state.pantry.length>10))throw new ApiError(403,'L’offre Découverte conserve une semaine, dix favoris et dix ingrédients.');
   if(!Number.isInteger(input.revision))throw new ApiError(400,'Version de sauvegarde manquante.');
   const now=new Date().toISOString();const result=await db().prepare('UPDATE members SET state=?,nickname=?,revision=revision+1,updated_at=? WHERE id=? AND revision=?').bind(JSON.stringify(state),state.profile.nickname||'Membre Végé',now,user.userId,input.revision).run();
   if(!result.meta.changes)return json({error:'Votre compte a été modifié dans une autre fenêtre. Rechargez avant de poursuivre.',conflict:true},409);

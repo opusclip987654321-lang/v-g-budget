@@ -1,10 +1,10 @@
-import { db,currentUser,memberFor,runtime,billingReady,body,json,failure,ApiError } from '@/lib/server';
+import { db,currentUser,memberFor,runtime,billingReady,commerceReady,body,json,failure,ApiError } from '@/lib/server';
 import { stripe } from '@/lib/billing';
 export const dynamic='force-dynamic';
 export async function POST(request:Request){try{
  const input=await body(request),user=await currentUser(),member=await memberFor(user);
- if(!billingReady())throw new ApiError(503,'Les abonnements ouvrent prochainement. Vous pouvez demander à être prévenu.');
- const origin=runtime().SITE_ORIGIN??'https://vegebudget.young-kiwi-5118.chatgpt.site';
+ if((input.action==='checkout'&&!await commerceReady())||!billingReady())throw new ApiError(503,'Les abonnements ouvrent prochainement. Vous pouvez demander à être prévenu.');
+ const origin=runtime().SITE_ORIGIN??new URL(request.url).origin;
  if(input.action==='portal'){
   if(!member.customer)throw new ApiError(400,'Aucun abonnement à gérer.');const session=await stripe('/billing_portal/sessions','POST',{customer:member.customer,return_url:`${origin}/#compte`});return json({url:session.url});
  }
