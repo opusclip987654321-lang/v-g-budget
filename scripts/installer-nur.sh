@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Installe ou met à jour VégéBudget sur le VPS Nūr (Docker + Caddy de nour-v2). Relançable sans risque.
-# Depuis le Mac : curl -fsSL https://raw.githubusercontent.com/opusclip987654321-lang/v-g-budget/claude/docker/scripts/installer-nur.sh | ssh ubuntu@57.131.152.36 bash
+# Depuis le Mac : curl -fsSL https://raw.githubusercontent.com/opusclip987654321-lang/v-g-budget/main/scripts/installer-nur.sh | ssh ubuntu@57.131.152.36 bash
 set -e
-BRANCH=${BRANCH:-claude/docker}
+BRANCH=${BRANCH:-main}
 sudo mkdir -p /opt/vegebudget && sudo chown ubuntu:ubuntu /opt/vegebudget
 [ -d /opt/vegebudget/.git ] || git clone -q https://github.com/opusclip987654321-lang/v-g-budget.git /opt/vegebudget
 cd /opt/vegebudget && git fetch -q origin && git checkout -q "$BRANCH" && git pull -q origin "$BRANCH"
