@@ -19,6 +19,14 @@ export function authSecret() {
 
 const sign = (payload: string) => createHmac('sha256', authSecret()).update(payload).digest('base64url');
 
+// Signature des liens envoyés par e-mail (désinscription des rappels).
+export const signValue = (value: string) => sign(`link:${value}`);
+export function checkSignedValue(value: string, signature: string) {
+  const expected = Buffer.from(signValue(value));
+  const given = Buffer.from(signature);
+  return expected.length === given.length && timingSafeEqual(expected, given);
+}
+
 export function createSessionValue(userId: string, email: string, now = Date.now()) {
   const payload = Buffer.from(JSON.stringify({ uid: userId, email, exp: now + SESSION_DAYS * 86400000 })).toString('base64url');
   return `${payload}.${sign(payload)}`;

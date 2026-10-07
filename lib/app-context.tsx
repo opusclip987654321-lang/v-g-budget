@@ -8,7 +8,7 @@ export type AppContextType={
  state:UserState;user:{id:string;name:string;email:string}|null;loaded:boolean;admin:boolean;catalog:{recipes:Recipe[];ingredients:Ingredient[]};allRecipes:Recipe[];activePlan:Plan;items:ShopItem[];week:string;
  commit:(update:(state:UserState)=>UserState,message?:string)=>boolean;modifyPlan:(update:(plan:Plan)=>Plan,message?:string)=>void;generate:()=>void;setWeek:(week:string)=>void;navigate:(view:View)=>void;toggleCooked:(id:string,servings?:number)=>void;startOnboarding:()=>void;reuseWeek:()=>void;serviceInfo:ServiceInfo;
  openRecipe:(id:string)=>void;openPreferences:()=>void;openPantry:(item?:PantryItem)=>void;replaceEntry:(entry:Entry)=>void;login:()=>void;
- billingReady:boolean;subscriptionStatus:string;interested:boolean;setInterested:(value:boolean)=>void;reload:()=>Promise<void>;busy:boolean;
+ billingReady:boolean;subscriptionStatus:string;interested:boolean;setInterested:(value:boolean)=>void;founder:boolean;founderLeft:number;reserveFounder:()=>Promise<void>;paywall:'week'|'limits'|null;reminders:boolean;setReminders:(on:boolean)=>Promise<void>;reload:()=>Promise<void>;busy:boolean;
 };
 export const AppContext=createContext<AppContextType|null>(null);
 export const useApp=()=>{const c=useContext(AppContext);if(!c)throw new Error('App context unavailable');return c;};

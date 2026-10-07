@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "VégéBudget — bien manger végétal, garder son budget",
-  description: "Des menus végétaux, un placard organisé et une liste de courses qui tient compte de votre budget.",
+  title: "VégéBudget — vos dîners de la semaine pour environ 25 €",
+  description: "Des dîners sans viande, simples et pas chers, avec la liste de courses exacte et votre placard déduit. Première semaine gratuite.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",

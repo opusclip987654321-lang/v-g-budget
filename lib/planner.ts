@@ -1,5 +1,5 @@
 import { ingredients as baseIngredients, recipes as baseRecipes, type Ingredient, type Recipe } from './catalog';
-export type Profile = { nickname: string; people:number; budget:number; mealCount:number; maxMinutes:number; allergens:string[]; excluded:string[]; equipment:string[]; newsletter:boolean; days?:number[]; repeatMeals?:boolean };
+export type Profile = { nickname: string; people:number; budget:number; mealCount:number; maxMinutes:number; allergens:string[]; excluded:string[]; equipment:string[]; newsletter:boolean; days?:number[]; repeatMeals?:boolean; usualSpend?:number };
 export type PantryItem = { id:string; qty:number; expiry?:string };
 export type Entry = { id:string; recipeId:string; date:string; servings:number; cooked:boolean; locked:boolean; consumed?:{id:string;qty:number}[] };
 export type Plan = { id:string; name:string; weekStart:string; entries:Entry[]; createdAt:string; budget?:number };
@@ -60,4 +60,4 @@ export function generatePlan(state:UserState,weekStart=monday(),seed=Date.now(),
   if(new Set(entries.map(e=>e.recipeId)).size<slots&&!state.profile.repeatMeals) warning=`Les préférences actuelles limitent le choix : certaines recettes se répètent.${warning?' '+warning:''}`;
   return {plan:{id:uniqueId(),name:`Semaine du ${new Date(`${weekStart}T12:00:00`).toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}`,weekStart,entries,createdAt:new Date().toISOString(),budget:state.profile.budget},warning};
 }
-export function shoppingText(items:ShopItem[],checked:string[]) {return ['VégéBudget — ma liste de courses','Prix indicatifs à personnaliser selon votre magasin.','',...items.filter(i=>i.missing>0).map(i=>`${checked.includes(i.id)?'✓':'□'} ${i.ingredient.name} — ${i.packages} ${i.packages>1?'paquets':'paquet'} de ${quantity(i.ingredient.pack,i.ingredient.unit)} — ${money(i.purchaseCost)}`),'',`Panier estimé : ${money(totals(items).purchase)}`].join('\n');}
+export function shoppingText(items:ShopItem[],checked:string[]) {return ['VégéBudget — ma liste de courses','Prix relevés chez Carrefour le 7 octobre 2026, à personnaliser selon votre magasin.','',...items.filter(i=>i.missing>0).map(i=>`${checked.includes(i.id)?'✓':'□'} ${i.ingredient.name} — ${i.packages} ${i.packages>1?'paquets':'paquet'} de ${quantity(i.ingredient.pack,i.ingredient.unit)} — ${money(i.purchaseCost)}`),'',`Panier estimé : ${money(totals(items).purchase)}`].join('\n');}
