@@ -1,0 +1,9 @@
+node_modules
+.next
+.git
+.wrangler
+.sites-runtime
+data
+.env*
+!.env.example
+*.tsbuildinfo

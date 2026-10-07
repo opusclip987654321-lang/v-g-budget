@@ -1,0 +1,27 @@
+# VégéBudget sur un serveur qui a déjà Caddy dans Docker (serveur Nūr).
+# Caddy joint le conteneur par son nom « vegebudget » sur le réseau partagé CADDY_NETWORK.
+services:
+  vegebudget:
+    build: .
+    image: vegebudget:latest
+    container_name: vegebudget
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - vegebudget-data:/data
+    ports:
+      - "127.0.0.1:3100:3000" # accès local pour le rappel hebdomadaire (cron) et les vérifications
+    networks:
+      - caddy
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+volumes:
+  vegebudget-data:
+
+networks:
+  caddy:
+    external: true
+    name: ${CADDY_NETWORK:-nour-v2_default}
