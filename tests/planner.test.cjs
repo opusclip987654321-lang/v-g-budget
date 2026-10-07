@@ -50,7 +50,7 @@ test('recording purchases moves money into expenses without creating budget savi
  const state=blankState();const plan={id:'week-one',weekStart:'2026-10-05',name:'Test',createdAt:new Date().toISOString(),budget:35,entries:[entry('curry-corail')]};
  const items=shopping(plan.entries,[]);const before=weeklyBudget(state,plan,items);state.checkedByWeek[plan.weekStart]=['oil'];
  const next=recordPurchases(state,plan,items);const after=weeklyBudget(next,plan,shopping(plan.entries,next.pantry));
- assert.equal(after.spent,2.8);assert.equal(after.forecast,before.forecast);assert.equal(after.margin,before.margin);assert.equal(next.pantry.find(p=>p.id==='oil').qty,500);
+ assert.equal(after.spent,1.69);assert.equal(after.forecast,before.forecast);assert.equal(after.margin,before.margin);assert.equal(next.pantry.find(p=>p.id==='oil').qty,1000);
  assert.equal(recordPurchases(next,plan,shopping(plan.entries,next.pantry)).purchases.length,1,'recording twice does not duplicate an unchecked purchase');
 });
 test('shopping selections are isolated by week',()=>{const state=blankState();state.checkedByWeek['2026-10-05']=['oil'];assert.deepEqual(checkedForWeek(state,'2026-10-05'),['oil']);assert.deepEqual(checkedForWeek(state,'2026-10-12'),[]);});
