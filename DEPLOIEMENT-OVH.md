@@ -144,6 +144,7 @@ Après chaque modification fusionnée sur GitHub :
 cd /opt/vegebudget/app
 sudo -u vegebudget git pull
 sudo -u vegebudget COREPACK_ENABLE_DOWNLOAD_PROMPT=0 corepack pnpm install --frozen-lockfile
+sudo -u vegebudget rm -rf .next     # repart d'une construction propre
 sudo -u vegebudget COREPACK_ENABLE_DOWNLOAD_PROMPT=0 corepack pnpm build
 sudo systemctl restart vegebudget
 ```

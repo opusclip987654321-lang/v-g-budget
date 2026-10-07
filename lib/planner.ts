@@ -1,5 +1,5 @@
 import { ingredients as baseIngredients, recipes as baseRecipes, type Ingredient, type Recipe } from './catalog';
-export type Profile = { nickname: string; people:number; budget:number; mealCount:number; maxMinutes:number; allergens:string[]; excluded:string[]; equipment:string[]; newsletter:boolean; days?:number[]; repeatMeals?:boolean };
+export type Profile = { nickname: string; people:number; budget:number; mealCount:number; maxMinutes:number; allergens:string[]; excluded:string[]; equipment:string[]; newsletter:boolean; days?:number[]; repeatMeals?:boolean; usualSpend?:number };
 export type PantryItem = { id:string; qty:number; expiry?:string };
 export type Entry = { id:string; recipeId:string; date:string; servings:number; cooked:boolean; locked:boolean; consumed?:{id:string;qty:number}[] };
 export type Plan = { id:string; name:string; weekStart:string; entries:Entry[]; createdAt:string; budget?:number };

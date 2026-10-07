@@ -74,6 +74,10 @@ try{
  await api('moderate',owner,{post,status:'visible'});
  await api('waitlist',member,{});await api('waitlist',member,{});
  check((await api('admin',owner)).body.waitlist.length,1,'waitlist deduplicated');
+ check(bootstrap.body.founderLeft,100,'founder seats shown to visitors');check((await api('bootstrap',member)).body.founder,false,'premium waitlist is not a founder seat');
+ const reserved=await api('waitlist',member,{plan:'founder'});check(reserved.body.founderLeft,99,'founder seat reserved');await api('waitlist',member,{});
+ const after=await api('bootstrap',member);check([after.body.founder,after.body.founderLeft],[true,99],'founder seat kept after a premium request');check((await api('admin',owner)).body.waitlist.find(w=>w.email===member.email).plan,'founder','founder visible to administrator');
+ { const usual=structuredClone((await api('bootstrap',owner)).body.state);usual.profile.usualSpend=45;const saved=await api('state',owner,{state:usual,revision:(await api('bootstrap',owner)).body.revision});check(saved.status,200,'usual spending saved');usual.profile.usualSpend=0;check((await api('state',owner,{state:usual,revision:saved.body.revision})).status,400,'usual spending validated'); }
  const exportData=await api('export',member);check(exportData.body.email,member.email,'personal export');check(exportData.body.comments.length,1,'export includes own comment');
  check((await request('/api/billing',member,{action:'checkout'})).status,503,'unconfigured payments blocked');
  check((await api('delete-post',owner,{post})).status,200,'post deleted');check((await api('comments',member,undefined)).body.comments.length,0,'comments disappear with post');
