@@ -1,34 +1,42 @@
 import assert from 'node:assert/strict';
-import {createRequire} from 'node:module';
-import {readFileSync,readdirSync} from 'node:fs';
-import {resolve} from 'node:path';
+import {readFileSync,mkdtempSync,rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {spawn} from 'node:child_process';
 import {createHmac} from 'node:crypto';
+import {DatabaseSync} from 'node:sqlite';
 
-// Exercise the built Worker in an isolated, temporary runtime. No deployed
-// service, production database, real account or payment provider is contacted.
-const require=createRequire(import.meta.url);
-const requireWrangler=createRequire(require.resolve('wrangler/package.json'));
-const {Miniflare}=requireWrangler('miniflare');
-const origin='http://terminal.local:4173';
-const moduleFiles=['index.js',...readdirSync('dist/server',{recursive:true}).filter(path=>/\.(js|mjs)$/.test(path)&&path!=='index.js')];
-const options={modules:moduleFiles.map(path=>({type:'ESModule',path:resolve('dist/server',path)})),modulesRoot:resolve('dist/server'),compatibilityDate:'2026-05-15',compatibilityFlags:['nodejs_compat'],d1Databases:['DB'],r2Buckets:['BUCKET'],assets:{directory:resolve('dist/client'),routerConfig:{has_user_worker:true}},bindings:{BILLING_ENABLED:'false',SITE_ORIGIN:origin,OWNER_EMAIL:'owner@example.invalid'},cf:false};
-const mf=new Miniflare(options);
+// Lance le site construit (next start) avec une base et un dossier de photos
+// temporaires. Aucun service déployé, compte réel ni prestataire de paiement n'est contacté.
+const port=4173+Math.floor(Math.random()*500);
+const origin=`http://127.0.0.1:${port}`;
+const dataDir=mkdtempSync(join(tmpdir(),'vegebudget-check-'));
+const outbox=join(dataDir,'outbox.jsonl');
+const secret='local-test-secret-local-test-secret-0123456789';
+const baseEnv={DATA_DIR:dataDir,AUTH_SECRET:secret,SITE_ORIGIN:origin,OWNER_EMAIL:'owner@example.invalid',BILLING_ENABLED:'false',MAIL_OUTBOX:outbox};
+let server;
+async function startServer(extra={}){
+ server=spawn(process.execPath,['node_modules/next/dist/bin/next','start','-p',String(port),'-H','127.0.0.1'],{env:{...process.env,...baseEnv,...extra},stdio:['ignore','ignore','inherit']});
+ for(let i=0;i<120;i++){try{await fetch(origin+'/api/app?action=bootstrap');return;}catch{await new Promise(r=>setTimeout(r,250));}}
+ throw new Error('Le serveur de test ne démarre pas.');
+}
+async function stopServer(){if(!server)return;const done=new Promise(r=>server.once('exit',r));server.kill('SIGTERM');await done;server=undefined;}
+function openDb(){const raw=new DatabaseSync(join(dataDir,'vegebudget.sqlite'));return {prepare:(sql)=>{let values=[];const st={bind:(...v)=>{values=v;return st;},first:async()=>raw.prepare(sql).get(...values)??null,run:async()=>raw.prepare(sql).run(...values)};return st;}};}
+function sessionFor(user){const payload=Buffer.from(JSON.stringify({uid:user.id,email:user.email,exp:Date.now()+3600000})).toString('base64url');return `vb_session=${payload}.${createHmac('sha256',secret).update(payload).digest('base64url')}`;}
 const owner={id:'local-test-owner',email:'owner@example.invalid'};
 const member={id:'local-test-member',email:'member@example.invalid'};
 let checks=0;
 const check=(value,expected,label)=>{assert.deepEqual(value,expected,label);checks++;};
 async function request(path,user,data,headers={}){
- const auth=user?{'oai-authenticated-user-id':user.id,'oai-authenticated-user-email':user.email,'oai-authenticated-user-full-name':encodeURIComponent(user===owner?'Propriétaire test':'Membre test'),'oai-authenticated-user-full-name-encoding':'percent-encoded-utf-8'}:{};
- const response=await mf.dispatchFetch(origin+path,{method:data===undefined?'GET':'POST',headers:{...auth,...(data!==undefined?{'Content-Type':'application/json',Origin:origin}:{}),...headers},...(data!==undefined?{body:JSON.stringify(data)}:{})});
+ const auth=user?{Cookie:sessionFor(user)}:{};
+ const response=await fetch(origin+path,{redirect:'manual',method:data===undefined?'GET':'POST',headers:{...auth,...(data!==undefined?{'Content-Type':'application/json',Origin:origin}:{}),...headers},...(data!==undefined?{body:JSON.stringify(data)}:{})});
  const type=response.headers.get('Content-Type')??'';
  const body=type.includes('json')?await response.json():await response.text();
  return {status:response.status,body};
 }
 const api=(action,user,data)=>request('/api/app'+(data===undefined?'?action='+action:''),user,data===undefined?undefined:{action,...data});
 try{
- let db=await mf.getD1Database('DB');
- const statements=readFileSync('drizzle/0000_stale_swordsman.sql','utf8').split('--> statement-breakpoint').map(x=>x.trim()).filter(Boolean);
- await db.batch(statements.map(sql=>db.prepare(sql)));
+ await startServer();let db=openDb();
  const page=await request('/');check(page.status,200,'server render');assert.match(page.body,/VégéBudget/);checks++;
  const bootstrap=await api('bootstrap');check(bootstrap.status,200,'anonymous bootstrap');check(bootstrap.body.catalog.recipes.length,24,'initial catalogue');check(bootstrap.body.billingReady,false,'billing closed');
  check((await api('state',undefined,{state:bootstrap.body.state,revision:0})).status,401,'anonymous write blocked');
@@ -49,7 +57,7 @@ try{
  check((await api('state',owner,{state:{...state,profile:{...state.profile,people:0}},revision:1})).status,400,'invalid portions rejected');
  check((await api('state',owner,{state:{...state,pantry:[{id:'rice',qty:1},{id:'rice',qty:2}]},revision:1})).status,400,'duplicate pantry stock rejected');
  const boundary='vegebudget-test-multipart';const photoBody=Buffer.concat([Buffer.from(`--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="test-curry.jpg"\r\nContent-Type: image/jpeg\r\n\r\n`),readFileSync('public/images/curry.jpg'),Buffer.from(`\r\n--${boundary}--\r\n`)]);
- const photoResponse=await mf.dispatchFetch(origin+'/api/photos',{method:'POST',headers:{'oai-authenticated-user-id':owner.id,'oai-authenticated-user-email':owner.email,Origin:origin,'Content-Type':`multipart/form-data; boundary=${boundary}`},body:photoBody});
+ const photoResponse=await fetch(origin+'/api/photos',{method:'POST',headers:{Cookie:sessionFor(owner),Origin:origin,'Content-Type':`multipart/form-data; boundary=${boundary}`},body:photoBody});
  check(photoResponse.status,201,'image upload');const photo=await photoResponse.json();
  check((await request('/api/photos/'+photo.id,member)).status,404,'unpublished photo stays private');
  check((await api('post',member,{content:'Essai de photo appartenant à un autre membre.',category:'Question',photoId:photo.id})).status,400,'photo ownership enforced');
@@ -76,15 +84,15 @@ try{
  check((await api('catalog',owner,{recipe:edited})).status,200,'recipe editing');check((await api('bootstrap',owner)).body.catalog.recipes.find(r=>r.id===edited.id).title,edited.title,'recipe change read back');
  await api('catalog',owner,{toggleRecipe:edited.id});check((await api('bootstrap',owner)).body.catalog.recipes.length,23,'hidden recipe excluded');
  await api('catalog',owner,{toggleRecipe:edited.id});
- await mf.setOptions({...options,bindings:{...options.bindings,BILLING_ENABLED:'true',STRIPE_SECRET_KEY:'local-test-unused',STRIPE_PRICE_ID:'local-test-unused',STRIPE_WEBHOOK_SECRET:'local-test-unused'}});
+ await stopServer();await startServer({BILLING_ENABLED:'true',STRIPE_SECRET_KEY:'local-test-unused',STRIPE_PRICE_ID:'local-test-unused',STRIPE_WEBHOOK_SECRET:'local-test-unused'});
  check((await api('bootstrap',member)).body.billingReady,false,'payment credentials alone cannot open sales');check((await request('/api/billing',member,{action:'checkout'})).status,503,'checkout stays closed without publisher information');
  const serviceInfo={publisher:'Test local',address:'Test address',registration:'TEST',contactEmail:'owner@example.invalid',terms:'Conditions de test local',privacy:'Informations de test local'};check((await api('service-info',member,{info:serviceInfo})).status,403,'publisher settings protected');check((await api('service-info',owner,{info:serviceInfo})).status,200,'publisher information saved');check((await api('bootstrap',member)).body.billingReady,true,'complete configured service can open sales');
- db=await mf.getD1Database('DB');
+ db=openDb();
  const event={id:'evt_local_test',type:'local.test',created:Math.floor(Date.now()/1000),data:{object:{}}};const raw=JSON.stringify(event),timestamp=event.created;
  const signature=createHmac('sha256','local-test-unused').update(`${timestamp}.${raw}`).digest('hex');
- const webhook=()=>mf.dispatchFetch(origin+'/api/billing/webhook',{method:'POST',headers:{'Content-Type':'application/json','stripe-signature':`t=${timestamp},v1=${signature}`},body:raw});
+ const webhook=()=>fetch(origin+'/api/billing/webhook',{method:'POST',headers:{'Content-Type':'application/json','stripe-signature':`t=${timestamp},v1=${signature}`},body:raw});
  check((await webhook()).status,200,'valid webhook signature');check((await webhook()).status,200,'webhook duplicate handled');
- check((await mf.dispatchFetch(origin+'/api/billing/webhook',{method:'POST',headers:{'Content-Type':'application/json','stripe-signature':`t=${timestamp},v1=${'0'.repeat(64)}`},body:raw})).status,400,'invalid webhook signature rejected');
+ check((await fetch(origin+'/api/billing/webhook',{method:'POST',headers:{'Content-Type':'application/json','stripe-signature':`t=${timestamp},v1=${'0'.repeat(64)}`},body:raw})).status,400,'invalid webhook signature rejected');
  const memberState=(await api('bootstrap',member)).body.state;
  memberState.favorites=bootstrap.body.catalog.recipes.slice(0,11).map(r=>r.id);
  check((await api('state',member,{state:memberState,revision:0})).status,403,'free tier enforced on server');
@@ -94,5 +102,16 @@ try{
  await db.prepare("UPDATE members SET subscription_status='none' WHERE id=?").bind(member.id).run();
  check((await api('delete-account',member,{confirm:'SUPPRIMER'})).status,200,'member deletion');
  check((await db.prepare('SELECT COUNT(*) AS n FROM waitlist').first()).n,0,'waitlist cascade');
+ const login=(email)=>fetch(origin+'/api/auth/request',{method:'POST',headers:{'Content-Type':'application/json',Origin:origin},body:JSON.stringify({email})});
+ check((await login('pas-une-adresse')).status,400,'invalid login email rejected');
+ check((await login('Nouveau@Example.invalid')).status,200,'login link requested');
+ const mail=readFileSync(outbox,'utf8').trim().split('\n').map(l=>JSON.parse(l)).at(-1);check(mail.to,'nouveau@example.invalid','login link sent to normalized address');
+ const verified=await fetch(mail.link,{redirect:'manual'});check(verified.status,303,'login link accepted');check(verified.headers.get('location'),origin+'/#dashboard','login redirects to dashboard');
+ const cookie=verified.headers.get('set-cookie').split(';')[0];
+ const mine=await fetch(origin+'/api/app?action=export',{headers:{Cookie:cookie}});check((await mine.json()).email,'nouveau@example.invalid','session opens the account');
+ check((await fetch(mail.link,{redirect:'manual'})).headers.get('location'),origin+'/?connexion=expiree','login link works only once');
+ check((await fetch(origin+'/api/app?action=export',{headers:{Cookie:cookie.slice(0,-3)+'abc'}})).status,401,'tampered session rejected');
+ for(let i=0;i<4;i++)await login('nouveau@example.invalid');check((await login('nouveau@example.invalid')).status,429,'login requests rate limited');
+ const out=await fetch(origin+'/api/auth/logout',{redirect:'manual'});check(out.headers.get('set-cookie').includes('Max-Age=0'),true,'logout clears session');
  console.log(`${checks} API and persistence assertions passed.`);
-}finally{await mf.dispose();}
+}finally{await stopServer();rmSync(dataDir,{recursive:true,force:true});}

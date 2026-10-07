@@ -1,4 +1,4 @@
-import { getChatGPTUser } from '@/app/chatgpt-auth';
+import { getCurrentUser } from '@/lib/auth';
 import { db,currentUser,memberFor,isAdmin,adminUser,catalog,readSetting,writeSetting,billingReady,body,json,failure,ApiError,runtime,serviceInfo,commerceReady } from '@/lib/server';
 import { stateSchema,postSchema,recipeSchema,serviceSchema } from '@/lib/validation';
 import { ingredients,challenges,type Recipe } from '@/lib/catalog';
@@ -8,7 +8,7 @@ export const dynamic='force-dynamic';
 export async function GET(request:Request){try{
  const url=new URL(request.url);const action=url.searchParams.get('action')??'bootstrap';
  if(action==='bootstrap'){
-  const user=await getChatGPTUser();const data=await catalog();
+  const user=await getCurrentUser();const data=await catalog();
   if(!user)return json({state:blankState(),revision:0,admin:false,user:null,catalog:data,billingReady:await commerceReady(),serviceInfo:await serviceInfo(),subscriptionStatus:'none',interested:false});
   const member=await memberFor(user);const interested=await db().prepare('SELECT owner FROM waitlist WHERE owner=?').bind(user.userId).first();
   return json({state:stateSchema.parse(JSON.parse(member.state)),revision:member.revision,admin:await isAdmin(user.userId),user:{id:user.userId,name:member.nickname,email:user.email},catalog:data,billingReady:await commerceReady(),serviceInfo:await serviceInfo(),subscriptionStatus:member.subscription_status,interested:!!interested});

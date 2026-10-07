@@ -9,7 +9,7 @@ export async function POST(request:Request){try{
  if(head[0]===137&&head[1]===80&&head[2]===78&&head[3]===71&&head[4]===13&&head[5]===10&&head[6]===26&&head[7]===10)mime='image/png';
  if(String.fromCharCode(...head.slice(0,4))==='RIFF'&&String.fromCharCode(...head.slice(8,12))==='WEBP')mime='image/webp';
  if(!mime)throw new ApiError(400,'Le fichier doit être une photo JPEG, PNG ou WebP.');
- const id=crypto.randomUUID(),key=`community/${user.userId}/${id}`;await bucket.put(key,bytes,{httpMetadata:{contentType:mime}});
+ const id=crypto.randomUUID(),key=`community/${user.userId}/${id}`;await bucket.put(key,bytes);
  try{await db().prepare('INSERT INTO photos (id,owner,storage_key,mime,size,created_at) VALUES (?,?,?,?,?,?)').bind(id,user.userId,key,mime,file.size,new Date().toISOString()).run();}catch(e){await bucket.delete(key);throw e;}
  return json({id,url:`/api/photos/${id}`},201);
 }catch(e){return failure(e);}}

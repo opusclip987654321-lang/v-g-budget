@@ -1,19 +1,20 @@
 import { getRawDb } from '@/db';
-import { getChatGPTUser, type ChatGPTUser } from '@/app/chatgpt-auth';
-import { env } from 'cloudflare:workers';
+import { getCurrentUser, type SessionUser } from '@/lib/auth';
+import { bucket } from '@/lib/storage';
 import { ingredients, recipes, type Recipe } from './catalog';
 import { blankState } from './planner';
 import {emptyServiceInfo,serviceComplete,type ServiceInfo} from './service-info';
 
-export type RuntimeConfig = { DB?:D1Database; BUCKET?:R2Bucket; STRIPE_SECRET_KEY?:string; STRIPE_PRICE_ID?:string; STRIPE_WEBHOOK_SECRET?:string; BILLING_ENABLED?:string; SITE_ORIGIN?:string; RESEND_API_KEY?:string; EMAIL_FROM?:string; OWNER_EMAIL?:string };
-export const runtime = () => env as unknown as RuntimeConfig;
+export type RuntimeConfig = { BUCKET?:typeof bucket; STRIPE_SECRET_KEY?:string; STRIPE_PRICE_ID?:string; STRIPE_WEBHOOK_SECRET?:string; BILLING_ENABLED?:string; SITE_ORIGIN?:string; RESEND_API_KEY?:string; EMAIL_FROM?:string; OWNER_EMAIL?:string };
+export const runtime = ():RuntimeConfig => ({...(process.env as Omit<RuntimeConfig,'BUCKET'>),BUCKET:bucket});
+export function siteOrigin(request:Request){return (runtime().SITE_ORIGIN??new URL(request.url).origin).replace(/\/$/,'');}
 export const db = getRawDb;
 export type Member = { id:string; email:string; nickname:string; state:string; revision:number; customer:string|null; subscription:string|null; subscription_status:string; billing_event_time:number; created_at:string; updated_at:string };
 export class ApiError extends Error { constructor(public status:number,message:string){super(message);} }
 export const json = (data:unknown,status=200) => Response.json(data,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
-export async function currentUser(){const u=await getChatGPTUser();if(!u)throw new ApiError(401,'Connectez-vous pour enregistrer votre activité.');return u;}
-export async function memberFor(user:ChatGPTUser):Promise<Member>{
- const now=new Date().toISOString();const state=blankState();state.profile.nickname=user.fullName?.split(' ')[0]?.slice(0,40)??'Membre Végé';
+export async function currentUser(){const u=await getCurrentUser();if(!u)throw new ApiError(401,'Connectez-vous pour enregistrer votre activité.');return u;}
+export async function memberFor(user:SessionUser):Promise<Member>{
+ const now=new Date().toISOString();const state=blankState();state.profile.nickname=user.email.split('@')[0].replace(/[^\p{L}\p{N}]+/gu,' ').trim().split(' ')[0]?.slice(0,40)||'Membre Végé';
  await db().prepare('INSERT INTO members (id,email,nickname,state,created_at,updated_at) VALUES (?,?,?,?,?,?) ON CONFLICT(id) DO NOTHING').bind(user.userId,user.email,state.profile.nickname,JSON.stringify(state),now,now).run();
  // Only the configured owner may initialize administration, including after public opening.
  if(runtime().OWNER_EMAIL?.trim().toLowerCase()===user.email.trim().toLowerCase())await db().prepare("INSERT INTO settings (key,value) VALUES ('owner_id',?) ON CONFLICT(key) DO NOTHING").bind(user.userId).run();
