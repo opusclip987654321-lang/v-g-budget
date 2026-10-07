@@ -11,9 +11,9 @@ export async function GET(request:Request){try{
  const url=new URL(request.url);const action=url.searchParams.get('action')??'bootstrap';
  if(action==='bootstrap'){
   const user=await getCurrentUser();const data=await catalog();
-  if(!user)return json({state:blankState(),revision:0,admin:false,user:null,catalog:data,billingReady:await commerceReady(),serviceInfo:await serviceInfo(),subscriptionStatus:'none',interested:false,founder:false,founderLeft:await founderLeft()});
+  if(!user)return json({state:blankState(),revision:0,admin:false,user:null,catalog:data,billingReady:await commerceReady(),serviceInfo:await serviceInfo(),subscriptionStatus:'none',interested:false,reminders:false,founder:false,founderLeft:await founderLeft()});
   const member=await memberFor(user);const interested=await db().prepare('SELECT plan FROM waitlist WHERE owner=?').bind(user.userId).first<{plan:string}>();
-  return json({state:stateSchema.parse(JSON.parse(member.state)),revision:member.revision,admin:await isAdmin(user.userId),user:{id:user.userId,name:member.nickname,email:user.email},catalog:data,billingReady:await commerceReady(),serviceInfo:await serviceInfo(),subscriptionStatus:member.subscription_status,interested:!!interested,founder:interested?.plan==='founder',founderLeft:await founderLeft()});
+  return json({state:stateSchema.parse(JSON.parse(member.state)),revision:member.revision,admin:await isAdmin(user.userId),user:{id:user.userId,name:member.nickname,email:user.email},catalog:data,billingReady:await commerceReady(),serviceInfo:await serviceInfo(),subscriptionStatus:member.subscription_status,interested:!!interested,reminders:member.reminders===1,founder:interested?.plan==='founder',founderLeft:await founderLeft()});
  }
  if(action==='posts'){
   const user=await currentUser();const rows=await db().prepare("SELECT p.id,p.owner,p.content,p.category,p.photo,p.created_at,m.nickname,(SELECT COUNT(*) FROM likes l WHERE l.post=p.id) AS likes,(SELECT COUNT(*) FROM comments c WHERE c.post=p.id) AS comment_count FROM posts p JOIN members m ON m.id=p.owner WHERE p.status='visible' ORDER BY p.created_at DESC LIMIT 100").all();
@@ -72,6 +72,9 @@ export async function POST(request:Request){try{
  }
  if(action==='delete-post'){
   const post=await db().prepare('SELECT owner FROM posts WHERE id=?').bind(String(input.post??'')).first<{owner:string}>();if(!post)throw new ApiError(404,'Publication introuvable.');if(post.owner!==user.userId&&!await isAdmin(user.userId))throw new ApiError(403,'Vous ne pouvez pas supprimer cette publication.');await db().prepare('DELETE FROM posts WHERE id=?').bind(input.post).run();return json({ok:true});
+ }
+ if(action==='reminders'){
+  if(typeof input.on!=='boolean')throw new ApiError(400,'Préférence invalide.');await db().prepare('UPDATE members SET reminders=? WHERE id=?').bind(input.on?1:0,user.userId).run();return json({reminders:input.on});
  }
  if(action==='waitlist'){
   const plan=input.plan==='founder'?'founder':'premium';

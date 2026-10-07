@@ -13,7 +13,7 @@ const origin=`http://127.0.0.1:${port}`;
 const dataDir=mkdtempSync(join(tmpdir(),'vegebudget-check-'));
 const outbox=join(dataDir,'outbox.jsonl');
 const secret='local-test-secret-local-test-secret-0123456789';
-const baseEnv={DATA_DIR:dataDir,AUTH_SECRET:secret,SITE_ORIGIN:origin,OWNER_EMAIL:'owner@example.invalid',BILLING_ENABLED:'false',MAIL_OUTBOX:outbox};
+const baseEnv={DATA_DIR:dataDir,AUTH_SECRET:secret,SITE_ORIGIN:origin,OWNER_EMAIL:'owner@example.invalid',CRON_SECRET:'cron-secret-de-test-1234',BILLING_ENABLED:'false',MAIL_OUTBOX:outbox};
 let server;
 async function startServer(extra={}){
  server=spawn(process.execPath,['node_modules/next/dist/bin/next','start','-p',String(port),'-H','127.0.0.1'],{env:{...process.env,...baseEnv,...extra},stdio:['ignore','ignore','inherit']});
@@ -78,6 +78,18 @@ try{
  const reserved=await api('waitlist',member,{plan:'founder'});check(reserved.body.founderLeft,99,'founder seat reserved');await api('waitlist',member,{});
  const after=await api('bootstrap',member);check([after.body.founder,after.body.founderLeft],[true,99],'founder seat kept after a premium request');check((await api('admin',owner)).body.waitlist.find(w=>w.email===member.email).plan,'founder','founder visible to administrator');
  { const usual=structuredClone((await api('bootstrap',owner)).body.state);usual.profile.usualSpend=45;const saved=await api('state',owner,{state:usual,revision:(await api('bootstrap',owner)).body.revision});check(saved.status,200,'usual spending saved');usual.profile.usualSpend=0;check((await api('state',owner,{state:usual,revision:saved.body.revision})).status,400,'usual spending validated'); }
+ { const cron=(secret)=>fetch(origin+'/api/reminders',{method:'POST',headers:secret?{Authorization:'Bearer '+secret}:{}});
+  check((await cron()).status,401,'reminders need the cron secret');check((await cron('mauvais-secret-1234567')).status,401,'wrong cron secret refused');
+  check((await api('bootstrap',member)).body.reminders,true,'reminders on by default');
+  const run=await (await cron('cron-secret-de-test-1234')).json();const mails=readFileSync(outbox,'utf8').trim().split('\n').map(l=>JSON.parse(l)).filter(m=>m.kind==='reminder');
+  const sentTo=mails.find(m=>m.to===member.email);check(!!sentTo,true,'weekly reminder sent');check(run.sent,mails.length,'reminder count reported');check(sentTo.link,origin+'/#menus','reminder links to the menus');
+  check((await (await cron('cron-secret-de-test-1234')).json()).sent,0,'reminder sent once per week');
+  const stop=sentTo.text.match(/Ne plus recevoir ce rappel : (\S+)/)[1];const u=new URL(stop);
+  check((await fetch(stop)).status,200,'unsubscribe page opens without unsubscribing');check((await api('bootstrap',member)).body.reminders,true,'opening the link alone changes nothing');
+  check((await fetch(stop.replace(/s=[^&]+/,'s=faux'))).status,400,'forged unsubscribe link refused');
+  check((await fetch(origin+'/api/reminders/stop',{method:'POST',body:new URLSearchParams({u:u.searchParams.get('u'),s:u.searchParams.get('s')})})).status,200,'unsubscribe confirmed');
+  check((await api('bootstrap',member)).body.reminders,false,'reminders turned off');
+  check((await api('reminders',member,{on:true})).body.reminders,true,'reminders turned back on from the account'); }
  const exportData=await api('export',member);check(exportData.body.email,member.email,'personal export');check(exportData.body.comments.length,1,'export includes own comment');
  check((await request('/api/billing',member,{action:'checkout'})).status,503,'unconfigured payments blocked');
  check((await api('delete-post',owner,{post})).status,200,'post deleted');check((await api('comments',member,undefined)).body.comments.length,0,'comments disappear with post');

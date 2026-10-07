@@ -9,7 +9,7 @@ export type RuntimeConfig = { BUCKET?:typeof bucket; STRIPE_SECRET_KEY?:string; 
 export const runtime = ():RuntimeConfig => ({...(process.env as Omit<RuntimeConfig,'BUCKET'>),BUCKET:bucket});
 export function siteOrigin(request:Request){return (runtime().SITE_ORIGIN??new URL(request.url).origin).replace(/\/$/,'');}
 export const db = getRawDb;
-export type Member = { id:string; email:string; nickname:string; state:string; revision:number; customer:string|null; subscription:string|null; subscription_status:string; billing_event_time:number; created_at:string; updated_at:string };
+export type Member = { id:string; email:string; nickname:string; state:string; revision:number; customer:string|null; subscription:string|null; subscription_status:string; billing_event_time:number; reminders:number; reminder_week:string|null; created_at:string; updated_at:string };
 export class ApiError extends Error { constructor(public status:number,message:string){super(message);} }
 export const json = (data:unknown,status=200) => Response.json(data,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 export async function currentUser(){const u=await getCurrentUser();if(!u)throw new ApiError(401,'Connectez-vous pour enregistrer votre activité.');return u;}

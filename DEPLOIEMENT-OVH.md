@@ -61,7 +61,7 @@ openssl rand -base64 48      # copiez le résultat dans AUTH_SECRET
 sudo nano /etc/vegebudget.env
 ```
 
-À remplir au minimum : `SITE_ORIGIN` (`https://www.mon-domaine.fr`), `AUTH_SECRET`, `OWNER_EMAIL` (votre adresse, pour l'espace de gestion), `SMTP_USER`, `SMTP_PASSWORD` et `EMAIL_FROM`. Avec un e-mail OVH, le serveur SMTP est `ssl0.ovh.net`, port `465`. Laissez `BILLING_ENABLED=false` pour l'instant.
+À remplir au minimum : `SITE_ORIGIN` (`https://www.mon-domaine.fr`), `AUTH_SECRET`, `CRON_SECRET` (générez-le avec `openssl rand -hex 24`), `OWNER_EMAIL` (votre adresse, pour l'espace de gestion), `SMTP_USER`, `SMTP_PASSWORD` et `EMAIL_FROM`. Avec un e-mail OVH, le serveur SMTP est `ssl0.ovh.net`, port `465`. Laissez `BILLING_ENABLED=false` pour l'instant.
 
 ## 5. Lancer le site en service
 
@@ -123,7 +123,19 @@ Ouvrez `https://www.mon-domaine.fr`, cliquez sur **Me connecter**, saisissez vot
 
 Dans la zone DNS OVH, vérifiez que l'enregistrement SPF du domaine inclut OVH (`v=spf1 include:mx.ovh.com ~all`) et activez DKIM pour l'adresse d'envoi (**Emails > mon-domaine.fr > DKIM**). Testez avec une adresse Gmail.
 
-## 8. Sauvegardes
+## 8. Rappel hebdomadaire par e-mail
+
+Chaque dimanche matin, les membres reçoivent un e-mail pour composer la semaine suivante, avec le bilan de la précédente (dîners cuisinés, coût des courses, économie). Chacun peut l'arrêter depuis l'e-mail ou depuis son compte. Pour le déclencher, ajoutez une tâche planifiée :
+
+```sh
+sudo crontab -e
+# ajouter la ligne (remplacez VOTRE_CRON_SECRET par la valeur de /etc/vegebudget.env) :
+0 10 * * 0 curl -fsS -X POST -H "Authorization: Bearer VOTRE_CRON_SECRET" http://127.0.0.1:3000/api/reminders > /dev/null
+```
+
+Un membre ne reçoit qu'un rappel par semaine, et aucun s'il a déjà composé la semaine suivante. Pour tester tout de suite, lancez la commande `curl` à la main : la réponse indique combien d'e-mails sont partis.
+
+## 9. Sauvegardes
 
 Tout ce qui compte est dans `/var/lib/vegebudget` (base `vegebudget.sqlite` et dossier `uploads`). Sauvegarde quotidienne à 3 h :
 
@@ -136,7 +148,7 @@ sudo crontab -e
 
 Copiez régulièrement ces fichiers hors du VPS (option « Backup automatique » d'OVH ou téléchargement manuel).
 
-## 9. Mettre le site à jour
+## 10. Mettre le site à jour
 
 Après chaque modification fusionnée sur GitHub :
 
@@ -151,7 +163,7 @@ sudo systemctl restart vegebudget
 
 Les nouvelles tables de la base sont créées automatiquement au démarrage.
 
-## 10. Plus tard : activer les paiements
+## 11. Plus tard : activer les paiements
 
 1. Dans Stripe, créez un prix mensuel récurrent de 4,99 € et notez son identifiant.
 2. Créez un webhook vers `https://www.mon-domaine.fr/api/billing/webhook` pour `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.paid` et `invoice.payment_failed`.
