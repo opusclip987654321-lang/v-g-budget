@@ -129,5 +129,20 @@ try{
  check((await fetch(origin+'/api/app?action=export',{headers:{Cookie:cookie.slice(0,-3)+'abc'}})).status,401,'tampered session rejected');
  for(let i=0;i<4;i++)await login('nouveau@example.invalid');check((await login('nouveau@example.invalid')).status,429,'login requests rate limited');
  const out=await fetch(origin+'/api/auth/logout',{redirect:'manual'});check(out.headers.get('set-cookie').includes('Max-Age=0'),true,'logout clears session');
+ { const browser={'Content-Type':'application/json',Origin:origin,'User-Agent':'Mozilla/5.0 (test)'};
+  const track=(data,headers={})=>fetch(origin+'/api/track',{method:'POST',headers:{...browser,...headers},body:JSON.stringify(data)});
+  check((await track({event:'visite',referrer:'https://www.google.com/search?q=x'})).status,200,'visit recorded');
+  await track({event:'visite',referrer:'https://www.google.com/'});await track({event:'visite',referrer:origin+'/recettes'});
+  await track({event:'visite',referrer:''},{'X-Forwarded-For':'203.0.113.9'});await track({event:'visite',utm:'Instagram'},{'X-Forwarded-For':'203.0.113.10'});
+  await track({event:'visite',referrer:''},{'User-Agent':'Googlebot/2.1'});
+  await track({event:'semaine'});await track({event:'clic_payer',detail:'fondateur'});await track({event:'clic_payer',detail:'premium'});
+  check((await track({event:'inconnu'})).status,400,'unknown event refused');check((await track({event:'connexion_demandee'})).status,400,'server-only event refused from the browser');
+  const stats=(secret)=>fetch(origin+'/api/stats?jours=7',{headers:secret?{Authorization:'Bearer '+secret}:{}});
+  check((await stats()).status,401,'stats need a secret');check((await stats('mauvais-secret-1234567')).status,401,'wrong stats secret refused');
+  const s=await (await stats(baseEnv.CRON_SECRET)).json();const today=s.jours.at(-1);
+  check(s.jours.length,7,'one row per day');check(today.visiteurs,3,'visitors counted once per day, bots and internal navigation ignored');
+  check(today.semaines,1,'week composed');check(today.clicsPayer,1,'pay clicks counted per visitor');check(today.connexionsDemandees>=1,true,'login requests counted');
+  check(today.inscrits>=1,true,'signups counted');check(s.sources.map(x=>x.source).sort(),['direct','google.com','instagram'],'traffic sources');
+  check(s.totaux.membres>=2,true,'member total'); }
  console.log(`${checks} API and persistence assertions passed.`);
 }finally{await stopServer();rmSync(dataDir,{recursive:true,force:true});}
