@@ -144,5 +144,10 @@ try{
   check(today.semaines,1,'week composed');check(today.clicsPayer,1,'pay clicks counted per visitor');check(today.connexionsDemandees>=1,true,'login requests counted');
   check(today.inscrits>=1,true,'signups counted');check(s.sources.map(x=>x.source).sort(),['direct','google.com','instagram'],'traffic sources');
   check(s.totaux.membres>=2,true,'member total'); }
+ { const blog=await request('/blog');check(blog.status,200,'blog index');assert.match(blog.body,/circuit-court/);checks++;
+  const post=await request('/blog/code-oeufs');check(post.status,200,'blog article');assert.match(post.body,/"@type":"BlogPosting"/);assert.match(post.body,/youtube-nocookie\.com\/embed\//);assert.match(post.body,/"@type":"FAQPage"/);checks+=3;
+  check((await request('/blog/inconnu')).status,404,'unknown article');
+  const map=await request('/sitemap.xml');assert.match(map.body,/\/blog\/manger-bio-pas-cher/);checks++;
+  const llms=await request('/llms.txt');assert.match(llms.body,/## Articles du blog/);checks++; }
  console.log(`${checks} API and persistence assertions passed.`);
 }finally{await stopServer();rmSync(dataDir,{recursive:true,force:true});}

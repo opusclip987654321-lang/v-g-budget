@@ -1,4 +1,5 @@
 import { recipes } from '@/lib/catalog';
+import { blogPath, sortedArticles } from '@/lib/blog';
 import { money } from '@/lib/planner';
 import { faq, HOME_DESCRIPTION, portionCost, publicOrigin, recipePath } from '@/lib/seo';
 export const dynamic = 'force-dynamic';
@@ -16,9 +17,13 @@ export async function GET() {
     `- [Accueil et application](${origin}/): composer sa semaine gratuitement`,
     `- [Comment ça marche, prix et questions fréquentes](${origin}/comment-ca-marche)`,
     `- [Les 24 recettes avec leur coût par portion](${origin}/recettes)`,
+    `- [Le blog : bio, circuit court, saisons, bien-être animal, budget](${origin}/blog)`,
     '',
     '## Questions fréquentes',
     ...faq.flatMap(f => [`### ${f.q}`, f.a, '']),
+    '## Articles du blog',
+    ...sortedArticles().map(a => `- [${a.title}](${origin}${blogPath(a)}): ${a.description}`),
+    '',
     '## Recettes',
     ...recipes.map(r => `- [${r.title}](${origin}${recipePath(r)}): ${r.minutes} min, environ ${money(portionCost(r))} par portion. ${r.description}`),
     '',
