@@ -19,13 +19,13 @@ Les prix initiaux sont des simulations, pas des relevés de supermarché. Les vi
 
 ## État commercial
 
-Toutes les fonctions sont ouvertes pendant la préouverture. L'offre à 9 €/mois est un tarif à tester. Le paiement demeure désactivé sans configuration complète. Les inscriptions sur la liste d'ouverture et préférences de nouvelles sont réellement sauvegardées ; aucun courriel n'est encore envoyé.
+Toutes les fonctions sont ouvertes pendant la préouverture. L'offre à 4,99 €/mois (`lib/pricing.ts`) est un tarif à tester. Le paiement demeure désactivé sans configuration complète. Les inscriptions sur la liste d'ouverture et préférences de nouvelles sont réellement sauvegardées ; aucun courriel n'est encore envoyé.
 
 La démonstration peut être rendue publique dans le mode d'accès Sites. Le catalogue et les menus d'essai sont accessibles sans compte ; les posts, commentaires et photos de membres demandent une connexion. Seule l'adresse configurée dans le secret runtime `OWNER_EMAIL` peut initialiser l'administration. Le premier visiteur ne reçoit aucun droit de gestion. Les paiements restent bloqués tant que les informations de l'éditeur, le contact, les conditions de vente et les informations sur les données personnelles ne sont pas renseignés dans « Gestion du service > Ouverture ».
 
 ## Paiement à connecter
 
-Variables runtime Sites : `BILLING_ENABLED=false` par défaut, `SITE_ORIGIN`, puis secrets `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` et `STRIPE_PRICE_ID`. Le prix Stripe doit être récurrent, mensuel et égal à 900 centimes EUR. Renseigner aussi les informations commerciales dans la gestion. Activer `BILLING_ENABLED=true` uniquement après validation en mode test et préparation des informations commerciales.
+Variables runtime Sites : `BILLING_ENABLED=false` par défaut, `SITE_ORIGIN`, puis secrets `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` et `STRIPE_PRICE_ID`. Le prix Stripe doit être récurrent, mensuel et égal à `PREMIUM_PRICE_CENTS` (499 centimes EUR). Renseigner aussi les informations commerciales dans la gestion. Activer `BILLING_ENABLED=true` uniquement après validation en mode test et préparation des informations commerciales.
 
 Configurer le webhook Stripe sur `/api/billing/webhook` pour les événements `customer.subscription.created`, `.updated`, `.deleted`, `invoice.paid` et `invoice.payment_failed`. Le code vérifie la signature, le prix, le client, l'ordre des événements et leur unicité. Les retours du navigateur ne donnent jamais à eux seuls un accès Premium.
 

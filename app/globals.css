@@ -22,3 +22,20 @@
 @media(max-width:767px){.welcome-start{grid-template-columns:1fr;gap:0}.welcome-start>div{padding:1.5rem}.welcome-start h1{font-size:2.35rem}.welcome-start figure{height:13rem;min-height:0;max-height:13rem}.welcome-actions .btn{width:100%;font-size:.875rem}.welcome-benefits{grid-template-columns:1fr;gap:.7rem}.welcome-benefits article{padding:1rem}.welcome-benefits h2{font-size:1.4rem}.welcome-benefits p{font-size:.9375rem}.dashboard-focus{grid-template-columns:1fr;gap:1rem}.dashboard-focus>div{padding:.5rem}.dashboard-focus h2{font-size:1.7rem}.budget-alert{padding:1rem}.budget-alert strong{font-size:1rem}.budget-alert-actions .btn{font-size:.875rem;flex:1 1 45%}.stock-quick-grid{gap:.7rem}.dinner-days>div{grid-template-columns:repeat(4,minmax(0,1fr))}.day-choice{padding:.65rem .35rem;font-size:.875rem}.onboarding-steps>span{font-size:.875rem;padding:.4rem}.onboarding .field,.onboarding .fine-print{font-size:.875rem}.pack-edit{width:7.5rem;margin-left:1.6rem}.price-edit{margin-left:0!important;width:7rem}.price-edit input{height:2.4rem!important}.price-edit label,.pack-edit label{font-size:.875rem}.shopping-row-total{width:auto}.spending-history{padding:1rem}.spending-history .section-heading{align-items:flex-start;flex-direction:column;gap:.7rem}.spending-history .pantry-table table{min-width:25rem}.spending-history .fine-print{font-size:.875rem}.weekly-topic{flex-direction:column;align-items:stretch;padding:1rem}.weekly-topic h2{font-size:1.5rem}.recipe-title h3,.meal-copy h3{font-size:.9375rem}.planning-summary,.meal-copy p,.detail-meta,.pill-tabs button,.category-chip,.field,.shopping-item-copy>strong,.shopping-row-total,.pantry-table td,.pantry-table th{font-size:.875rem}.meal-actions{flex-wrap:wrap}.meal-actions .btn.small{font-size:.875rem;min-height:2.6rem}.pantry-table table{min-width:0}.pantry-table th,.pantry-table td{padding:.6rem}.table-actions{flex-wrap:wrap}.detail-photo:has(.atlas-photo){max-width:100%}.guest-banner p,.guest-banner .text-button{font-size:.875rem}}
 @media(max-width:390px){.stock-quick-grid{grid-template-columns:1fr}.pack-edit{width:6.5rem}.price-edit{width:6rem}.welcome-start h1{font-size:2.1rem}}
 @media print{.pack-edit,.spending-history,.budget-alert{display:none!important}}
+
+/* Accueil : étapes, lien d'exemple et rappel de l'offre */
+.welcome-example{color:var(--lime);text-decoration:underline;text-underline-offset:2px;font-weight:600}
+.step-number{display:inline-grid;place-items:center;width:1.9rem;height:1.9rem;border-radius:50%;background:var(--lime);color:var(--green);font-weight:700;font-size:.9rem}
+.welcome-pricing{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;margin:2.5rem 0 1rem;padding:1.6rem;border-radius:.9rem;background:#e9efdf;border:1px solid #dee7d2}
+.welcome-pricing h2{font:500 1.5rem/1.25 Georgia,serif;color:var(--green);margin-bottom:.4rem}
+.welcome-pricing p{font-size:.9375rem;color:var(--subtle);max-width:40rem}
+.welcome-pricing .btn{flex-shrink:0}
+.next-week-card{border-color:var(--lime);background:#f6fbe6}
+.sidebar-premium small{display:block;margin-top:.35rem}
+@media(max-width:767px){
+.welcome-pricing{flex-direction:column;align-items:stretch;padding:1.2rem}
+.guest-banner{align-items:center;flex-wrap:wrap}
+.guest-banner p{flex:1 1 calc(100% - 2rem);min-width:0}
+.guest-banner .text-button{margin-left:1.7rem}
+}
+.guest-offer{margin-top:2.5rem}
