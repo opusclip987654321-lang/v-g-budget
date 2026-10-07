@@ -170,6 +170,15 @@ Les nouvelles tables de la base sont créées automatiquement au démarrage.
 3. Renseignez `STRIPE_SECRET_KEY`, `STRIPE_PRICE_ID` et `STRIPE_WEBHOOK_SECRET`, testez en mode test, puis passez `BILLING_ENABLED=true` et redémarrez (`sudo systemctl restart vegebudget`).
 4. Complétez les informations de l'éditeur dans **Gestion du service > Ouverture**.
 
+## 12. Référencement Google, Bing et assistants IA
+
+Le site fournit déjà tout le technique : `/robots.txt` (Google, Bing et les robots de ChatGPT, Claude, Perplexity et Gemini autorisés), `/sitemap.xml` (accueil, aide et les 24 recettes avec photo), `/llms.txt` (résumé du site pour les assistants IA), une page par recette avec ses données structurées, et l'image d'aperçu pour les partages. Toutes les adresses utilisent `SITE_ORIGIN` : vérifiez qu'il vaut bien l'adresse finale du site (par exemple `https://www.mon-domaine.fr`), sans `/` final.
+
+1. **Google Search Console** : sur https://search.google.com/search-console, ajoutez une propriété **Domaine** `mon-domaine.fr`. Google donne un enregistrement `TXT` : ajoutez-le dans la zone DNS OVH (**Domaines > mon-domaine.fr > Zone DNS > Ajouter une entrée > TXT**), attendez quelques minutes et cliquez sur **Valider**. Dans **Sitemaps**, saisissez `sitemap.xml` et envoyez. Dans **Inspection de l'URL**, demandez l'indexation de l'accueil et de `/recettes`.
+2. **Bing Webmaster Tools** : sur https://www.bing.com/webmasters, choisissez **Importer depuis Google Search Console**. Bing alimente aussi la recherche de ChatGPT et de Copilot, cette étape compte pour le référencement IA.
+3. Si vous préférez la balise à l'enregistrement DNS, renseignez `GOOGLE_SITE_VERIFICATION` et `BING_SITE_VERIFICATION` dans `/etc/vegebudget.env` (le code seul, sans la balise), puis `sudo systemctl restart vegebudget`.
+4. Vérifiez une recette dans https://search.google.com/test/rich-results (par exemple `https://www.mon-domaine.fr/recettes/curry-corail`) : elle doit être reconnue comme **Recette**.
+
 ## En cas de problème
 
 - Journaux du site : `sudo journalctl -u vegebudget -n 100`
