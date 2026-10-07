@@ -39,3 +39,8 @@
 .guest-banner .text-button{margin-left:1.7rem}
 }
 .guest-offer{margin-top:2.5rem}
+.login-panel .field{margin:0 0 .8rem;text-align:left;align-self:stretch;display:flex;flex-direction:column;gap:.4rem}
+.login-panel .field input{width:100%}
+.login-sent{margin:1rem 0;line-height:1.6}
+.form-error{color:#a3401f;font-size:.875rem;margin-bottom:.6rem}
+@media(max-height:900px) and (min-width:768px){.nav-button{min-height:2.4rem;padding:.45rem .85rem!important}.nav-caption{padding-bottom:.5rem}}

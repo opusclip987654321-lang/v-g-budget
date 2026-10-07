@@ -45,3 +45,7 @@ next-env.d.ts
 /.codex/
 /outputs/
 /work/
+
+# données locales (base SQLite et photos)
+/data/
+!.env.example
