@@ -8,7 +8,7 @@ import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogDescription} from '@
 import {Toaster} from '@/components/ui/sonner';
 import {toast} from 'sonner';
 import {AppContext,api,type View} from '@/lib/app-context';
-import {track} from '@/lib/track';
+import {track,trackPage} from '@/lib/track';
 import {recipes as baseRecipes,ingredients as baseIngredients,type Recipe,type Ingredient} from '@/lib/catalog';
 import {blankState,generatePlan,isEligible,monday,money,recipeCost,type UserState,type Plan,type Entry,type PantryItem,shopping,addDay,uniqueId,cookMeal,awardChallenges} from '@/lib/planner';
 import {stateSchema} from '@/lib/validation';
@@ -55,6 +55,7 @@ export default function VegeApp({user,signOutPath}:{user:{id:string;name:string;
  useEffect(()=>{const params=new URLSearchParams(window.location.search);if(params.get('connexion')==='expiree'){if(!user){toast.error('Ce lien de connexion a expiré ou a déjà servi. Demandez-en un nouveau.');setModal('login');}params.delete('connexion');window.history.replaceState(null,'',`${window.location.pathname}${params.size?`?${params}`:''}${window.location.hash}`);}},[]);
  useEffect(()=>{track('visite');},[]);
  useEffect(()=>{if(view==='offre')track('offre_vue');},[view]);
+ useEffect(()=>{trackPage(view==='bienvenue'?'/':`/#${view}`);},[view]);
  useEffect(()=>{function read(){const hash=window.location.hash.slice(1) as View;if(navigation.some(([id])=>id===hash)||['offre','admin'].includes(hash))setView(hash);}read();window.addEventListener('hashchange',read);return()=>window.removeEventListener('hashchange',read);},[]);
  useEffect(()=>{if(!loaded)return;const requested=new URLSearchParams(window.location.search).get('recette');if(requested&&allRecipes.some(r=>r.id===requested)){setRecipeId(requested);setModal('recipe');}},[loaded]);
  function navigate(next:View){setView(next);window.history.replaceState(null,'',`${window.location.pathname}${window.location.search}#${next}`);window.scrollTo({top:0,behavior:'smooth'});}

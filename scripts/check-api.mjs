@@ -143,7 +143,17 @@ try{
   check(s.jours.length,7,'one row per day');check(today.visiteurs,3,'visitors counted once per day, bots and internal navigation ignored');
   check(today.semaines,1,'week composed');check(today.clicsPayer,1,'pay clicks counted per visitor');check(today.connexionsDemandees>=1,true,'login requests counted');
   check(today.inscrits>=1,true,'signups counted');check(s.sources.map(x=>x.source).sort(),['direct','google.com','instagram'],'traffic sources');
-  check(s.totaux.membres>=2,true,'member total'); }
+  check(s.totaux.membres>=2,true,'member total');
+  await track({event:'page',view:'vue001',path:'/blog/code-oeufs',seconds:0,scroll:0});await track({event:'page',view:'vue001',path:'/blog/code-oeufs',seconds:42,scroll:65});await track({event:'page',view:'vue001',path:'/blog/code-oeufs',seconds:5,scroll:10});
+  await track({event:'clic',path:'/blog/code-oeufs',detail:'Composer ma semaine'});await track({event:'page',view:'vue002',path:'/',seconds:12,scroll:80});await track({event:'page',view:'vue003',path:'/#offre',seconds:30,scroll:100});
+  await track({event:'page',view:'vue004',path:'/blog/code-oeufs',seconds:4,scroll:20},{'X-Forwarded-For':'203.0.113.9'});
+  await track({event:'page',view:'vue005',path:'https://ailleurs.invalid/x'},{'X-Forwarded-For':'203.0.113.11'});await track({event:'page',view:'vue006',path:'/'},{'User-Agent':'Googlebot/2.1'});
+  await track({event:'page',view:'vue007',path:'/#admin',seconds:9},{Cookie:sessionFor(owner)});
+  const p=(await (await stats(baseEnv.CRON_SECRET)).json()).parcours;
+  check(p.visites,2,'one journey per visitor, bots, owner and foreign paths ignored');
+  const full=p.dernieres.find(v=>v.pages===3);check(full.source,'google.com','journey keeps its traffic source');check(full.entree,'/blog/code-oeufs','entry page');check(full.sortie,'Offre Premium','exit page named');check(full.secondes,84,'time on page keeps the longest report');
+  check(full.parcours.filter(x=>x.type==='page').map(x=>x.lu),[65,80,100],'scroll depth');check(full.parcours.some(x=>x.type==='clic'&&x.texte==='Composer ma semaine'),true,'clicks in the journey');check(full.plusLoin,'A cliqué sur payer / réserver','furthest funnel step');
+  check(p.dernieres.find(v=>v.pages===1).rebond,true,'bounce detected');check(p.entonnoir[0].visites,2,'funnel start');check(p.pages[0].chemin,'/blog/code-oeufs','pages ranked by views');check(p.constats.length>0,true,'plain-language findings'); }
  { const blog=await request('/blog');check(blog.status,200,'blog index');assert.match(blog.body,/circuit-court/);checks++;
   const post=await request('/blog/code-oeufs');check(post.status,200,'blog article');assert.match(post.body,/"@type":"BlogPosting"/);assert.match(post.body,/youtube-nocookie\.com\/embed\//);assert.match(post.body,/"@type":"FAQPage"/);checks+=3;
   check((await request('/blog/inconnu')).status,404,'unknown article');
