@@ -159,5 +159,7 @@ try{
   check((await request('/blog/inconnu')).status,404,'unknown article');
   const map=await request('/sitemap.xml');assert.match(map.body,/\/blog\/manger-bio-pas-cher/);checks++;
   const llms=await request('/llms.txt');assert.match(llms.body,/## Articles du blog/);checks++; }
+ { for(const [path,currency] of [['/belgique','€'],['/suisse','CHF'],['/quebec','$']]){const page=await request(path);check(page.status,200,`${path} page`);assert.ok(page.body.includes(currency)&&/soupers/.test(page.body),`${path} shows local prices and words`);checks++;}
+  assert.match((await request('/')).body,/hrefLang="fr-BE"/);checks++; }
  console.log(`${checks} API and persistence assertions passed.`);
 }finally{await stopServer();rmSync(dataDir,{recursive:true,force:true});}

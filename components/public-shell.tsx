@@ -8,7 +8,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
     <header className="pub-header"><Link href="/" className="pub-logo"><span aria-hidden="true" />VégéBudget</Link><nav aria-label="Pages"><Link href="/recettes">Recettes</Link><Link href="/blog">Blog</Link><Link href="/comment-ca-marche">Comment ça marche</Link><Link href="/" className="pub-cta">Composer ma semaine</Link></nav></header>
     <TrackVisit />
     <main className="pub-main">{children}</main>
-    <footer className="pub-footer"><p>VégéBudget · Des dîners sans viande, dans votre budget.</p><nav aria-label="Liens"><Link href="/">Accueil</Link><Link href="/recettes">Toutes les recettes</Link><Link href="/blog">Blog</Link><Link href="/comment-ca-marche">Comment ça marche</Link></nav></footer>
+    <footer className="pub-footer"><p>VégéBudget · Des dîners sans viande, dans votre budget. <Link href="/belgique">Belgique</Link> · <Link href="/suisse">Suisse</Link> · <Link href="/quebec">Québec</Link></p><nav aria-label="Liens"><Link href="/">Accueil</Link><Link href="/recettes">Toutes les recettes</Link><Link href="/blog">Blog</Link><Link href="/comment-ca-marche">Comment ça marche</Link></nav></footer>
   </div>;
 }
 export function Cta({ lead, text = 'Composer ma semaine gratuitement' }: { lead: string; text?: string }) {

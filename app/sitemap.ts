@@ -11,6 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${origin}/recettes`, lastModified, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${origin}/blog`, lastModified: new Date(`${articles.map(a => a.updated ?? a.date).sort().at(-1)}T12:00:00Z`), changeFrequency: 'weekly', priority: 0.8 },
     ...articles.map(a => ({ url: `${origin}${blogPath(a)}`, lastModified: new Date(`${a.updated ?? a.date}T12:00:00Z`), changeFrequency: 'monthly' as const, priority: 0.7, images: [`${origin}${blogCoverJpg(a)}`] })),
+    ...['/belgique', '/suisse', '/quebec'].map(path => ({ url: `${origin}${path}`, lastModified, changeFrequency: 'weekly' as const, priority: 0.9 })),
     { url: `${origin}/comment-ca-marche`, lastModified, changeFrequency: 'monthly', priority: 0.8 },
     ...recipes.map(r => ({ url: `${origin}${recipePath(r)}`, lastModified, changeFrequency: 'monthly' as const, priority: 0.7, images: [`${origin}${recipeImage(r)}`] })),
   ];

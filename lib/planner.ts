@@ -1,5 +1,6 @@
+import { localizeText, priceSource, region, type RegionCode } from './region';
 import { ingredients as baseIngredients, recipes as baseRecipes, type Ingredient, type Recipe } from './catalog';
-export type Profile = { nickname: string; people:number; budget:number; mealCount:number; maxMinutes:number; allergens:string[]; excluded:string[]; equipment:string[]; newsletter:boolean; days?:number[]; repeatMeals?:boolean; usualSpend?:number };
+export type Profile = { region?: RegionCode; nickname: string; people:number; budget:number; mealCount:number; maxMinutes:number; allergens:string[]; excluded:string[]; equipment:string[]; newsletter:boolean; days?:number[]; repeatMeals?:boolean; usualSpend?:number };
 export type PantryItem = { id:string; qty:number; expiry?:string };
 export type Entry = { id:string; recipeId:string; date:string; servings:number; cooked:boolean; locked:boolean; consumed?:{id:string;qty:number}[] };
 export type Plan = { id:string; name:string; weekStart:string; entries:Entry[]; createdAt:string; budget?:number };
@@ -9,7 +10,7 @@ export type ShopItem = { id:string; ingredient:Ingredient; required:number; inPa
 export const defaultProfile:Profile = { nickname:'', people:2, budget:35, mealCount:5, maxMinutes:35, allergens:[], excluded:[], equipment:['Plaques','Four','Mixeur'], newsletter:false };
 export const blankState = ():UserState => ({profile:{...defaultProfile,allergens:[],excluded:[],equipment:[...defaultProfile.equipment]},pantry:[],favorites:[],plans:[],activePlanId:null,checked:[],checkedByWeek:{},purchases:[],packSizes:{},challengeAwards:[],joinedChallenges:[],completedChallenges:[],prices:{},onboardingDone:false});
 export const roundMoney = (n:number) => Math.round((n+Number.EPSILON)*100)/100;
-export const money = (n:number) => new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR'}).format(n);
+export const money = (n:number,code?:RegionCode) => {const r=region(code);return new Intl.NumberFormat(r.locale,{style:'currency',currency:r.currency}).format(n);};
 export function quantity(n:number,unit:Ingredient['unit']) { const fmt=(v:number)=>new Intl.NumberFormat('fr-FR',{maximumFractionDigits:2}).format(v);if(unit==='g' && n>=1000) return `${fmt(n/1000)} kg`; if(unit==='ml' && n>=1000) return `${fmt(n/1000)} l`;const fraction=unit==='pièce'?({0.25:'¼',0.5:'½',0.75:'¾'} as Record<number,string>)[n]:null;return `${fraction??fmt(n)} ${unit}${unit==='pièce' && n>1 ? 's':''}`; }
 export function uniqueId(){if(typeof crypto!=='undefined'&&typeof crypto.randomUUID==='function')return crypto.randomUUID();const b=new Uint8Array(16);crypto.getRandomValues(b);b[6]=(b[6]&15)|64;b[8]=(b[8]&63)|128;const h=Array.from(b,x=>x.toString(16).padStart(2,'0')).join('');return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;}
 export function portionStep(text:string,servings:number){return text.replace(/\{([\d.]+) ([^{}]+)\}/g,(_,amount,unit)=>`${new Intl.NumberFormat('fr-FR',{maximumFractionDigits:2}).format(Number(amount)*servings/2)} ${unit}`);}
@@ -60,4 +61,4 @@ export function generatePlan(state:UserState,weekStart=monday(),seed=Date.now(),
   if(new Set(entries.map(e=>e.recipeId)).size<slots&&!state.profile.repeatMeals) warning=`Les préférences actuelles limitent le choix : certaines recettes se répètent.${warning?' '+warning:''}`;
   return {plan:{id:uniqueId(),name:`Semaine du ${new Date(`${weekStart}T12:00:00`).toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}`,weekStart,entries,createdAt:new Date().toISOString(),budget:state.profile.budget},warning};
 }
-export function shoppingText(items:ShopItem[],checked:string[]) {return ['VégéBudget — ma liste de courses','Prix relevés chez Carrefour le 7 octobre 2026, à personnaliser selon votre magasin.','',...items.filter(i=>i.missing>0).map(i=>`${checked.includes(i.id)?'✓':'□'} ${i.ingredient.name} — ${i.packages} ${i.packages>1?'paquets':'paquet'} de ${quantity(i.ingredient.pack,i.ingredient.unit)} — ${money(i.purchaseCost)}`),'',`Panier estimé : ${money(totals(items).purchase)}`].join('\n');}
+export function shoppingText(items:ShopItem[],checked:string[]) {return localizeText(['VégéBudget — ma liste de courses',`${priceSource()}, à personnaliser selon votre magasin.`,'',...items.filter(i=>i.missing>0).map(i=>`${checked.includes(i.id)?'✓':'□'} ${i.ingredient.name} — ${i.packages} ${i.packages>1?'paquets':'paquet'} de ${quantity(i.ingredient.pack,i.ingredient.unit)} — ${money(i.purchaseCost)}`),'',`Panier estimé : ${money(totals(items).purchase)}`].join('\n'));}
