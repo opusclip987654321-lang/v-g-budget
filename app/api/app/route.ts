@@ -3,8 +3,7 @@ import { db,currentUser,memberFor,isAdmin,adminUser,catalog,readSetting,writeSet
 import { stateSchema,postSchema,recipeSchema,serviceSchema } from '@/lib/validation';
 import { ingredients,challenges,type Recipe } from '@/lib/catalog';
 import { blankState } from '@/lib/planner';
-import { FOUNDER_SEATS } from '@/lib/pricing';
-async function founderLeft(){const row=await db().prepare("SELECT COUNT(*) AS count FROM waitlist WHERE plan='founder'").first<{count:number}>();return Math.max(0,FOUNDER_SEATS-Number(row?.count??0));}
+import { founderLeft } from '@/lib/billing';
 export const dynamic='force-dynamic';
 
 export async function GET(request:Request){try{
@@ -13,7 +12,7 @@ export async function GET(request:Request){try{
   const user=await getCurrentUser();const data=await catalog();
   if(!user)return json({state:blankState(),revision:0,admin:false,user:null,catalog:data,billingReady:await commerceReady(),serviceInfo:await serviceInfo(),subscriptionStatus:'none',interested:false,reminders:false,founder:false,founderLeft:await founderLeft()});
   const member=await memberFor(user);const interested=await db().prepare('SELECT plan FROM waitlist WHERE owner=?').bind(user.userId).first<{plan:string}>();
-  return json({state:stateSchema.parse(JSON.parse(member.state)),revision:member.revision,admin:await isAdmin(user.userId),user:{id:user.userId,name:member.nickname,email:user.email},catalog:data,billingReady:await commerceReady(),serviceInfo:await serviceInfo(),subscriptionStatus:member.subscription_status,interested:!!interested,reminders:member.reminders===1,founder:interested?.plan==='founder',founderLeft:await founderLeft()});
+  return json({state:stateSchema.parse(JSON.parse(member.state)),revision:member.revision,admin:await isAdmin(user.userId),user:{id:user.userId,name:member.nickname,email:user.email},catalog:data,billingReady:await commerceReady(),serviceInfo:await serviceInfo(),subscriptionStatus:member.subscription_status,subscriptionPlan:member.subscription_plan,interested:!!interested,reminders:member.reminders===1,founder:interested?.plan==='founder',founderLeft:await founderLeft()});
  }
  if(action==='posts'){
   const user=await currentUser();const rows=await db().prepare("SELECT p.id,p.owner,p.content,p.category,p.photo,p.created_at,m.nickname,(SELECT COUNT(*) FROM likes l WHERE l.post=p.id) AS likes,(SELECT COUNT(*) FROM comments c WHERE c.post=p.id) AS comment_count FROM posts p JOIN members m ON m.id=p.owner WHERE p.status='visible' ORDER BY p.created_at DESC LIMIT 100").all();
@@ -29,7 +28,7 @@ export async function GET(request:Request){try{
  if(action==='admin'){
   await adminUser();const counts=await db().batch<{count:number}>([db().prepare('SELECT COUNT(*) AS count FROM members'),db().prepare('SELECT COUNT(*) AS count FROM posts'),db().prepare('SELECT COUNT(*) AS count FROM waitlist'),db().prepare("SELECT COUNT(*) AS count FROM members WHERE subscription_status IN ('active','trialing')")]);
   const reports=await db().prepare('SELECT r.id,r.post,r.reason,r.created_at,p.content,p.status,m.nickname FROM reports r JOIN posts p ON p.id=r.post JOIN members m ON m.id=p.owner ORDER BY r.created_at DESC LIMIT 100').all();
-  const members=await db().prepare('SELECT id,nickname,subscription_status,created_at FROM members ORDER BY created_at DESC LIMIT 100').all();
+  const members=await db().prepare('SELECT id,nickname,subscription_status,subscription_plan,created_at FROM members ORDER BY created_at DESC LIMIT 100').all();
   const waiting=await db().prepare('SELECT m.nickname,m.email,w.plan,w.created_at FROM waitlist w JOIN members m ON m.id=w.owner ORDER BY w.created_at DESC').all();
   return json({counts:counts.map(x=>Number(x.results[0]?.count??0)),reports:reports.results,members:members.results,waitlist:waiting.results,catalog:await catalog(),billingReady:await commerceReady(),serviceInfo:await serviceInfo()});
  }

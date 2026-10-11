@@ -25,7 +25,7 @@ Le catalogue et les menus d'essai sont accessibles sans compte ; les posts, comm
 
 ## Paiement à connecter
 
-Variables d'environnement (voir `.env.example`) : `BILLING_ENABLED=false` par défaut, `SITE_ORIGIN`, puis `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` et `STRIPE_PRICE_ID`. Le prix Stripe doit être récurrent, mensuel et égal à `PREMIUM_PRICE_CENTS` (499 centimes EUR, `lib/pricing.ts`). Renseigner aussi les informations commerciales dans la gestion. Activer `BILLING_ENABLED=true` uniquement après validation en mode test et préparation des informations commerciales.
+Variables d'environnement (voir `.env.example`) : `BILLING_ENABLED=false` par défaut, `SITE_ORIGIN`, puis `STRIPE_SECRET_KEY`. Le site crée lui-même dans Stripe les prix (Premium mensuel et fondateur annuel, montants de `lib/region.ts`), l'adresse de notification et la page de gestion d'abonnement : espace de gestion > Ouverture > « Vérifier et préparer Stripe ». Renseigner aussi les informations commerciales dans la gestion. Activer `BILLING_ENABLED=true` uniquement après validation en mode test et préparation des informations commerciales.
 
 Configurer le webhook Stripe sur `/api/billing/webhook` pour les événements `customer.subscription.created`, `.updated`, `.deleted`, `invoice.paid` et `invoice.payment_failed`. Le code vérifie la signature, le prix, le client, l'ordre des événements et leur unicité. Les retours du navigateur ne donnent jamais à eux seuls un accès Premium.
 

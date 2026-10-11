@@ -5,6 +5,7 @@ import {join} from 'node:path';
 import {spawn} from 'node:child_process';
 import {createHmac} from 'node:crypto';
 import {DatabaseSync} from 'node:sqlite';
+import {createServer} from 'node:http';
 
 // Lance le site construit (next start) avec une base et un dossier de photos
 // temporaires. Aucun service déployé, compte réel ni prestataire de paiement n'est contacté.
@@ -161,5 +162,48 @@ try{
   const llms=await request('/llms.txt');assert.match(llms.body,/## Articles du blog/);checks++; }
  { for(const [path,currency] of [['/belgique','€'],['/suisse','CHF'],['/quebec','$']]){const page=await request(path);check(page.status,200,`${path} page`);assert.ok(page.body.includes(currency)&&/soupers/.test(page.body),`${path} shows local prices and words`);checks++;}
   assert.match((await request('/')).body,/hrefLang="fr-BE"/);checks++; }
+ { // Paiement de bout en bout contre un faux Stripe local : prix créés par le site, paiement, notification signée, Premium ouvert.
+  const fake={prices:[],posts:[],sessions:[],subscription:null,webhook:null};
+  const stripeServer=createServer((req,res)=>{let raw='';req.on('data',c=>raw+=c);req.on('end',()=>{const url=new URL(req.url,'http://x');const form=Object.fromEntries(new URLSearchParams(raw));const send=(data,status=200)=>{res.writeHead(status,{'Content-Type':'application/json'});res.end(JSON.stringify(data));};
+   if(req.headers.authorization!=='Bearer sk_test_local')return send({error:{code:'auth'}},401);if(req.method==='POST')fake.posts.push(url.pathname);const path=url.pathname.replace(/^\/v1/,'');
+   if(path==='/prices'&&req.method==='GET'){const key=url.searchParams.get('lookup_keys[]');return send({data:fake.prices.filter(p=>p.lookup_key===key)});}
+   if(path==='/prices'){const options={};for(const c of ['chf','cad'])options[c]={unit_amount:Number(form[`currency_options[${c}][unit_amount]`])};for(const p of fake.prices)if(p.lookup_key===form.lookup_key)p.lookup_key=null;const price={id:`price_${fake.prices.length+1}`,active:true,currency:form.currency,unit_amount:Number(form.unit_amount),recurring:{interval:form['recurring[interval]'],interval_count:1},lookup_key:form.lookup_key,metadata:{vegebudget_plan:form['metadata[vegebudget_plan]']},currency_options:{eur:{unit_amount:Number(form.unit_amount)},...options},product:form.product??`prod_${form['product_data[name]']}`};fake.prices.push(price);return send(price);}
+   if(path==='/webhook_endpoints'&&req.method==='POST'){fake.webhook={id:'we_1',secret:'whsec_local_test',status:'enabled',url:form.url,events:Object.entries(form).filter(([k])=>k.startsWith('enabled_events')).map(([,v])=>v)};return send(fake.webhook);}
+   if(path.startsWith('/webhook_endpoints/'))return fake.webhook?send({id:fake.webhook.id,status:'enabled'}):send({error:{code:'resource_missing'}},404);
+   if(path==='/billing_portal/configurations')return send({id:'bpc_1'});if(path.startsWith('/billing_portal/configurations/'))return send({id:'bpc_1'});
+   if(path==='/billing_portal/sessions')return send({url:'https://billing.stripe.test/portal'});
+   if(path==='/customers')return send({id:'cus_local'});if(path.startsWith('/customers/'))return path==='/customers/cus_local'?send({id:'cus_local'}):send({error:{code:'resource_missing'}},404);
+   if(path==='/checkout/sessions'){fake.sessions.push(form);return send({id:'cs_1',url:'https://checkout.stripe.test/pay'});}
+   if(path.startsWith('/subscriptions/'))return send(fake.subscription);
+   send({error:{code:'unknown'}},404);});}).listen(0,'127.0.0.1');
+  await new Promise(r=>stripeServer.once('listening',r));
+  try{
+   await stopServer();await startServer({BILLING_ENABLED:'true',STRIPE_SECRET_KEY:'sk_test_local',STRIPE_API_BASE:`http://127.0.0.1:${stripeServer.address().port}/v1`});db=openDb();
+   const payer={id:'local-test-payer',email:'payer@example.invalid'};
+   check((await request('/api/billing',payer,{action:'setup'})).status,403,'Stripe setup reserved to the owner');
+   const setup=await request('/api/billing',owner,{action:'setup'});check([setup.body.mode,setup.body.prices,setup.body.webhook,setup.body.portal,setup.body.open],['test',true,true,true,true],'Stripe prepared from the admin page');
+   check(fake.webhook.url,origin+'/api/billing/webhook','notification address points to the site');check(fake.webhook.events.includes('customer.subscription.updated'),true,'subscription events requested');
+   const premiumPrice=fake.prices.find(p=>p.lookup_key==='vegebudget_premium_mensuel'),founderPrice=fake.prices.find(p=>p.lookup_key==='vegebudget_fondateur_annuel');
+   check([premiumPrice.unit_amount,premiumPrice.recurring.interval,premiumPrice.currency_options.chf.unit_amount,premiumPrice.currency_options.cad.unit_amount],[499,'month',590,699],'Premium price in each currency');
+   check([founderPrice.unit_amount,founderPrice.recurring.interval],[1900,'year'],'founder yearly price');
+   const before=fake.posts.length;await request('/api/billing',owner,{action:'setup'});check(fake.posts.length,before,'setup is idempotent');
+   check((await api('bootstrap',payer)).body.billingReady,true,'sales open');const seats=(await api('bootstrap',payer)).body.founderLeft;
+   const pay=await request('/api/billing',payer,{action:'checkout',plan:'founder',region:'CH'});check(pay.body.url,'https://checkout.stripe.test/pay','checkout link returned');
+   const session=fake.sessions.at(-1);check([session['line_items[0][price]'],session.currency,session.mode,session.customer,session['subscription_data[metadata][user_id]']],[founderPrice.id,'chf','subscription','cus_local',payer.id],'founder checkout in Swiss francs');
+   check((await api('bootstrap',payer)).body.founderLeft,seats-1,'founder seat held at checkout');
+   check((await api('bootstrap',payer)).body.subscriptionStatus,'none','not premium before payment');
+   fake.subscription={id:'sub_local',object:'subscription',customer:'cus_local',status:'active',metadata:{user_id:payer.id,plan:'founder'},items:{data:[{price:founderPrice}]}};
+   const notify=async(event,secret='whsec_local_test')=>{const raw=JSON.stringify(event),t=Math.floor(Date.now()/1000);return fetch(origin+'/api/billing/webhook',{method:'POST',headers:{'Content-Type':'application/json','stripe-signature':`t=${t},v1=${createHmac('sha256',secret).update(`${t}.${raw}`).digest('hex')}`},body:raw});};
+   check((await notify({id:'evt_pay',type:'checkout.session.completed',created:Math.floor(Date.now()/1000),data:{object:{id:'cs_1',subscription:'sub_local'}}},'whsec_wrong')).status,400,'notification with another secret refused');
+   check((await notify({id:'evt_pay',type:'checkout.session.completed',created:Math.floor(Date.now()/1000),data:{object:{id:'cs_1',subscription:'sub_local'}}})).status,200,'payment notification accepted');
+   const paid=(await api('bootstrap',payer)).body;check([paid.subscriptionStatus,paid.subscriptionPlan,paid.founder],['active','founder',true],'Premium opened as founder after payment');
+   check((await request('/api/billing',payer,{action:'checkout',plan:'premium'})).status,409,'no second subscription');
+   check((await request('/api/billing',payer,{action:'portal'})).body.url,'https://billing.stripe.test/portal','subscription management link');
+   await notify({id:'evt_cancel',type:'customer.subscription.deleted',created:Math.floor(Date.now()/1000)+1,data:{object:{...fake.subscription,status:'canceled'}}});
+   check((await api('bootstrap',payer)).body.subscriptionStatus,'canceled','cancellation closes Premium');
+   await stopServer();await startServer({BILLING_ENABLED:'true',STRIPE_SECRET_KEY:'sk_test_local',STRIPE_API_BASE:`http://127.0.0.1:${stripeServer.address().port}/v1`});
+   const premiumCheckout=await request('/api/billing',payer,{action:'checkout',plan:'premium',region:'FR'});check([premiumCheckout.status,fake.sessions.at(-1)['line_items[0][price]'],fake.sessions.at(-1).currency],[200,premiumPrice.id,'eur'],'monthly Premium checkout in euros');
+  }finally{await new Promise(r=>stripeServer.close(r));}
+ }
  console.log(`${checks} API and persistence assertions passed.`);
 }finally{await stopServer();rmSync(dataDir,{recursive:true,force:true});}

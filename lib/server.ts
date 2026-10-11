@@ -5,11 +5,11 @@ import { ingredients, recipes, type Recipe } from './catalog';
 import { blankState } from './planner';
 import {emptyServiceInfo,serviceComplete,type ServiceInfo} from './service-info';
 
-export type RuntimeConfig = { BUCKET?:typeof bucket; STRIPE_SECRET_KEY?:string; STRIPE_PRICE_ID?:string; STRIPE_WEBHOOK_SECRET?:string; BILLING_ENABLED?:string; SITE_ORIGIN?:string; RESEND_API_KEY?:string; EMAIL_FROM?:string; OWNER_EMAIL?:string };
+export type RuntimeConfig = { BUCKET?:typeof bucket; STRIPE_SECRET_KEY?:string; STRIPE_WEBHOOK_SECRET?:string; BILLING_ENABLED?:string; SITE_ORIGIN?:string; RESEND_API_KEY?:string; EMAIL_FROM?:string; OWNER_EMAIL?:string };
 export const runtime = ():RuntimeConfig => ({...(process.env as Omit<RuntimeConfig,'BUCKET'>),BUCKET:bucket});
 export function siteOrigin(request:Request){return (runtime().SITE_ORIGIN??new URL(request.url).origin).replace(/\/$/,'');}
 export const db = getRawDb;
-export type Member = { id:string; email:string; nickname:string; state:string; revision:number; customer:string|null; subscription:string|null; subscription_status:string; billing_event_time:number; reminders:number; reminder_week:string|null; created_at:string; updated_at:string };
+export type Member = { id:string; email:string; nickname:string; state:string; revision:number; customer:string|null; subscription:string|null; subscription_status:string; subscription_plan:string; billing_event_time:number; reminders:number; reminder_week:string|null; created_at:string; updated_at:string };
 export class ApiError extends Error { constructor(public status:number,message:string){super(message);} }
 export const json = (data:unknown,status=200) => Response.json(data,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 export async function currentUser(){const u=await getCurrentUser();if(!u)throw new ApiError(401,'Connectez-vous pour enregistrer votre activité.');return u;}
@@ -25,7 +25,7 @@ export async function adminUser(){const user=await currentUser();await memberFor
 export async function readSetting<T>(key:string,fallback:T):Promise<T>{const row=await db().prepare('SELECT value FROM settings WHERE key=?').bind(key).first<{value:string}>();if(!row)return fallback;try{return JSON.parse(row.value) as T;}catch{return fallback;}}
 export async function writeSetting(key:string,value:unknown){await db().prepare('INSERT INTO settings (key,value) VALUES (?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value').bind(key,JSON.stringify(value)).run();}
 export async function catalog(){const config=await readSetting<{hidden:string[];overrides:Record<string,Recipe>;prices:Record<string,number>}>('catalog',{hidden:[],overrides:{},prices:{}});const list=[...recipes.map(r=>config.overrides[r.id]??r),...Object.values(config.overrides).filter(r=>!recipes.some(b=>b.id===r.id))].filter(r=>!config.hidden.includes(r.id));return {recipes:list,ingredients:ingredients.map(i=>({...i,price:config.prices[i.id]??i.price})),config};}
-export function billingReady(){const c=runtime();return c.BILLING_ENABLED==='true'&&!!c.STRIPE_SECRET_KEY&&!!c.STRIPE_PRICE_ID&&!!c.STRIPE_WEBHOOK_SECRET;}
+export function billingReady(){const c=runtime();return c.BILLING_ENABLED==='true'&&!!c.STRIPE_SECRET_KEY;}
 export async function serviceInfo(){return readSetting<ServiceInfo>('service_info',emptyServiceInfo);}
 export async function commerceReady(){return billingReady()&&serviceComplete(await serviceInfo());}
 export function writeRequest(request:Request){const origin=request.headers.get('origin');const own=new URL(request.url).origin;const configured=runtime().SITE_ORIGIN;if(origin&&origin!==own&&origin!==configured)throw new ApiError(403,'Cette demande ne vient pas du site.');}
