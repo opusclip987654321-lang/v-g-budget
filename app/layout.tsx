@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { HOME_DESCRIPTION, HOME_TITLE, publicOrigin } from "@/lib/seo";
+import { HOME_DESCRIPTION, HOME_TITLE, HREFLANG, publicOrigin } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -8,7 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: { default: HOME_TITLE, template: "%s | VégéBudget" },
     description: HOME_DESCRIPTION,
     applicationName: "VégéBudget",
-    alternates: { canonical: "/" },
+    alternates: { canonical: "/", languages: HREFLANG },
     openGraph: { type: "website", locale: "fr_FR", siteName: "VégéBudget", title: HOME_TITLE, description: HOME_DESCRIPTION },
     twitter: { card: "summary_large_image" },
     robots: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },

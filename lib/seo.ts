@@ -4,6 +4,8 @@ import { money, portionStep, quantity, recipeCost } from './planner';
 import { FOUNDER_PRICE_LABEL, FOUNDER_SEATS, PREMIUM_PRICE_LABEL, PRICE_SOURCE } from './pricing';
 
 export const SITE_NAME = 'VégéBudget';
+// Une version par pays francophone : Google montre à chacun la page de son pays.
+export const HREFLANG = { 'fr-FR': '/', 'fr-BE': '/belgique', 'fr-CH': '/suisse', 'fr-CA': '/quebec', 'x-default': '/' };
 export const PUBLISHED = '2026-10-07';
 export const HOME_TITLE = 'Menu de la semaine pas cher et sans viande, avec la liste de courses | VégéBudget';
 export const HOME_DESCRIPTION = 'Composez vos dîners sans viande de la semaine selon votre budget : liste de courses exacte en paquets entiers, placard déduit, environ 0,70 € par portion. Première semaine gratuite.';
