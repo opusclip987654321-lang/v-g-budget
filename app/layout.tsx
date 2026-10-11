@@ -24,6 +24,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr">
+      <head>
+        {/* Statistiques Umami (serveur stats.nourmeet.com) : sans cookie. */}
+        <script defer src="https://stats.nourmeet.com/script.js" data-website-id="7cdda908-b5f3-4627-8805-03d19eab9d6c"></script>
+      </head>
       <body className="antialiased">{children}</body>
     </html>
   );
