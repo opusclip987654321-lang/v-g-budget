@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ingredients as baseIngredients, recipes } from '@/lib/catalog';
-import { money, recipeCost, shopping, totals, type Entry } from '@/lib/planner';
-import { localizeIngredients, priceSource, REGIONS, type RegionCode } from '@/lib/region';
+import { money } from '@/lib/planner';
+import { countryExample } from '@/lib/region-example';
+import { priceSource, REGIONS, type RegionCode } from '@/lib/region';
 import { HREFLANG, ldScript, organizationLd, publicOrigin, recipeImage, recipePath } from '@/lib/seo';
 import { PublicShell } from './public-shell';
 
@@ -31,17 +31,6 @@ const COPY: Record<Exclude<RegionCode, 'FR'>, Copy> = {
     faq: [['Les prix sont-ils ceux du Québec ?', 'Oui : les prix ont été relevés dans une épicerie québécoise, en dollars canadiens. Vous pouvez aussi saisir les prix de votre épicerie, le budget est recalculé tout de suite.']],
   },
 };
-// Semaine d'exemple : les 5 soupers du menu à petit prix du blog, pour 2 personnes.
-const EXAMPLE = ['curry-corail', 'pates-brocoli', 'riz-saute', 'epinards-pois-chiches', 'soupe-petits-pois'];
-
-export function countryExample(code: RegionCode) {
-  const ingredients = localizeIngredients(baseIngredients, code);
-  const entries: Entry[] = EXAMPLE.map((recipeId, n) => ({ id: recipeId, recipeId, date: `2026-10-${12 + n}`, servings: 2, cooked: false, locked: false }));
-  const week = totals(shopping(entries, [], {}, recipes, ingredients));
-  const portions = recipes.map(r => ({ recipe: r, cost: recipeCost(r, 2, {}, ingredients) / 2 })).sort((a, b) => a.cost - b.cost);
-  return { week, portions, estimated: ingredients.filter(i => 'estimated' in i && i.estimated).length };
-}
-
 export function countryMetadata(code: Exclude<RegionCode, 'FR'>): Metadata {
   const r = REGIONS[code], c = COPY[code];
   const description = `${c.lead} Première semaine gratuite.`;
@@ -54,7 +43,7 @@ export async function CountryPage({ code }: { code: Exclude<RegionCode, 'FR'> })
   const { week, portions } = countryExample(code);
   const start = `/?pays=${r.short}`;
   const faq: [string, string][] = [
-    [`Combien coûte une semaine de soupers ?`, `L’exemple de semaine (5 soupers pour 2 personnes) revient à environ ${money(week.purchase, code)} ${c.groceries === 'épicerie' ? 'd’épicerie' : 'de courses'}, en paquets entiers. ${priceSource(code)}.`],
+    [`Combien coûte une semaine de soupers ?`, `L’exemple de semaine (5 soupers pour 2 personnes) revient à environ ${money(week.purchase, code)} ${c.groceries === 'épicerie' ? 'd’épicerie' : 'de courses'}, en paquets entiers (huile, sel et épices déjà au placard), dont une partie reste pour la semaine suivante. Ce que vous mangez revient à environ ${money(week.used / 10, code)} par portion. ${priceSource(code)}.`],
     ['Est-ce que VégéBudget est gratuit ?', `La première semaine est gratuite, sans compte ni carte bancaire. Ensuite, Premium coûte ${r.premium.label} par mois, sans engagement.`],
     ...c.faq,
   ];
@@ -64,7 +53,7 @@ export async function CountryPage({ code }: { code: Exclude<RegionCode, 'FR'> })
     <p className="pub-eyebrow">VégéBudget · {r.name}</p>
     <h1>{c.h1}</h1>
     <p className="pub-lead">{c.lead}</p>
-    <ul className="pub-facts"><li><strong>{money(week.purchase, code)}</strong> la semaine type pour 2</li><li><strong>{money(portions[0].cost, code)}</strong> la portion la moins chère</li><li><strong>3 minutes</strong> pour composer la semaine</li></ul>
+    <ul className="pub-facts"><li><strong>{money(week.purchase, code)}</strong> {c.groceries === 'épicerie' ? 'd’épicerie' : 'de courses'} pour 5 soupers à 2</li><li><strong>{money(week.used / 10, code)}</strong> par portion en moyenne</li><li><strong>{money(portions[0].cost, code)}</strong> la portion la moins chère</li><li><strong>3 minutes</strong> pour composer la semaine</li></ul>
     <p className="pub-note">{priceSource(code)}.</p>
     <div className="pub-cta-box"><p><strong>Essayez avec votre budget.</strong> Vos soupers, la liste {c.groceries === 'épicerie' ? 'd’épicerie' : 'de courses'} exacte et le total avant de partir à {c.store}.</p><Link href={start} className="pub-cta">Composer ma semaine gratuitement</Link><small>Première semaine gratuite, sans compte ni carte bancaire.</small></div>
     <section><h2>Les soupers les moins chers, aux prix {code === 'QC' ? 'du Québec' : code === 'CH' ? 'suisses' : 'belges'}</h2>

@@ -57,14 +57,14 @@ export function detectRegion(search: string, languages: readonly string[]): Regi
 }
 
 // Vocabulaire : en Belgique, en Suisse et au Québec, le repas du soir est le « souper »
-// (le « dîner » est celui du midi) ; au Québec, on fait « l'épicerie ».
+// (le « dîner » est celui du midi) ; au Québec, on fait « l'épicerie » et on range au « garde-manger ».
 export function vocabulary(code: RegionCode): [RegExp, Record<string, string>] | null {
   if (code === 'FR') return null;
   const words: Record<string, string> = {
     'Déjeuners et petits-déjeuners': 'Dîners et déjeuners', 'petits-déjeuners': 'déjeuners',
     'Dîners': 'Soupers', 'dîners': 'soupers', 'Dîner': 'Souper', 'dîner': 'souper',
   };
-  if (code === 'QC') Object.assign(words, { 'Liste de courses': 'Liste d’épicerie', 'liste de courses': 'liste d’épicerie', 'Mes courses': 'Mon épicerie', 'de courses': 'd’épicerie' });
+  if (code === 'QC') Object.assign(words, { 'Liste de courses': 'Liste d’épicerie', 'liste de courses': 'liste d’épicerie', 'Mes courses': 'Mon épicerie', 'de courses': 'd’épicerie', 'Mon placard': 'Mon garde-manger', 'placard': 'garde-manger' });
   if (REGIONS[code].symbol !== '€') words['€'] = REGIONS[code].symbol;
   const keys = Object.keys(words).sort((a, b) => b.length - a.length).map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
   return [new RegExp(keys.join('|'), 'g'), words];
