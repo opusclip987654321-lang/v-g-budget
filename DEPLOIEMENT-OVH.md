@@ -167,7 +167,7 @@ Les nouvelles tables de la base sont créées automatiquement au démarrage.
 
 1. Dans Stripe, créez un prix mensuel récurrent de 4,99 € et notez son identifiant.
 2. Créez un webhook vers `https://www.mon-domaine.fr/api/billing/webhook` pour `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.paid` et `invoice.payment_failed`.
-3. Renseignez `STRIPE_SECRET_KEY`, `STRIPE_PRICE_ID` et `STRIPE_WEBHOOK_SECRET`, testez en mode test, puis passez `BILLING_ENABLED=true` et redémarrez (`sudo systemctl restart vegebudget`).
+3. Renseignez `STRIPE_SECRET_KEY` (le site crée les prix et l'adresse de notification), testez en mode test, puis passez `BILLING_ENABLED=true` et redémarrez (`sudo systemctl restart vegebudget`).
 4. Complétez les informations de l'éditeur dans **Gestion du service > Ouverture**.
 
 ## 12. Référencement Google, Bing et assistants IA
