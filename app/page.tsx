@@ -4,7 +4,7 @@ import { getCurrentUser } from '@/lib/auth';
 import { recipes } from '@/lib/catalog';
 import { money } from '@/lib/planner';
 import { FOUNDER_PRICE_LABEL, FOUNDER_SEATS, PREMIUM_PRICE_LABEL, PRICE_SOURCE } from '@/lib/pricing';
-import { faq, homeExample, homeLd, ldScript, portionCost, publicOrigin, recipeImage, recipePath } from '@/lib/seo';
+import { faq, homeExample, homeLd, ldScript, portionCost, publicOrigin, recipeImage } from '@/lib/seo';
 import { PublicShell, START_PATH } from '@/components/public-shell';
 import { AppLinkRedirect } from '@/components/app-link-redirect';
 export const dynamic = 'force-dynamic';
@@ -42,7 +42,7 @@ export default async function Home() {
         <h2 id="exemple">{example.dinners} dîners pour 2 personnes, environ {Math.round(example.purchase)} € de courses</h2>
         <p>Ce montant inclut les paquets entiers : une partie servira pour d’autres repas.</p>
       </div>
-      <ol className="land-week">{week.map((r, n) => <li key={r.id}><Link href={recipePath(r)}><img src={recipeImage(r)} alt="" width={120} height={120} loading="lazy" /><span><small>{['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'][n]}</small><strong>{r.title}</strong><small>{r.minutes} min · {money(portionCost(r))} par portion</small></span></Link></li>)}</ol>
+      <ol className="land-week">{week.map((r, n) => <li key={r.id}><Link href={START_PATH}><img src={recipeImage(r)} alt="" width={120} height={120} loading="lazy" /><span><small>{['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'][n]}</small><strong>{r.title}</strong><small>{r.minutes} min · {money(portionCost(r))} par portion</small></span></Link></li>)}</ol>
       <p className="pub-note">{PRICE_SOURCE}. Les prix peuvent varier selon le magasin. Le prix par portion correspond aux ingrédients utilisés.</p>
     </section>
 
@@ -97,7 +97,6 @@ export default async function Home() {
     <section aria-labelledby="questions">
       <h2 id="questions">Questions fréquentes</h2>
       <div className="pub-faq">{faq.slice(0, 5).map(f => <details key={f.q}><summary>{f.q}</summary><p>{f.a}</p></details>)}</div>
-      <p className="pub-note"><Link href="/comment-ca-marche">Toutes les questions et le détail du calcul</Link></p>
     </section>
 
     <div className="pub-cta-box land-final"><p><strong>Ce soir, vous savez déjà quoi cuisiner.</strong></p><Link href={START_PATH} className="pub-cta">Créer mes menus gratuitement</Link><small>Première semaine gratuite, sans compte ni carte bancaire.</small></div>
