@@ -43,7 +43,7 @@ test('regeneration preserves a locked meal on its original weekday',()=>{
 });
 test('impossible budgets are disclosed and impossible preferences return no plan',()=>{
  const state=blankState();state.profile.budget=1;
- const result=generatePlan(state,'2026-10-05',42);assert.ok(result.plan);assert.match(result.warning,/dépasse votre budget/);
+ const result=generatePlan(state,'2026-10-05',42);assert.ok(result.plan);assert.match(result.warning,/dépassent votre budget/);
  state.profile.equipment=[];const none=generatePlan(state,'2026-10-05',42);assert.equal(none.plan,null);assert.match(none.warning,/Aucune recette/);
 });
 test('recording purchases moves money into expenses without creating budget savings',()=>{

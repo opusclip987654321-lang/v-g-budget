@@ -5,7 +5,7 @@ import { HOME_DESCRIPTION, HOME_TITLE, HREFLANG, publicOrigin } from "@/lib/seo"
 export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL(await publicOrigin()),
-    title: { default: HOME_TITLE, template: "%s | VégéBudget" },
+    title: { default: HOME_TITLE, template: "%s · VégéBudget" },
     description: HOME_DESCRIPTION,
     applicationName: "VégéBudget",
     alternates: { canonical: "/", languages: HREFLANG },

@@ -41,8 +41,8 @@ export async function sendWeeklyReminder(to: string, data: { link: string; stopL
   const recapHtml = data.recap.length ? `<ul>${data.recap.map(line => `<li>${escape(line)}</li>`).join('')}</ul>` : '';
   await send({
     to, link: data.link, kind: 'reminder',
-    subject: `Vos dîners de la semaine du ${data.weekLabel} sont à composer`,
-    text: `Bonjour,\n\n${data.recap.length ? 'Votre semaine passée :\n' : ''}${recapText}En une minute, composez vos dîners de la semaine du ${data.weekLabel} et obtenez la liste de courses exacte :\n${data.link}\n\nNe plus recevoir ce rappel : ${data.stopLink}\n\nVégéBudget`,
-    html: `<p>Bonjour,</p>${data.recap.length ? '<p>Votre semaine passée :</p>' : ''}${recapHtml}<p>En une minute, composez vos dîners de la semaine du ${escape(data.weekLabel)} et obtenez la liste de courses exacte.</p>${button(data.link, 'Composer ma semaine')}<p style="color:#666;font-size:13px"><a href="${escape(data.stopLink)}" style="color:#666">Ne plus recevoir ce rappel</a></p>`,
+    subject: `Préparez vos menus de la semaine du ${data.weekLabel} avec VégéBudget`,
+    text: `Bonjour,\n\n${data.recap.length ? 'Votre semaine passée :\n' : ''}${recapText}Prenez un moment pour prévoir vos dîners de la semaine du ${data.weekLabel} et vérifier ce que vous avez déjà à la maison. Vos menus et votre liste de courses vous attendent dans VégéBudget :\n${data.link}\n\nNe plus recevoir ce rappel : ${data.stopLink}\n\nVégéBudget`,
+    html: `<p>Bonjour,</p>${data.recap.length ? '<p>Votre semaine passée :</p>' : ''}${recapHtml}<p>Prenez un moment pour prévoir vos dîners de la semaine du ${escape(data.weekLabel)} et vérifier ce que vous avez déjà à la maison. Vos menus et votre liste de courses vous attendent dans VégéBudget.</p>${button(data.link, 'Préparer mes menus')}<p style="color:#666;font-size:13px"><a href="${escape(data.stopLink)}" style="color:#666">Ne plus recevoir ce rappel</a></p>`,
   });
 }

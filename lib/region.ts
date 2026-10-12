@@ -62,6 +62,8 @@ export function vocabulary(code: RegionCode): [RegExp, Record<string, string>] |
   if (code === 'FR') return null;
   const words: Record<string, string> = {
     'Déjeuners et petits-déjeuners': 'Dîners et déjeuners', 'petits-déjeuners': 'déjeuners',
+    'Petits-déjeuners, déjeuners': 'Déjeuners, dîners', 'petits-déjeuners, déjeuners': 'déjeuners, dîners',
+    'Les petits-déjeuners et les déjeuners': 'Les déjeuners et les dîners', 'les petits-déjeuners et les déjeuners': 'les déjeuners et les dîners',
     'Dîners': 'Soupers', 'dîners': 'soupers', 'Dîner': 'Souper', 'dîner': 'souper',
   };
   if (code === 'QC') Object.assign(words, { 'Liste de courses': 'Liste d’épicerie', 'liste de courses': 'liste d’épicerie', 'Mes courses': 'Mon épicerie', 'de courses': 'd’épicerie', 'Mon placard': 'Mon garde-manger', 'placard': 'garde-manger' });
