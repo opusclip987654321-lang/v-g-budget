@@ -16,7 +16,7 @@ export default async function Home() {
   const origin = await publicOrigin();
   const example = homeExample();
   const week = example.recipeIds.map(id => recipes.find(r => r.id === id)!).filter(Boolean);
-  return <PublicShell>
+  return <PublicShell minimal>
     <script type="application/ld+json" dangerouslySetInnerHTML={ldScript(homeLd(origin))} />
     <AppLinkRedirect />
     <section className="land-hero">
