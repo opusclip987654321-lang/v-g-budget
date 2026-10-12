@@ -30,8 +30,8 @@ export async function sendLoginEmail(to: string, link: string) {
   await send({
     to, link, kind: 'login',
     subject: 'Votre lien de connexion VégéBudget',
-    text: `Bonjour,\n\nCliquez sur ce lien pour vous connecter à VégéBudget :\n${link}\n\nCe lien est valable 20 minutes et ne fonctionne qu'une fois. Si vous n'avez rien demandé, ignorez cet e-mail.\n\nVégéBudget`,
-    html: `<p>Bonjour,</p><p>Cliquez sur ce bouton pour vous connecter à VégéBudget :</p>${button(link, 'Me connecter')}<p style="color:#666;font-size:13px">Ce lien est valable 20 minutes et ne fonctionne qu'une fois. Si vous n'avez rien demandé, ignorez cet e-mail.</p>`,
+    text: `Bonjour,\n\nCliquez sur ce lien pour vous connecter à VégéBudget :\n${link}\n\nCe lien est valable 20 minutes et ne fonctionne qu’une fois. Si vous n’avez rien demandé, ignorez cet e-mail.\n\nVégéBudget`,
+    html: `<p>Bonjour,</p><p>Cliquez sur ce bouton pour vous connecter à VégéBudget :</p>${button(link, 'Me connecter')}<p style="color:#666;font-size:13px">Ce lien est valable 20 minutes et ne fonctionne qu’une fois. Si vous n’avez rien demandé, ignorez cet e-mail.</p>`,
   });
 }
 

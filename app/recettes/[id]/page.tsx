@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const recipe = findRecipe((await params).id);
   if (!recipe) return {};
   const title = `${recipe.title} : recette et coût estimé`;
-  const description = `Préparez ${recipe.title.charAt(0).toLowerCase()}${recipe.title.slice(1)} : ingrédients, étapes et coût estimé par portion. Retrouvez aussi des idées pour organiser vos repas du soir.`;
+  const description = `Recette : ${recipe.title.charAt(0).toLowerCase()}${recipe.title.slice(1)}. Ingrédients, étapes et coût estimé par portion, pour organiser vos dîners de la semaine.`;
   return { title, description, alternates: { canonical: recipePath(recipe) }, openGraph: { title, description, type: 'article', images: [{ url: recipeImage(recipe), alt: recipe.title }] } };
 }
 export default async function RecipePage({ params }: Props) {

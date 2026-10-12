@@ -20,7 +20,7 @@ export default async function HowItWorks() {
     <section><h2>Trois étapes pour préparer votre semaine</h2><ol className="pub-steps">{steps.map(([name, text]) => <li key={name}><strong>{name}.</strong> {text}</li>)}</ol></section>
     <section><h2>Une première semaine gratuite, puis une formule au choix</h2>
       <ul className="pub-ingredients"><li><span>Première semaine</span><span>Gratuite, sans compte ni carte bancaire</span></li><li><span>Premium</span><span>{PREMIUM_PRICE_LABEL} par mois, résiliable depuis Mon compte</span></li><li><span>Offre de lancement ({FOUNDER_SEATS} premiers abonnés)</span><span>{FOUNDER_PRICE_LABEL} par an, tarif conservé tant que l’abonnement n’est pas interrompu</span></li></ul>
-      <p className="pub-note">Un exemple concret : {example.dinners} dîners pour 2 personnes, pour environ {Math.round(example.purchase)} € de courses. Ce montant compte les produits à acheter en entier : une partie reste pour d’autres repas. {PRICE_SOURCE}. Les prix peuvent varier selon le magasin.</p></section>
+      <p className="pub-note">Un exemple concret : {example.dinners} dîners pour 2 personnes, pour environ {Math.round(example.purchase)} € de courses. Ce montant inclut les paquets entiers : une partie servira pour d’autres repas. {PRICE_SOURCE}. Les prix peuvent varier selon le magasin.</p></section>
     <section><h2>Questions fréquentes</h2><div className="pub-faq">{faq.map(f => <details key={f.q}><summary>{f.q}</summary><p>{f.a}</p></details>)}</div></section>
     <Cta lead="Préparez vos premiers menus." />
     <p className="pub-note"><Link href="/recettes">Voir les recettes et leur coût par portion</Link></p>

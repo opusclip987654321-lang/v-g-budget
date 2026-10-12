@@ -21,7 +21,7 @@ export default async function Home() {
     <AppLinkRedirect />
     <section className="land-hero">
       <div>
-        <p className="land-eyebrow">Vos repas du soir, votre liste de courses, votre budget.</p>
+        <p className="land-eyebrow">Vos dîners, vos courses, votre budget.</p>
         <h1>Mangez sans viande. Gardez le plaisir, maîtrisez le budget.</h1>
         <p className="land-lead">Qu’est-ce qu’on mange ce soir ? VégéBudget vous propose des dîners sans viande, faciles et adaptés à votre budget, avec la liste de courses qui va avec.</p>
         <Link href={START_PATH} className="pub-cta land-cta">Créer mes menus gratuitement</Link>
@@ -30,39 +30,67 @@ export default async function Home() {
       <img src="/images/couscous.jpg" alt="Couscous aux légumes et aux pois chiches" width={560} height={560} />
     </section>
 
+    <ul className="land-proof" aria-label="En bref">
+      <li><strong>{recipes.length} recettes</strong> 100 % végétales</li>
+      <li><strong>Prix réels</strong> relevés chez Carrefour</li>
+      <li><strong>Sans compte</strong> pour la première semaine</li>
+    </ul>
+
     <section className="land-example" aria-labelledby="exemple">
       <div className="land-example-head">
         <p className="land-eyebrow">Un exemple concret</p>
         <h2 id="exemple">{example.dinners} dîners pour 2 personnes, environ {Math.round(example.purchase)} € de courses</h2>
-        <p>Ce montant compte les produits à acheter en entier : une partie reste pour d’autres repas.</p>
+        <p>Ce montant inclut les paquets entiers : une partie servira pour d’autres repas.</p>
       </div>
       <ol className="land-week">{week.map((r, n) => <li key={r.id}><Link href={recipePath(r)}><img src={recipeImage(r)} alt="" width={120} height={120} loading="lazy" /><span><small>{['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'][n]}</small><strong>{r.title}</strong><small>{r.minutes} min · {money(portionCost(r))} par portion</small></span></Link></li>)}</ol>
       <p className="pub-note">{PRICE_SOURCE}. Les prix peuvent varier selon le magasin. Le prix par portion correspond aux ingrédients utilisés.</p>
     </section>
 
-    <section aria-labelledby="etapes">
-      <h2 id="etapes">Trois étapes pour préparer votre semaine</h2>
-      <ol className="land-steps">
-        <li><span>1</span><strong>Dites-nous pour combien vous cuisinez</strong><p>Le nombre de personnes, les soirs à prévoir, votre temps de cuisine et votre budget.</p></li>
-        <li><span>2</span><strong>Utilisez ce que vous avez déjà</strong><p>Cochez ce que vous avez à la maison : la liste de courses en tient compte.</p></li>
-        <li><span>3</span><strong>Retrouvez vos menus et vos courses</strong><p>Vos dîners, les produits à acheter et le montant estimé, avant de partir au magasin.</p></li>
-      </ol>
+    <section className="land-before-after" aria-labelledby="avant-apres">
+      <h2 id="avant-apres">Avant : on improvise. Avec VégéBudget : tout est prévu.</h2>
+      <p className="land-sub">Vous décidez une fois par semaine, en quelques minutes. Ensuite, vous n’avez plus qu’à cuisiner.</p>
+      <div className="land-compare">
+        <div className="land-old"><strong>Sans plan</strong><ul><li>Chaque soir, la même question : on mange quoi ?</li><li>Des courses au hasard, et des produits qui finissent à la poubelle.</li><li>Le total découvert à la caisse.</li></ul></div>
+        <div className="land-new"><strong>Avec VégéBudget</strong><ul><li>Vos dîners de la semaine choisis d’avance.</li><li>Une liste de courses qui tient compte de ce que vous avez déjà.</li><li>Le montant estimé connu avant d’aller au magasin.</li></ul></div>
+      </div>
     </section>
 
     <section aria-labelledby="pourquoi">
-      <h2 id="pourquoi">Ce que ça change, chaque semaine</h2>
+      <h2 id="pourquoi">Ce que ça change chaque semaine</h2>
       <ul className="land-benefits">
-        <li><strong>Plus de « on mange quoi ce soir ? »</strong><p>Vos dîners de la semaine sont prévus, avec des recettes simples de {Math.min(...recipes.map(r => r.minutes))} à {Math.max(...recipes.map(r => r.minutes))} minutes.</p></li>
-        <li><strong>Une seule liste de courses</strong><p>Tout ce qu’il faut acheter pour la semaine, regroupé par type de produit.</p></li>
-        <li><strong>Le budget connu avant le magasin</strong><p>Vous voyez le montant estimé avant de partir, puis vous suivez les dépenses que vous enregistrez.</p></li>
+        <li><strong>Moins de charge mentale</strong><p>Le menu de la semaine est décidé. Le soir, vous suivez la recette.</p></li>
+        <li><strong>Des repas rapides</strong><p>Des recettes simples, prêtes en {Math.min(...recipes.map(r => r.minutes))} à {Math.max(...recipes.map(r => r.minutes))} minutes.</p></li>
+        <li><strong>Un budget maîtrisé</strong><p>Les menus respectent le budget que vous fixez, et vous suivez vos dépenses.</p></li>
+        <li><strong>Moins de gaspillage</strong><p>La liste tient compte de ce que vous avez déjà, pour ne rien racheter en double.</p></li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="etapes">
+      <h2 id="etapes">Comment ça marche</h2>
+      <ol className="land-steps">
+        <li><span>1</span><strong>Vos réglages</strong><p>Le nombre de personnes, les soirs à prévoir, votre temps et votre budget.</p></li>
+        <li><span>2</span><strong>Votre placard</strong><p>Cochez ce que vous avez déjà à la maison.</p></li>
+        <li><span>3</span><strong>Vos menus</strong><p>VégéBudget propose vos dîners. Changez ceux qui ne vous plaisent pas.</p></li>
+        <li><span>4</span><strong>Vos courses</strong><p>Partez au magasin avec la liste et le montant estimé.</p></li>
+      </ol>
+    </section>
+
+    <section aria-labelledby="contenu">
+      <h2 id="contenu">Tout ce que vous recevez</h2>
+      <ul className="land-get">
+        <li><strong>Les menus du soir</strong><p>De 1 à 7 dîners par semaine, pour 1 à 8 personnes.</p></li>
+        <li><strong>La liste de courses</strong><p>Regroupée par type de produit, avec les quantités à acheter.</p></li>
+        <li><strong>{recipes.length} recettes pas à pas</strong><p>Ingrédients, étapes et coût par portion pour chacune.</p></li>
+        <li><strong>Le suivi du budget</strong><p>Le total prévu, vos achats et ce qu’il reste à dépenser.</p></li>
       </ul>
     </section>
 
     <section aria-labelledby="formules">
-      <h2 id="formules">Essayez gratuitement, continuez si ça vous aide</h2>
+      <h2 id="formules">Essayez gratuitement, continuez si ça vous plaît</h2>
       <div className="land-plans">
         <article><p className="land-eyebrow">Découverte</p><p className="land-price">Gratuit</p><p>Votre première semaine de menus et sa liste de courses, sans compte ni carte bancaire.</p><Link href={START_PATH} className="pub-cta">Créer mes menus gratuitement</Link></article>
-        <article className="land-premium"><p className="land-eyebrow">Premium</p><p className="land-price">{PREMIUM_PRICE_LABEL} <small>par mois</small></p><p>De nouveaux menus et leur liste de courses chaque semaine, vos menus préférés réutilisables et le suivi de vos dépenses. Sans engagement, résiliable depuis Mon compte.</p><p className="land-founder"><strong>Offre de lancement :</strong> Premium à {FOUNDER_PRICE_LABEL} par an, réservé aux {FOUNDER_SEATS} premiers abonnés.</p></article>
+        <article className="land-premium"><p className="land-eyebrow">Premium</p><p className="land-price">{PREMIUM_PRICE_LABEL} <small>par mois</small></p><p>De nouveaux menus et leur liste de courses chaque semaine, vos menus préférés réutilisables et le suivi de vos dépenses.</p><p>Sans engagement, résiliable depuis Mon compte.</p></article>
+        <article><p className="land-eyebrow">Offre de lancement</p><p className="land-price">{FOUNDER_PRICE_LABEL} <small>par an</small></p><p>Tout Premium pour l’année, soit moins de 2 € par mois. Réservé aux {FOUNDER_SEATS} premiers abonnés.</p></article>
       </div>
     </section>
 
