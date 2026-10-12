@@ -76,8 +76,8 @@ try{
  await api('waitlist',member,{});await api('waitlist',member,{});
  check((await api('admin',owner)).body.waitlist.length,1,'waitlist deduplicated');
  check(bootstrap.body.founderLeft,100,'founder seats shown to visitors');check((await api('bootstrap',member)).body.founder,false,'premium waitlist is not a founder seat');
- const reserved=await api('waitlist',member,{plan:'founder'});check(reserved.body.founderLeft,99,'founder seat reserved');await api('waitlist',member,{});
- const after=await api('bootstrap',member);check([after.body.founder,after.body.founderLeft],[true,99],'founder seat kept after a premium request');check((await api('admin',owner)).body.waitlist.find(w=>w.email===member.email).plan,'founder','founder visible to administrator');
+ const reserved=await api('waitlist',member,{plan:'founder'});check(reserved.body.founderLeft,100,'a free reservation takes no founder seat');await api('waitlist',member,{});
+ const after=await api('bootstrap',member);check([after.body.founder,after.body.founderLeft],[true,100],'founder request kept after a premium request');check((await api('admin',owner)).body.waitlist.find(w=>w.email===member.email).plan,'founder','founder visible to administrator');
  { const usual=structuredClone((await api('bootstrap',owner)).body.state);usual.profile.usualSpend=45;const saved=await api('state',owner,{state:usual,revision:(await api('bootstrap',owner)).body.revision});check(saved.status,200,'usual spending saved');usual.profile.usualSpend=0;check((await api('state',owner,{state:usual,revision:saved.body.revision})).status,400,'usual spending validated'); }
  { const cron=(secret)=>fetch(origin+'/api/reminders',{method:'POST',headers:secret?{Authorization:'Bearer '+secret}:{}});
   check((await cron()).status,401,'reminders need the cron secret');check((await cron('mauvais-secret-1234567')).status,401,'wrong cron secret refused');
@@ -190,18 +190,21 @@ try{
    check((await api('bootstrap',payer)).body.billingReady,true,'sales open');const seats=(await api('bootstrap',payer)).body.founderLeft;
    const pay=await request('/api/billing',payer,{action:'checkout',plan:'founder',region:'CH'});check(pay.body.url,'https://checkout.stripe.test/pay','checkout link returned');
    const session=fake.sessions.at(-1);check([session['line_items[0][price]'],session.currency,session.mode,session.customer,session['subscription_data[metadata][user_id]']],[founderPrice.id,'chf','subscription','cus_local',payer.id],'founder checkout in Swiss francs');
-   check((await api('bootstrap',payer)).body.founderLeft,seats-1,'founder seat held at checkout');
+   check((await api('bootstrap',payer)).body.founderLeft,seats,'an unpaid checkout takes no founder seat');
    check((await api('bootstrap',payer)).body.subscriptionStatus,'none','not premium before payment');
    fake.subscription={id:'sub_local',object:'subscription',customer:'cus_local',status:'active',metadata:{user_id:payer.id,plan:'founder'},items:{data:[{price:founderPrice}]}};
    const notify=async(event,secret='whsec_local_test')=>{const raw=JSON.stringify(event),t=Math.floor(Date.now()/1000);return fetch(origin+'/api/billing/webhook',{method:'POST',headers:{'Content-Type':'application/json','stripe-signature':`t=${t},v1=${createHmac('sha256',secret).update(`${t}.${raw}`).digest('hex')}`},body:raw});};
    check((await notify({id:'evt_pay',type:'checkout.session.completed',created:Math.floor(Date.now()/1000),data:{object:{id:'cs_1',subscription:'sub_local'}}},'whsec_wrong')).status,400,'notification with another secret refused');
    check((await notify({id:'evt_pay',type:'checkout.session.completed',created:Math.floor(Date.now()/1000),data:{object:{id:'cs_1',subscription:'sub_local'}}})).status,200,'payment notification accepted');
-   const paid=(await api('bootstrap',payer)).body;check([paid.subscriptionStatus,paid.subscriptionPlan,paid.founder],['active','founder',true],'Premium opened as founder after payment');
+   const paid=(await api('bootstrap',payer)).body;check([paid.subscriptionStatus,paid.subscriptionPlan,paid.founder,paid.founderLeft],['active','founder',true,seats-1],'Premium opened as founder after payment, seat taken');
    check((await request('/api/billing',payer,{action:'checkout',plan:'premium'})).status,409,'no second subscription');
    check((await request('/api/billing',payer,{action:'portal'})).body.url,'https://billing.stripe.test/portal','subscription management link');
    await notify({id:'evt_cancel',type:'customer.subscription.deleted',created:Math.floor(Date.now()/1000)+1,data:{object:{...fake.subscription,status:'canceled'}}});
-   check((await api('bootstrap',payer)).body.subscriptionStatus,'canceled','cancellation closes Premium');
-   await stopServer();await startServer({BILLING_ENABLED:'true',STRIPE_SECRET_KEY:'sk_test_local',STRIPE_API_BASE:`http://127.0.0.1:${stripeServer.address().port}/v1`});
+   check((await api('bootstrap',payer)).body.subscriptionStatus,'canceled','cancellation closes Premium');check((await api('bootstrap',payer)).body.founderLeft,seats,'cancellation frees the founder seat');
+   await stopServer();
+   { const raw=new DatabaseSync(join(dataDir,'vegebudget.sqlite'));const row=raw.prepare("SELECT value FROM settings WHERE key='service_info'").get();const info=JSON.parse(row.value);info.terms+=' Il peut aussi utiliser la plateforme européenne de règlement des litiges : https://ec.europa.eu/consumers/odr.';
+     raw.prepare("UPDATE settings SET value=? WHERE key='service_info'").run(JSON.stringify(info));raw.prepare("DELETE FROM _migrations WHERE name='0007_retrait_lien_odr.sql'").run();raw.close(); }await startServer({BILLING_ENABLED:'true',STRIPE_SECRET_KEY:'sk_test_local',STRIPE_API_BASE:`http://127.0.0.1:${stripeServer.address().port}/v1`});
+   { const terms=(await api('bootstrap',payer)).body.serviceInfo.terms;check([terms.includes('ec.europa.eu/consumers/odr'),terms.length>0],[false,true],'closed EU dispute platform link removed from stored terms'); }
    const premiumCheckout=await request('/api/billing',payer,{action:'checkout',plan:'premium',region:'FR'});check([premiumCheckout.status,fake.sessions.at(-1)['line_items[0][price]'],fake.sessions.at(-1).currency],[200,premiumPrice.id,'eur'],'monthly Premium checkout in euros');
   }finally{await new Promise(r=>stripeServer.close(r));}
  }
