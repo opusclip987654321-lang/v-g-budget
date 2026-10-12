@@ -61,8 +61,9 @@ export async function ensurePortal(origin:string){
  await writeSetting(key,created.id);return created.id as string;
 }
 
-// Places de membre fondateur : chaque réservation (gratuite pendant la préouverture, ou au moment de payer) en prend une.
-export async function founderLeft(){const row=await db().prepare("SELECT COUNT(*) AS count FROM waitlist WHERE plan='founder'").first<{count:number}>();return Math.max(0,FOUNDER_SEATS-Number(row?.count??0));}
+// Places de membre fondateur : seul un abonnement fondateur payé (actif, ou en attente d'un renouvellement) en prend une.
+// Un paiement abandonné ne bloque donc aucune place.
+export async function founderLeft(){const row=await db().prepare("SELECT COUNT(*) AS count FROM members WHERE subscription_plan='founder' AND subscription_status IN ('active','trialing','past_due')").first<{count:number}>();return Math.max(0,FOUNDER_SEATS-Number(row?.count??0));}
 export async function holdFounderSeat(userId:string){
  const current=await db().prepare('SELECT plan FROM waitlist WHERE owner=?').bind(userId).first<{plan:string}>();if(current?.plan==='founder')return;
  if(await founderLeft()<=0)throw new ApiError(409,'Toutes les places de membre fondateur sont prises. L’offre Premium reste ouverte.');
