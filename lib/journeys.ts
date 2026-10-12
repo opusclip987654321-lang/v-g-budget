@@ -30,14 +30,15 @@ export async function recordStep(request: Request, input: Record<string, unknown
   return true;
 }
 
-const APP_PAGES: Record<string, string> = { '/': 'Accueil (appli)', '/#dashboard': 'Tableau de bord', '/#menus': 'Menus de la semaine', '/#recettes': 'Recettes (appli)', '/#placard': 'Placard', '/#courses': 'Liste de courses', '/#offre': 'Offre Premium', '/#compte': 'Compte', '/#club': 'Club', '/#defis': 'Défis', '/#admin': 'Administration' };
+// L'appli est sur /app depuis le 12 octobre 2026 ; avant, elle était à la racine (« / » et « /#vue »).
+const APP_PAGES: Record<string, string> = { '/app': 'Accueil (appli)', '/app#dashboard': 'Tableau de bord', '/app#menus': 'Menus de la semaine', '/app#recettes': 'Recettes (appli)', '/app#placard': 'Placard', '/app#courses': 'Liste de courses', '/app#offre': 'Offre Premium', '/app#compte': 'Compte', '/app#club': 'Club', '/app#defis': 'Défis', '/app#admin': 'Administration', '/': 'Page d’accueil', '/#dashboard': 'Tableau de bord', '/#menus': 'Menus de la semaine', '/#recettes': 'Recettes (appli)', '/#placard': 'Placard', '/#courses': 'Liste de courses', '/#offre': 'Offre Premium', '/#compte': 'Compte', '/#club': 'Club', '/#defis': 'Défis', '/#admin': 'Administration' };
 export const pageName = (path: string) => APP_PAGES[path] ?? path;
 
 // Étapes de l'entonnoir, de l'arrivée au clic sur « payer ».
 const STEPS = [
   { id: 'arrivee', libelle: 'Arrivée sur le site' },
   { id: 'interaction', libelle: 'A cliqué ou vu une 2e page' },
-  { id: 'appli', libelle: 'A ouvert l’appli (page d’accueil)' },
+  { id: 'appli', libelle: 'A ouvert l’appli' },
   { id: 'semaine', libelle: 'A composé une semaine' },
   { id: 'offre', libelle: 'A vu l’offre Premium' },
   { id: 'connexion', libelle: 'A demandé un lien de connexion' },
@@ -64,7 +65,7 @@ export async function journeys(days = 7, now = new Date()) {
     const pages = steps.filter(s => s.kind === 'page'), clicks = steps.filter(s => s.kind === 'clic');
     const reached = new Set<string>(['arrivee']);
     if (clicks.length || pages.length > 1) reached.add('interaction');
-    if (pages.some(p => p.path === '/' || p.path.startsWith('/#'))) reached.add('appli');
+    if (pages.some(p => p.path === '/app' || p.path.startsWith('/app#') || p.path.startsWith('/#'))) reached.add('appli');
     for (const e of own) if (EVENT_STEP[e.name]) reached.add(EVENT_STEP[e.name]);
     const furthest = [...STEPS].reverse().find(s => reached.has(s.id))!;
     const timeline = [

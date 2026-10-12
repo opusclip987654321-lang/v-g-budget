@@ -2,17 +2,19 @@ import Link from 'next/link';
 import { money } from '@/lib/planner';
 import { findRecipe, portionCost, recipeImage, recipePath } from '@/lib/seo';
 import { TrackVisit } from './track-visit';
+// Entrée dans l'appli : ouvre directement le formulaire de première semaine.
+export const START_PATH = '/app?commencer=1';
 // Habillage des pages publiques (recettes, aide) : du HTML simple, lisible par Google et les assistants IA.
 export function PublicShell({ children }: { children: React.ReactNode }) {
   return <div className="pub">
-    <header className="pub-header"><Link href="/" className="pub-logo"><span aria-hidden="true" />VégéBudget</Link><nav aria-label="Pages"><Link href="/recettes">Recettes</Link><Link href="/blog">Blog</Link><Link href="/comment-ca-marche">Comment ça marche</Link><Link href="/" className="pub-cta">Créer mes menus</Link></nav></header>
+    <header className="pub-header"><Link href="/" className="pub-logo"><span aria-hidden="true" />VégéBudget</Link><nav aria-label="Pages"><Link href="/recettes">Recettes</Link><Link href="/blog">Blog</Link><Link href="/comment-ca-marche">Comment ça marche</Link><Link href="/app#compte">Me connecter</Link><Link href={START_PATH} className="pub-cta">Créer mes menus</Link></nav></header>
     <TrackVisit />
     <main className="pub-main">{children}</main>
     <footer className="pub-footer"><p>VégéBudget · Des repas du soir sans viande, plus simples à organiser. <Link href="/belgique">Belgique</Link> · <Link href="/suisse">Suisse</Link> · <Link href="/quebec">Québec</Link></p><nav aria-label="Liens"><Link href="/">Accueil</Link><Link href="/recettes">Toutes les recettes</Link><Link href="/blog">Blog</Link><Link href="/comment-ca-marche">Comment ça marche</Link></nav></footer>
   </div>;
 }
 export function Cta({ lead, text = 'Créer mes menus gratuitement' }: { lead: string; text?: string }) {
-  return <div className="pub-cta-box"><p><strong>{lead}</strong> Préparez vos menus selon votre budget et retrouvez les produits à acheter, en tenant compte de ce que vous avez déjà.</p><Link href="/" className="pub-cta">{text}</Link><small>Première semaine gratuite, sans compte ni carte bancaire.</small></div>;
+  return <div className="pub-cta-box"><p><strong>{lead}</strong> Préparez vos menus selon votre budget et retrouvez les produits à acheter, en tenant compte de ce que vous avez déjà.</p><Link href={START_PATH} className="pub-cta">{text}</Link><small>Première semaine gratuite, sans compte ni carte bancaire.</small></div>;
 }
 export function RecipeCard({ id }: { id: string }) {
   const r = findRecipe(id)!;

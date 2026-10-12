@@ -41,7 +41,7 @@ export async function CountryPage({ code }: { code: Exclude<RegionCode, 'FR'> })
   const origin = await publicOrigin();
   const r = REGIONS[code], c = COPY[code];
   const { week, portions } = countryExample(code);
-  const start = `/?pays=${r.short}`;
+  const start = `/app?pays=${r.short}&commencer=1`;
   const faq: [string, string][] = [
     [`Combien coûte une semaine de soupers ?`, `L’exemple de semaine (5 soupers pour 2 personnes) revient à environ ${money(week.purchase, code)} ${c.groceries === 'épicerie' ? 'd’épicerie' : 'de courses'}, en paquets entiers (huile, sel et épices déjà au placard), dont une partie reste pour la semaine suivante. Ce que vous mangez revient à environ ${money(week.used / 10, code)} par portion. ${priceSource(code)}.`],
     ['Est-ce que VégéBudget est gratuit ?', `La première semaine est gratuite, sans compte ni carte bancaire. Ensuite, Premium coûte ${r.premium.label} par mois, sans engagement.`],

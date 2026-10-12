@@ -64,9 +64,11 @@ export default function VegeApp({user,signOutPath}:{user:{id:string;name:string;
   return()=>{stopped=true;};},[]);
  useEffect(()=>{track('visite');},[]);
  useEffect(()=>{if(view==='offre')track('offre_vue');},[view]);
- useEffect(()=>{trackPage(view==='bienvenue'?'/':`/#${view}`);},[view]);
+ useEffect(()=>{trackPage(view==='bienvenue'?'/app':`/app#${view}`);},[view]);
  useEffect(()=>{function read(){const hash=window.location.hash.slice(1) as View;if(navigation.some(([id])=>id===hash)||['offre','admin'].includes(hash))setView(hash);}read();window.addEventListener('hashchange',read);return()=>window.removeEventListener('hashchange',read);},[]);
  useEffect(()=>{if(!loaded)return;const requested=new URLSearchParams(window.location.search).get('recette');if(requested&&allRecipes.some(r=>r.id===requested)){setRecipeId(requested);setModal('recipe');}},[loaded]);
+ // Arrivée depuis la page d'accueil (« Créer mes menus gratuitement ») : le formulaire de première semaine s'ouvre tout de suite.
+ useEffect(()=>{if(!loaded)return;const params=new URLSearchParams(window.location.search);if(!params.has('commencer'))return;params.delete('commencer');window.history.replaceState(null,'',`${window.location.pathname}${params.size?`?${params}`:''}${window.location.hash}`);if(user&&state.onboardingDone)navigate('menus');else setModal('onboarding');},[loaded]);
  function navigate(next:View){setView(next);window.history.replaceState(null,'',`${window.location.pathname}${window.location.search}#${next}`);window.scrollTo({top:0,behavior:'smooth'});}
  function toggleCooked(id:string,servings?:number){commit(s=>cookMeal(s,{...activeRef.current!,entries:activeRef.current!.entries.map(e=>e.id===id&&!e.cooked&&servings?{...e,servings}:e)},id,allRecipes),'Repas préparé : votre placard est mis à jour.');}
  function reuseWeek(){const base=activeRef.current!;const nextWeek=addDay(base.weekStart,7);const plan={...base,id:uniqueId(),weekStart:nextWeek,name:`Semaine du ${new Date(`${nextWeek}T12:00:00`).toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}`,createdAt:new Date().toISOString(),budget:latest.current.profile.budget,entries:base.entries.map(e=>({...e,id:uniqueId(),date:addDay(e.date,7),cooked:false,locked:false,consumed:[]}))};if(commit(s=>({...s,plans:[...s.plans.filter(p=>p.weekStart!==nextWeek),plan].slice(-52),activePlanId:plan.id,checkedByWeek:{...s.checkedByWeek,[nextWeek]:[]}}),'Menus réutilisés : la liste de courses est recalculée.')){setWeek(nextWeek);navigate('menus');}}

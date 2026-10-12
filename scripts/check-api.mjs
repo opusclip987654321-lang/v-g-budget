@@ -38,7 +38,7 @@ async function request(path,user,data,headers={}){
 const api=(action,user,data)=>request('/api/app'+(data===undefined?'?action='+action:''),user,data===undefined?undefined:{action,...data});
 try{
  await startServer();let db=openDb();
- const page=await request('/');check(page.status,200,'server render');assert.match(page.body,/VégéBudget/);checks++;
+ const page=await request('/');check(page.status,200,'server render');assert.match(page.body,/VégéBudget/);checks++;const appPage=await request('/app');check(appPage.status,200,'app render');
  const bootstrap=await api('bootstrap');check(bootstrap.status,200,'anonymous bootstrap');check(bootstrap.body.catalog.recipes.length,24,'initial catalogue');check(bootstrap.body.billingReady,false,'billing closed');
  check((await api('state',undefined,{state:bootstrap.body.state,revision:0})).status,401,'anonymous write blocked');
  check((await request('/api/app',undefined,null)).status,400,'null JSON rejected');
@@ -83,7 +83,7 @@ try{
   check((await cron()).status,401,'reminders need the cron secret');check((await cron('mauvais-secret-1234567')).status,401,'wrong cron secret refused');
   check((await api('bootstrap',member)).body.reminders,true,'reminders on by default');
   const run=await (await cron('cron-secret-de-test-1234')).json();const mails=readFileSync(outbox,'utf8').trim().split('\n').map(l=>JSON.parse(l)).filter(m=>m.kind==='reminder');
-  const sentTo=mails.find(m=>m.to===member.email);check(!!sentTo,true,'weekly reminder sent');check(run.sent,mails.length,'reminder count reported');check(sentTo.link,origin+'/#menus','reminder links to the menus');
+  const sentTo=mails.find(m=>m.to===member.email);check(!!sentTo,true,'weekly reminder sent');check(run.sent,mails.length,'reminder count reported');check(sentTo.link,origin+'/app#menus','reminder links to the menus');
   check((await (await cron('cron-secret-de-test-1234')).json()).sent,0,'reminder sent once per week');
   const stop=sentTo.text.match(/Ne plus recevoir ce rappel : (\S+)/)[1];const u=new URL(stop);
   check((await fetch(stop)).status,200,'unsubscribe page opens without unsubscribing');check((await api('bootstrap',member)).body.reminders,true,'opening the link alone changes nothing');
@@ -123,10 +123,10 @@ try{
  check((await login('pas-une-adresse')).status,400,'invalid login email rejected');
  check((await login('Nouveau@Example.invalid')).status,200,'login link requested');
  const mail=readFileSync(outbox,'utf8').trim().split('\n').map(l=>JSON.parse(l)).at(-1);check(mail.to,'nouveau@example.invalid','login link sent to normalized address');
- const verified=await fetch(mail.link,{redirect:'manual'});check(verified.status,303,'login link accepted');check(verified.headers.get('location'),origin+'/#dashboard','login redirects to dashboard');
+ const verified=await fetch(mail.link,{redirect:'manual'});check(verified.status,303,'login link accepted');check(verified.headers.get('location'),origin+'/app#dashboard','login redirects to dashboard');
  const cookie=verified.headers.get('set-cookie').split(';')[0];
  const mine=await fetch(origin+'/api/app?action=export',{headers:{Cookie:cookie}});check((await mine.json()).email,'nouveau@example.invalid','session opens the account');
- check((await fetch(mail.link,{redirect:'manual'})).headers.get('location'),origin+'/?connexion=expiree','login link works only once');
+ check((await fetch(mail.link,{redirect:'manual'})).headers.get('location'),origin+'/app?connexion=expiree','login link works only once');
  check((await fetch(origin+'/api/app?action=export',{headers:{Cookie:cookie.slice(0,-3)+'abc'}})).status,401,'tampered session rejected');
  for(let i=0;i<4;i++)await login('nouveau@example.invalid');check((await login('nouveau@example.invalid')).status,429,'login requests rate limited');
  const out=await fetch(origin+'/api/auth/logout',{redirect:'manual'});check(out.headers.get('set-cookie').includes('Max-Age=0'),true,'logout clears session');

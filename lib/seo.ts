@@ -38,7 +38,7 @@ export function homeExample() {
   const plan = generatePlan(blankState(), monday(), 42).plan;
   const t = totals(shopping(plan?.entries ?? [], []));
   const portions = (plan?.entries.length ?? 0) * 2;
-  return { dinners: plan?.entries.length ?? 0, purchase: t.purchase, used: t.used, perPortion: portions ? t.used / portions : 0 };
+  return { dinners: plan?.entries.length ?? 0, recipeIds: plan?.entries.map(e => e.recipeId) ?? [], purchase: t.purchase, used: t.used, perPortion: portions ? t.used / portions : 0 };
 }
 const example = homeExample();
 

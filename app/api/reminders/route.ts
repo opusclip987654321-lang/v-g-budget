@@ -41,7 +41,7 @@ export async function POST(request: Request) { try {
         if (usual && usual - forecast > 0) recap.push(`soit environ ${money(usual - forecast)} d’économie par rapport à d’habitude`);
       }
       await sendWeeklyReminder(member.email, {
-        link: `${origin}/#menus`,
+        link: `${origin}/app#menus`,
         stopLink: `${origin}/api/reminders/stop?u=${encodeURIComponent(member.id)}&s=${signValue(`reminders:${member.id}`)}`,
         weekLabel, recap,
       });
