@@ -38,10 +38,10 @@ export async function POST(request: Request) { try {
         recap.push(`${cooked} ${cooked > 1 ? 'dîners cuisinés' : 'dîner cuisiné'} sur ${last.entries.length}`);
         recap.push(`environ ${money(forecast)} de courses`);
         const usual = state.profile.usualSpend;
-        if (usual && usual - forecast > 0) recap.push(`soit environ ${money(usual - forecast)} d’économie par rapport à d’habitude`);
+        if (usual && usual - forecast > 0) recap.push(`soit environ ${money(usual - forecast)} de moins que votre montant habituel`);
       }
       await sendWeeklyReminder(member.email, {
-        link: `${origin}/#menus`,
+        link: `${origin}/app#menus`,
         stopLink: `${origin}/api/reminders/stop?u=${encodeURIComponent(member.id)}&s=${signValue(`reminders:${member.id}`)}`,
         weekLabel, recap,
       });

@@ -57,8 +57,10 @@ export function generatePlan(state:UserState,weekStart=monday(),seed=Date.now(),
   }
   const entries=best.sort((a,b)=>a.date.localeCompare(b.date)).map(e=>({...e,id:e.locked||e.cooked?e.id:uniqueId()}));
   const cost=spent+totals(shopping(entries,state.pantry,state.prices,recipes,ingredients,state.packSizes)).purchase;
-  let warning=cost>state.profile.budget ? `Le panier estimé dépasse votre budget de ${money(cost-state.profile.budget)}. Ajoutez ce que vous avez au placard, ajustez les prix ou augmentez le budget.` : null;
+  let warning=cost>state.profile.budget ? `Les menus proposés dépassent votre budget de ${money(cost-state.profile.budget)}. Indiquez ce que vous avez déjà dans Mon placard, ajustez les prix dans vos courses ou modifiez vos critères.` : null;
   if(new Set(entries.map(e=>e.recipeId)).size<slots&&!state.profile.repeatMeals) warning=`Les préférences actuelles limitent le choix : certaines recettes se répètent.${warning?' '+warning:''}`;
   return {plan:{id:uniqueId(),name:`Semaine du ${new Date(`${weekStart}T12:00:00`).toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}`,weekStart,entries,createdAt:new Date().toISOString(),budget:state.profile.budget},warning};
 }
-export function shoppingText(items:ShopItem[],checked:string[]) {return localizeText(['VégéBudget — ma liste de courses',`${priceSource()}, à personnaliser selon votre magasin.`,'',...items.filter(i=>i.missing>0).map(i=>`${checked.includes(i.id)?'✓':'□'} ${i.ingredient.name} — ${i.packages} ${i.packages>1?'paquets':'paquet'} de ${quantity(i.ingredient.pack,i.ingredient.unit)} — ${money(i.purchaseCost)}`),'',`Panier estimé : ${money(totals(items).purchase)}`].join('\n'));}
+// Quantité à acheter, sans inventer de contenant : « 2 citrons » pour un produit vendu à l’unité, sinon « 3 × 265 g égouttés ».
+export function packLabel(packages:number,pack:number,unit:Ingredient['unit'],name:string) {if(unit==='pièce'&&pack===1)return `${packages} ${name.toLowerCase()}${packages>1?'s':''}`;return `${packages} × ${quantity(pack,unit)}${/égoutté/i.test(name)?' égouttés':''}`;}
+export function shoppingText(items:ShopItem[],checked:string[]) {return localizeText(['VégéBudget — ma liste de courses',`${priceSource()}. Les prix peuvent varier selon le magasin.`,'',...items.filter(i=>i.missing>0).map(i=>`${checked.includes(i.id)?'✓':'□'} ${i.ingredient.name} — ${packLabel(i.packages,i.ingredient.pack,i.ingredient.unit,i.ingredient.name)} — ${money(i.purchaseCost)}`),'',`Montant estimé des courses : ${money(totals(items).purchase)}`].join('\n'));}
