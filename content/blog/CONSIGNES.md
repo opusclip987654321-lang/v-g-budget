@@ -31,16 +31,48 @@ Le site : vegebudget.fr prépare des menus de dîners sans viande selon un budge
 - Pas d'adjectifs gratuits (« croustillant », « fondant », « crémeux », « rassasiant », « équilibré ») ni de durée non mesurée (« en 3 minutes »).
 - Pas de tiret long (—) pour couper les phrases.
 
-## 4. La structure d'un article
+## 4. La structure d'un article : court, visuel, facile à survoler
 
-- **Longueur** : 900 à 1 600 mots dans le corps.
-- **Introduction (`lead`)** : répond à la question du lecteur dès les deux premières phrases. C'est souvent ce passage que Google et les IA reprennent.
-- **Intertitres `##`** formulés comme les questions que les gens tapent. Paragraphes de 2 à 4 phrases. Au moins un tableau ou une liste utile (comparatif de prix, liste de courses, calendrier).
+Choix de louis (15/10/2026) : un article trop long et sans images fait fuir le lecteur. On écrit comme un magazine de cuisine, pas comme un dossier : le lecteur doit trouver ce qu'il cherche en faisant défiler, sans tout lire.
+
+- **Longueur** : 500 à 900 mots dans le corps. Mieux vaut une phrase de moins qu'une phrase creuse.
+- **Introduction (`lead`)** : 2 phrases au plus, qui répondent à la question du lecteur (c'est souvent ce passage que Google et les IA reprennent).
+- **Juste après, dans cet ordre** :
+  1. un bloc `@essentiel` : 3 ou 4 lignes « - » courtes, la réponse en 10 secondes ;
+  2. une ligne `@chiffres` : 3 chiffres clés (prix, temps, repère officiel), chacun avec une étiquette de 3 à 6 mots.
+- **Ce que le lecteur est venu chercher vient en premier** : pour un article de recettes, les recettes d'abord ; les explications (prix, choix, conseils) ensuite.
+- **Recettes** : chaque recette citée est une carte `@recette id | une ou deux phrases` (photo, temps et coût s'affichent tout seuls), pas un paragraphe. 4 à 6 cartes au plus. En fin d'article, un bloc `@recettes id1, id2, id3` (3 recettes, pour une rangée complète).
+- **Rythme** : jamais plus de 2 paragraphes de suite sans élément visuel (carte, tableau, liste, photo, chiffres, encadré). Paragraphes de 1 à 3 phrases. Le gras sert à repérer l'idée de chaque ligne de liste.
+- **Photos** : en plus de la photo de couverture, au moins une photo dans le corps (`node scripts/blog-photo.mjs <slug> "scène" <nom>`, voir section 6), placée sous l'intertitre qu'elle illustre, avec une légende courte.
+- **Comparaisons** en tableau (2 ou 3 colonnes, cellules de quelques mots), conseils en liste « - » d'une ligne chacun.
+- **Intertitres `##`** formulés comme les questions que les gens tapent. 4 à 6 intertitres.
 - **Liens internes** : au moins 3, vers des recettes (`/recettes/id`), d'autres articles du blog (`/blog/slug`) et, si utile, `/recettes`. Les pays : `/belgique`, `/suisse`, `/quebec`.
-- **Recettes** : un bloc `@recettes id1, id2, id3` (3 ou 4 recettes du catalogue qui collent au sujet).
-- **Conversion** : un encadré `> ` au milieu de l'article qui montre comment VégéBudget règle le problème concret de l'article (sans exagérer), et le bloc final `@cta <titre>` (une seule fois, à la fin). Titres de CTA dans l'esprit : « Préparez vos menus en fonction de votre budget », « Organisez vos dîners de la semaine », « Tenez compte de ce que vous avez déjà ». Pas de question racoleuse.
-- **FAQ** : 3 à 5 questions réellement posées (vues pendant la recherche), réponses de 1 à 3 phrases, autonomes (elles deviennent des données structurées pour Google).
+- **Conversion** : un bandeau `@cta-court accroche` au milieu, juste après les premières recettes ou la première réponse utile : l'accroche montre en une phrase comment VégéBudget règle le problème concret de l'article (sans exagérer). Puis le grand bloc final `@cta <titre>` (une seule fois, à la fin). Titres dans l'esprit : « Préparez vos menus en fonction de votre budget », « Organisez vos dîners de la semaine », « Tenez compte de ce que vous avez déjà ». Pas de question racoleuse.
+- **FAQ** : 3 à 5 questions réellement posées (vues pendant la recherche), réponses de 1 à 3 phrases, autonomes (elles deviennent des données structurées pour Google). Les détails qu'on a coupés du corps peuvent aller ici.
 - Une vidéo YouTube (`@video ID | titre exact | chaîne`) seulement si elle a été trouvée et vérifiée (organisme officiel ou chaîne sérieuse).
+- Modèle à suivre : `content/blog/articles/recettes-lentilles-pas-cheres.ts`.
+
+**Les blocs disponibles dans le corps** (chacun séparé par une ligne vide) :
+
+```
+@essentiel
+- Première idée clé.
+- Deuxième idée clé.
+
+@chiffres 0,19 € | la portion de lentilles ; 10 min | de cuisson ; 2 fois | par semaine, conseil Manger Bouger
+
+@recette curry-corail | Une ou deux phrases sur ce plat et pourquoi il colle au sujet.
+
+@cta-court Une phrase qui relie le problème du lecteur à VégéBudget.
+
+![Texte alternatif](/images/blog/<slug>-<nom>.jpg "Légende courte")
+
+> Encadré de conseil (optionnel).
+
+@recettes id1, id2, id3
+
+@cta Organisez vos dîners de la semaine
+```
 
 ## 5. Les champs du fichier
 
@@ -77,6 +109,7 @@ Dans le corps (gabarit entre accents graves), écrire les apostrophes typographi
 **Photo réaliste (choix de louis, 15/10/2026), si la clé `OPENAI_API_KEY` est disponible** :
 - `node scripts/blog-photo.mjs <slug> "scène"` : décrire en une phrase une scène concrète liée au sujet (le plat ou les ingrédients de l'article, posés sur une table du quotidien). Le script ajoute le style commun (réaliste, lumière naturelle, sans texte, sans marque, sans visage, sans viande) et enregistre `public/images/blog/<slug>.jpg` en 1200 × 675.
 - Mettre `photo: true` dans l'article. Pas de SVG dans ce cas.
+- **Photo dans le corps** (au moins une, voir section 4) : `node scripts/blog-photo.mjs <slug> "scène" <nom>` enregistre `public/images/blog/<slug>-<nom>.jpg`. Choisir une scène qui montre ce que dit l'intertitre (deux ingrédients à comparer, les légumes à acheter, un plat de l'article…).
 - Regarder la photo avant de la garder : rien d'étrange (mains, texte, ustensiles déformés, aliments qui ne sont pas dans la recette). Sinon, relancer avec une scène plus simple (3 essais au plus).
 
 **Sinon (pas de clé ou génération en échec)** : dessin SVG.
@@ -87,7 +120,8 @@ Dans le corps (gabarit entre accents graves), écrire les apostrophes typographi
 
 Le copywriter relit l'article comme un expert du référencement et de la conversion, et **corrige directement le fichier** :
 - **Lecteurs** : le mot-clé principal est dans le seoTitle, la description, le lead, un intertitre et le slug ; les intertitres reprennent les questions réelles ; la réponse est donnée tôt ; le titre donne envie de cliquer face aux résultats concurrents ; la FAQ couvre les questions restantes.
-- **Clients** : le lien entre le problème du lecteur et VégéBudget est naturel et concret ; l'encadré du milieu et le CTA final sont présents et clairs ; les recettes proposées collent au sujet ; aucune promesse que le service ne tient pas.
+- **Lecture** : l'article se survole en 30 secondes : bloc `@essentiel` et `@chiffres` en haut, recettes en cartes `@recette`, au moins une photo dans le corps, jamais plus de 2 paragraphes de suite sans élément visuel, 500 à 900 mots. Il coupe tout ce qui ne sert pas le lecteur.
+- **Clients** : le lien entre le problème du lecteur et VégéBudget est naturel et concret ; le bandeau `@cta-court` du milieu et le CTA final sont présents et clairs ; les recettes proposées collent au sujet ; aucune promesse que le service ne tient pas.
 - **Confiance** : chaque chiffre a sa source ; les prix viennent du site ; aucun fait douteux ; style conforme à la section 3 ; pas de remplissage ni de phrase creuse ; orthographe et typographie françaises.
 - Il rend un court compte rendu : ce qu'il a changé et pourquoi, et une note de 1 à 10 pour « trouvé sur Google » et « donne envie d'essayer ». En dessous de 7, le rédacteur reprend l'article et le copywriter relit à nouveau.
 
