@@ -23,7 +23,7 @@ export function RecipeCard({ id }: { id: string }) {
   return <Link href={recipePath(r)} className="pub-card"><img src={recipeImage(r)} alt="" width={300} height={300} loading="lazy" /><span className="pub-card-title">{r.title}</span><span className="pub-card-meta">{r.minutes} min · {money(portionCost(r))} par portion</span></Link>;
 }
 // Grande carte recette dans un article : photo, temps, coût par portion et une phrase sur le plat.
-export function RecipeFeature({ id, text }: { id: string; text: string }) {
+export function RecipeFeature({ id, text }: { id: string; text: React.ReactNode }) {
   const r = findRecipe(id)!;
   return <article className="blog-recipe"><Link href={recipePath(r)} tabIndex={-1} aria-hidden="true"><img src={recipeImage(r)} alt="" width={320} height={240} loading="lazy" /></Link><div><h3><Link href={recipePath(r)}>{r.title}</Link></h3><p className="blog-recipe-meta"><span>{r.minutes} min</span><span>{money(portionCost(r))} la portion</span></p><p>{text}</p><Link href={recipePath(r)} className="blog-recipe-link">Voir la recette</Link></div></article>;
 }

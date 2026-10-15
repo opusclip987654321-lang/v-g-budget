@@ -45,7 +45,7 @@ export function BlogContent({ body }: { body: string }) {
     if (b.startsWith('@video ')) { const [id, title, channel] = b.slice(7).split('|').map(s => s.trim()); return <Video key={n} id={id} title={title} channel={channel} />; }
     if (lines[0] === '@essentiel') return <aside key={n} className="blog-essentiel"><strong>L’essentiel</strong><ul>{lines.slice(1).map((l, i) => <li key={i}>{inline(l.replace(/^- /, ''))}</li>)}</ul></aside>;
     if (b.startsWith('@chiffres ')) return <ul key={n} className="blog-chiffres">{b.slice(10).split(';').map(x => x.split('|').map(s => s.trim())).map(([v, l], i) => <li key={i}><strong>{v}</strong><span>{inline(l)}</span></li>)}</ul>;
-    if (b.startsWith('@recette ')) { const [id, text] = b.slice(9).split('|').map(s => s.trim()); return <RecipeFeature key={n} id={id} text={text} />; }
+    if (b.startsWith('@recette ')) { const [id, text] = b.slice(9).split('|').map(s => s.trim()); return <RecipeFeature key={n} id={id} text={inline(text)} />; }
     if (b.startsWith('@cta-court ')) return <CtaInline key={n} lead={b.slice(11)} />;
     if (b.startsWith('@recettes ')) return <ul key={n} className="pub-grid blog-recipes">{b.slice(10).split(',').map(id => <li key={id}><RecipeCard id={id.trim()} /></li>)}</ul>;
     if (b.startsWith('@cta ')) return <Cta key={n} lead={b.slice(5)} />;
