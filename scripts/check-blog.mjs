@@ -48,7 +48,8 @@ for(const f of files){
   if(!/^@cta /m.test(src))fail(`${where} il manque l'appel à l'action « @cta … » dans le corps.`);
   if(/€/.test(src.replace(/\$\{(?:cost|packPrice|kiloPrice|amountPrice)\([^}]*\)\}/g,''))&&!/\bsources: \[\s*\[/.test(src))warn(`${where} contient des montants en euros sans aucune source : vérifier qu'ils viennent du site.`);
   const words=src.split(/\s+/).length;if(words<700)warn(`${where} article court (${words} mots).`);
-  for(const ext of ['svg','jpg']){const img=`public/images/blog/${name}.${ext}`;if(!existsSync(img)||statSync(img).size===0)fail(`${where} illustration manquante : ${img}.`);}
+  const photo=/\bphoto: true\b/.test(src);
+  for(const ext of photo?['jpg']:['svg','jpg']){const img=`public/images/blog/${name}.${ext}`;if(!existsSync(img)||statSync(img).size===0)fail(`${where} illustration manquante : ${img}.`);}
   const jpg=`public/images/blog/${name}.jpg`;if(existsSync(jpg)){const s=jpegSize(jpg);if(!s||s.w!==1200||s.h!==675)fail(`${where} ${jpg} doit être un vrai JPEG de 1200 × 675 (trouvé ${s?`${s.w} × ${s.h}`:'autre format'}).`);}
 }
 for(const [list,label] of [[slugs,'slug'],[titles,'titre']]){const seen=new Set();for(const v of list){if(seen.has(v))fail(`${label} en double : ${v}.`);seen.add(v);}}

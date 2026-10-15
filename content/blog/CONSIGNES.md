@@ -74,7 +74,13 @@ Dans le corps (gabarit entre accents graves), écrire les apostrophes typographi
 
 ## 6. L'illustration
 
-- `public/images/blog/<slug>.svg`, 1200 × 675, dans le style des autres (dessin à plat, formes simples, aucun texte sauf la pastille de catégorie en haut à gauche). Couleurs : fond `#e8f0e9` ou `#f1f6ee`, vert foncé `#174c38`, vert citron `#d7f369`, rouge `#eb5757`, orange `#f2994a`, verts `#27ae60` `#8fd18f` `#b8d9b0`, brun `#c98a4b`. S'inspirer de `public/images/blog/circuit-court.svg`.
+**Photo réaliste (choix de louis, 15/10/2026), si la clé `OPENAI_API_KEY` est disponible** :
+- `node scripts/blog-photo.mjs <slug> "scène"` : décrire en une phrase une scène concrète liée au sujet (le plat ou les ingrédients de l'article, posés sur une table du quotidien). Le script ajoute le style commun (réaliste, lumière naturelle, sans texte, sans marque, sans visage, sans viande) et enregistre `public/images/blog/<slug>.jpg` en 1200 × 675.
+- Mettre `photo: true` dans l'article. Pas de SVG dans ce cas.
+- Regarder la photo avant de la garder : rien d'étrange (mains, texte, ustensiles déformés, aliments qui ne sont pas dans la recette). Sinon, relancer avec une scène plus simple (3 essais au plus).
+
+**Sinon (pas de clé ou génération en échec)** : dessin SVG.
+- `public/images/blog/<slug>.svg`, 1200 × 675, dans le style des autres (dessin à plat, formes simples, aucun texte sauf la pastille de catégorie en haut à gauche). Couleurs : fond `#e8f0e9` ou `#f1f6ee`, vert foncé `#174c38`, vert citron `#d7f369`, rouge `#eb5757`, orange `#f2994a`, verts `#27ae60` `#8fd18f` `#b8d9b0`, brun `#c98a4b`. S'inspirer de `public/images/blog/recettes-lentilles-pas-cheres.svg`.
 - Puis `node scripts/blog-illustration.mjs <slug>` crée la version `.jpg` (aperçu Google et réseaux sociaux). Regarder le JPG pour vérifier qu'il est propre.
 
 ## 7. La relecture copywriter (agent séparé, après l'agent SEO)

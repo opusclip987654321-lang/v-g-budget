@@ -4,7 +4,7 @@ import { organizationLd, SITE_NAME } from './seo';
 export type { Article };
 export { articles };
 export const blogPath = (a: Article) => `/blog/${a.slug}`;
-export const blogCover = (a: Article) => `/images/blog/${a.slug}.svg`;
+export const blogCover = (a: Article) => `/images/blog/${a.slug}.${a.photo ? 'jpg' : 'svg'}`;
 // Version JPG de l'illustration : les réseaux sociaux et Google n'affichent pas le SVG en aperçu.
 export const blogCoverJpg = (a: Article) => `/images/blog/${a.slug}.jpg`;
 export const findArticle = (slug: string) => articles.find(a => a.slug === slug);

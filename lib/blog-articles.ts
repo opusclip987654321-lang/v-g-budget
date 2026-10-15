@@ -2,10 +2,11 @@ import { cost } from './blog-cost';
 import { dailyArticles } from '@/content/blog';
 
 // Articles du blog. Le corps est en markdown simple (voir components/blog-content.tsx pour ce qui est reconnu).
-// Chaque article a une illustration public/images/blog/<slug>.svg et sa version .jpg (aperçu réseaux sociaux).
+// Chaque article a une illustration public/images/blog/<slug>.svg et sa version .jpg (aperçu réseaux sociaux),
+// ou seulement une photo <slug>.jpg quand photo est vrai (photo générée par scripts/blog-photo.mjs).
 export type Article = {
   slug: string; title: string; seoTitle?: string; description: string; lead: string; category: string; keywords: string[];
-  date: string; updated?: string; coverAlt: string; body: string; faq: [string, string][]; sources: [string, string][];
+  date: string; updated?: string; coverAlt: string; photo?: boolean; body: string; faq: [string, string][]; sources: [string, string][];
 };
 
 // Les articles publiés chaque jour par la tâche automatique sont dans content/blog (un fichier par article).

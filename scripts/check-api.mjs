@@ -170,7 +170,7 @@ try{
    assert.match(head,/<title>[^<]{15,}<\/title>/,`${path} balise title`);assert.match(head,/<meta name="description" content="[^"]{80,}"/,`${path} meta description`);
    assert.match(head,new RegExp(`<link rel="canonical" href="[^"]*${path}"`),`${path} canonical`);assert.match(head,/<meta property="og:image" content="[^"]+\.jpg"/,`${path} image d'aperçu`);
    check((page.body.match(/<h1[\s>]/g)??[]).length,1,`${path} un seul titre h1`);assert.match(page.body,/"@type":"BreadcrumbList"/,`${path} fil d'Ariane structuré`);assert.ok(!/<img(?![^>]*\balt=)[^>]*>/.test(page.body.split('<article')[1]??''),`${path} image sans texte alternatif`);checks+=6;
-   const slug=path.split('/').pop();for(const ext of ['svg','jpg'])check(await status(`/images/blog/${slug}.${ext}`),200,`${path} illustration ${ext}`);
+   const slug=path.split('/').pop();check(await status(`/images/blog/${slug}.jpg`),200,`${path} image d'aperçu jpg`);const cover=page.body.match(/<figure class="blog-cover"><img src="([^"]+)"/)?.[1];assert.ok(cover,`${path} illustration affichée`);check(await status(cover),200,`${path} illustration ${cover}`);
    const article=page.body.split('<article')[1]?.split('</article>')[0]??'';
    for(const href of new Set([...article.matchAll(/href="(\/[^"#?]*)/g)].map(m=>m[1])))assert.ok(await status(href)<400,`${path} lien interne cassé : ${href}`);checks++;} }
  { for(const [path,currency] of [['/belgique','€'],['/suisse','CHF'],['/quebec','$']]){const page=await request(path);check(page.status,200,`${path} page`);assert.ok(page.body.includes(currency)&&/soupers/.test(page.body),`${path} shows local prices and words`);checks++;}
