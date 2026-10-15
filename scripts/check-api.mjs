@@ -160,6 +160,14 @@ try{
   check((await request('/blog/inconnu')).status,404,'unknown article');
   const map=await request('/sitemap.xml');assert.match(map.body,/\/blog\/manger-bio-pas-cher/);checks++;
   const llms=await request('/llms.txt');assert.match(llms.body,/## Articles du blog/);checks++; }
+ { // Chaque article du sitemap s'affiche, a ses deux illustrations et ne contient aucun lien interne cassé.
+  const map=await request('/sitemap.xml');const posts=[...new Set([...map.body.matchAll(/<loc>[^<]*?(\/blog\/[a-z0-9-]+)<\/loc>/g)].map(m=>m[1]))];
+  assert.ok(posts.length>=9,'all blog articles in sitemap');checks++;const seen=new Map();
+  const status=async(path)=>{if(!seen.has(path))seen.set(path,(await request(path)).status);return seen.get(path);};
+  for(const path of posts){const page=await request(path);check(page.status,200,`${path} page`);assert.match(page.body,/"@type":"BlogPosting"/,`${path} BlogPosting`);
+   const slug=path.split('/').pop();for(const ext of ['svg','jpg'])check(await status(`/images/blog/${slug}.${ext}`),200,`${path} illustration ${ext}`);
+   const article=page.body.split('<article')[1]?.split('</article>')[0]??'';
+   for(const href of new Set([...article.matchAll(/href="(\/[^"#?]*)/g)].map(m=>m[1])))assert.ok(await status(href)<400,`${path} lien interne cassé : ${href}`);checks++;} }
  { for(const [path,currency] of [['/belgique','€'],['/suisse','CHF'],['/quebec','$']]){const page=await request(path);check(page.status,200,`${path} page`);assert.ok(page.body.includes(currency)&&/soupers/.test(page.body),`${path} shows local prices and words`);checks++;}
   assert.match((await request('/')).body,/hrefLang="fr-BE"/);checks++; }
  { // Paiement de bout en bout contre un faux Stripe local : prix créés par le site, paiement, notification signée, Premium ouvert.

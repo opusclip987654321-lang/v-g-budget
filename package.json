@@ -11,6 +11,7 @@
     "start": "NODE_OPTIONS=--disable-warning=ExperimentalWarning next start",
     "lint": "eslint . --ignore-pattern .next",
     "check:planner": "node scripts/check-planner.mjs",
+    "check:blog": "node scripts/check-blog.mjs",
     "check:api": "node scripts/check-api.mjs",
     "db:generate": "drizzle-kit generate"
   },

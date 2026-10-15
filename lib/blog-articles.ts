@@ -1,5 +1,5 @@
-import { money } from './planner';
-import { findRecipe, portionCost } from './seo';
+import { cost } from './blog-cost';
+import { dailyArticles } from '@/content/blog';
 
 // Articles du blog. Le corps est en markdown simple (voir components/blog-content.tsx pour ce qui est reconnu).
 // Chaque article a une illustration public/images/blog/<slug>.svg et sa version .jpg (aperçu réseaux sociaux).
@@ -8,9 +8,7 @@ export type Article = {
   date: string; updated?: string; coverAlt: string; body: string; faq: [string, string][]; sources: [string, string][];
 };
 
-// Coût par portion d'une recette du catalogue, recalculé avec les prix du moment.
-const cost = (id: string) => money(portionCost(findRecipe(id)!));
-
+// Les articles publiés chaque jour par la tâche automatique sont dans content/blog (un fichier par article).
 export const articles: Article[] = [
   {
     slug: 'manger-bio-pas-cher',
@@ -622,4 +620,5 @@ Le gaspillage commence au magasin. Quand on sait ce qu’on va cuisiner chaque s
       ['Comment traquer le gaspillage alimentaire ? (Ademe)', 'https://librairie.ademe.fr/dechets-economie-circulaire/5795-comment-traquer-le-gaspillage-alimentaire-.html'],
     ],
   },
+  ...dailyArticles,
 ];
