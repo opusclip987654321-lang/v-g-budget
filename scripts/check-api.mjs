@@ -87,7 +87,7 @@ try{
   const pub=(secret)=>fetch(origin+'/api/instagram/publier',{method:'POST',headers:secret?{Authorization:'Bearer '+secret}:{}});
   check((await pub()).status,401,'instagram publishing needs the cron secret');const idle=await pub(baseEnv.CRON_SECRET);check([idle.status,(await idle.json()).rien],[200,'Instagram n’est pas connecté.'],'nothing published without an account');
   const bilan=await request('/api/instagram/bilan');check([bilan.status,bilan.body.compte,bilan.body.posts],[200,null,[]],'instagram report readable without an account');
-  check((await request('/instagram',member)).status,404,'instagram page hidden from members');check((await request('/instagram',owner)).status,200,'instagram page open to the owner');
+  { const page=await request('/instagram',member);check([page.status,page.body.includes('Espace réservé'),page.body.includes('Coller')||page.body.includes('jeton')],[200,true,false],'instagram page closed to members'); }check((await request('/instagram',owner)).status,200,'instagram page open to the owner');
   check((await request('/api/instagram',member,{action:'deconnecter'})).status,403,'members cannot change instagram settings'); }
  { const cron=(secret)=>fetch(origin+'/api/reminders',{method:'POST',headers:secret?{Authorization:'Bearer '+secret}:{}});
   check((await cron()).status,401,'reminders need the cron secret');check((await cron('mauvais-secret-1234567')).status,401,'wrong cron secret refused');
