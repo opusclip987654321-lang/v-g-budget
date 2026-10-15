@@ -26,11 +26,11 @@ export function InstagramAdmin({ username, expiresAt, next, articles }: { userna
       <h2>Compte</h2>
       {username
         ? <p>Connecté à <strong>@{username}</strong>. Le jeton se prolonge tout seul chaque semaine{expiresAt ? ` (valable jusqu’au ${new Date(expiresAt).toLocaleDateString('fr-FR')})` : ''}.{' '}
-          <button type="button" disabled={busy} onClick={() => run({ action: 'deconnecter' }, 'Instagram déconnecté.')}>Déconnecter</button></p>
+          <button type="button" className="btn secondary small" disabled={busy} onClick={() => run({ action: 'deconnecter' }, 'Instagram déconnecté.')}>Déconnecter</button></p>
         : <form onSubmit={e => { e.preventDefault(); run({ action: 'connecter', token }, 'Instagram connecté.'); }}>
           <p>Collez ici le jeton d’accès Instagram (tableau de bord Meta, « Générer un jeton »).</p>
           <input type="password" value={token} onChange={e => setToken(e.target.value)} placeholder="IGAA…" autoComplete="off" style={{ width: '100%', padding: 10, borderRadius: 10, border: '1px solid #ccd' }} />
-          <p><button type="submit" disabled={busy || token.trim().length < 20}>Connecter Instagram</button></p>
+          <p><button type="submit" className="btn primary" disabled={busy || token.trim().length < 20}>Connecter Instagram</button></p>
         </form>}
       {message && <p role="status"><strong>{message}</strong></p>}
     </section>
@@ -43,7 +43,7 @@ export function InstagramAdmin({ username, expiresAt, next, articles }: { userna
           <span style={{ color: '#5f6b64' }}>{a.date}</span>
           {a.publication
             ? (a.publication.permalink ? <a href={a.publication.permalink} target="_blank" rel="noopener">Publié le {new Date(a.publication.at).toLocaleDateString('fr-FR')}</a> : <span>Publié le {new Date(a.publication.at).toLocaleDateString('fr-FR')}</span>)
-            : username && <button type="button" disabled={busy} onClick={() => confirm(`Publier « ${a.title} » sur Instagram maintenant ?`) && run({ action: 'publier', slug: a.slug }, 'Carrousel publié sur Instagram.')}>Publier maintenant</button>}
+            : username && <button type="button" className="btn lime small" disabled={busy} onClick={() => confirm(`Publier « ${a.title} » sur Instagram maintenant ?`) && run({ action: 'publier', slug: a.slug }, 'Carrousel publié sur Instagram.')}>Publier maintenant</button>}
         </p>
         {a.stats && <p style={{ margin: '4px 0 0', color: '#5f6b64' }}>{`${a.stats.reach ?? 0} comptes touchés · ${a.stats.saved ?? 0} enregistrements · ${a.stats.shares ?? 0} partages · ${a.stats.likes ?? 0} j’aime · ${a.stats.follows ?? 0} abonnés gagnés`}</p>}
         {open === a.slug && <div>
