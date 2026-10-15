@@ -39,7 +39,7 @@ async function render(s: Slide, n: number, total: number) {
   if (s.kind === 'couverture') {
     const photo = await publicDataUri(s.image);
     return <div style={page}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}><Pill>{s.category}</Pill><div style={{ display: 'flex', fontSize: 32, fontWeight: 600, color: green }}>Glissez →</div></div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}><Pill>{s.pill}</Pill><div style={{ display: 'flex', fontSize: 32, fontWeight: 600, color: green }}>Glissez →</div></div>
       <Photo src={photo} height={700} />
       <div style={{ display: 'flex', fontSize: s.title.length > 70 ? 60 : 70, fontWeight: 800, lineHeight: 1.08, letterSpacing: -1.5 }}>{s.title}</div>
       <Footer logo={logo} />
@@ -47,34 +47,35 @@ async function render(s: Slide, n: number, total: number) {
   }
   if (s.kind === 'essentiel') return <div style={page}>
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}><div style={{ display: 'flex', fontSize: 72, fontWeight: 800, color: green, letterSpacing: -1.5 }}>L’essentiel</div>{counter}</div>
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 56 }}>
-      {s.lines.map((l, i) => <div key={i} style={{ display: 'flex', gap: 28, alignItems: 'flex-start' }}>
-        <div style={{ display: 'flex', flexShrink: 0, width: 56, height: 56, borderRadius: 28, background: lime, color: green, fontSize: 30, fontWeight: 800, alignItems: 'center', justifyContent: 'center' }}>{String(i + 1)}</div>
-        <div style={{ display: 'flex', fontSize: 50, lineHeight: 1.25, fontWeight: 600 }}>{l}</div>
+    {s.items.length > 0 && <div style={{ display: 'flex', gap: 20 }}>
+      {s.items.map(([v, l], i) => <div key={i} style={{ display: 'flex', flexDirection: 'column', flex: 1, gap: 8, background: i === 0 ? green : '#fff', color: i === 0 ? '#fff' : ink, borderRadius: 28, padding: '28px 26px' }}>
+        <div style={{ display: 'flex', fontSize: 58, fontWeight: 800, color: i === 0 ? lime : green, letterSpacing: -1.5 }}>{v}</div>
+        <div style={{ display: 'flex', fontSize: 26, lineHeight: 1.25, fontWeight: 600 }}>{l}</div>
       </div>)}
-    </div>
-    <Footer logo={logo} />
-  </div>;
-  if (s.kind === 'chiffres') return <div style={page}>
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}><div style={{ display: 'flex', fontSize: 72, fontWeight: 800, color: green, letterSpacing: -1.5 }}>En chiffres</div>{counter}</div>
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-      {s.items.map(([v, l], i) => <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 8, background: i === 0 ? green : '#fff', color: i === 0 ? '#fff' : ink, borderRadius: 32, padding: '36px 44px' }}>
-        <div style={{ display: 'flex', fontSize: 92, fontWeight: 800, color: i === 0 ? lime : green, letterSpacing: -2 }}>{v}</div>
-        <div style={{ display: 'flex', fontSize: 38, fontWeight: 600 }}>{l}</div>
+    </div>}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
+      {s.lines.map((l, i) => <div key={i} style={{ display: 'flex', gap: 26, alignItems: 'flex-start' }}>
+        <div style={{ display: 'flex', flexShrink: 0, width: 52, height: 52, borderRadius: 26, background: lime, color: green, fontSize: 28, fontWeight: 800, alignItems: 'center', justifyContent: 'center' }}>{String(i + 1)}</div>
+        <div style={{ display: 'flex', fontSize: 44, lineHeight: 1.25, fontWeight: 600 }}>{l}</div>
       </div>)}
     </div>
     <Footer logo={logo} />
   </div>;
   if (s.kind === 'recette') {
     const photo = await publicDataUri(s.image);
+    const half = Math.ceil(s.ingredients.length / 2);
+    const column = (list: [string, string][]) => <div style={{ display: 'flex', flexDirection: 'column', flex: 1, gap: 10 }}>
+      {list.map(([name, amount]) => <div key={name} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, fontSize: 28, borderBottom: '2px solid #e6e1d6', paddingBottom: 8 }}><span>{name}</span><span style={{ color: green, fontWeight: 800 }}>{amount}</span></div>)}
+    </div>;
     return <div style={page}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}><Pill>{`${s.price} la part`}</Pill>{counter}</div>
-      <Photo src={photo} height={580} />
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-        <div style={{ display: 'flex', fontSize: s.title.length > 34 ? 52 : 60, fontWeight: 800, lineHeight: 1.08, letterSpacing: -1 }}>{s.title}</div>
-        <div style={{ display: 'flex', fontSize: 32, color: grey, fontWeight: 600 }}>{`Prêt en ${s.minutes} min · prix des ingrédients par part`}</div>
-        <div style={{ display: 'flex', fontSize: 34, lineHeight: 1.3, marginTop: 8 }}>{s.text.length > 150 ? `${s.text.slice(0, 147).replace(/\s+\S*$/, '')}…` : s.text}</div>
+      <Photo src={photo} height={470} />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={{ display: 'flex', fontSize: s.title.length > 34 ? 50 : 58, fontWeight: 800, lineHeight: 1.08, letterSpacing: -1 }}>{s.title}</div>
+        <div style={{ display: 'flex', fontSize: 30, color: grey, fontWeight: 600 }}>{`${s.minutes} min · ingrédients pour 2`}</div>
       </div>
+      <div style={{ display: 'flex', gap: 36 }}>{column(s.ingredients.slice(0, half))}{column(s.ingredients.slice(half))}</div>
+      {s.text && <div style={{ display: 'flex', fontSize: 30, lineHeight: 1.3, color: grey }}>{s.text.length > 110 ? `${s.text.slice(0, 107).replace(/\s+\S*$/, '')}…` : s.text}</div>}
       <Footer logo={logo} />
     </div>;
   }
@@ -82,9 +83,9 @@ async function render(s: Slide, n: number, total: number) {
     <div style={{ display: 'flex', justifyContent: 'flex-end' }}><div style={{ display: 'flex', fontSize: 28, color: lime, fontWeight: 600 }}>{`${n}/${total}`}</div></div>
     <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
       <div style={{ display: 'flex', fontSize: 84, fontWeight: 800, lineHeight: 1.05, letterSpacing: -2, color: lime }}>Vos dîners de la semaine, dans votre budget.</div>
-      <div style={{ display: 'flex', fontSize: 42, lineHeight: 1.3 }}>VégéBudget prépare vos menus sans viande et votre liste de courses, avec le montant estimé.</div>
-      <div style={{ display: 'flex', fontSize: 36, lineHeight: 1.3, color: '#cfe0d6' }}>Première semaine gratuite, sans compte ni carte bancaire.</div>
-      <div style={{ display: 'flex', alignSelf: 'flex-start', background: lime, color: green, borderRadius: 999, padding: '22px 40px', fontSize: 40, fontWeight: 800 }}>Lien dans la bio</div>
+      <div style={{ display: 'flex', fontSize: 42, lineHeight: 1.3 }}>Vos menus sans viande, la liste de courses et son coût estimé, préparés par VégéBudget.</div>
+      <div style={{ display: 'flex', alignSelf: 'flex-start', background: lime, color: green, borderRadius: 999, padding: '22px 40px', fontSize: 40, fontWeight: 800 }}>Lien dans la bio · 1re semaine gratuite</div>
+      <div style={{ display: 'flex', fontSize: 36, lineHeight: 1.3, color: '#cfe0d6' }}>📌 Enregistrez pour le jour des courses. Envoyez-le à la personne avec qui vous faites les courses.</div>
     </div>
     <Footer light logo={logo} />
   </div>;
