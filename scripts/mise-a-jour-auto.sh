@@ -25,6 +25,15 @@ main() {
   flock -n 9 || return 0
   cd "$dir" || { note "Dossier $dir introuvable."; return 1; }
 
+  # Carrousel Instagram du jour (ajouté le 15/10/2026) : le site décide lui-même s'il publie
+  # (une fois par jour, à partir de 18 h, seulement s'il y a un nouvel article et un compte connecté).
+  local secret reponse
+  secret=$(grep -E '^CRON_SECRET=' .env 2>/dev/null | tail -1 | cut -d= -f2- | tr -d '"'"'"' \r')
+  if [ -n "$secret" ]; then
+    reponse=$(curl -sS --max-time 300 -X POST -H "Authorization: Bearer $secret" http://127.0.0.1:3100/api/instagram/publier 2>&1)
+    case "$reponse" in *'"publie"'*|*'"error"'*|curl:*) note "Instagram : $reponse";; esac
+  fi
+
   if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
     note "ARRÊT : fichiers modifiés à la main sur le serveur : $(git status --porcelain --untracked-files=no | tr '\n' ' '). Rien n'est mis à jour."
     return 1

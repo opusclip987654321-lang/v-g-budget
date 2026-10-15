@@ -6,6 +6,7 @@ import {spawn} from 'node:child_process';
 import {createHmac} from 'node:crypto';
 import {DatabaseSync} from 'node:sqlite';
 import {createServer} from 'node:http';
+import sharp from 'sharp';
 
 // Lance le site construit (next start) avec une base et un dossier de photos
 // temporaires. Aucun service déployé, compte réel ni prestataire de paiement n'est contacté.
@@ -79,6 +80,14 @@ try{
  const reserved=await api('waitlist',member,{plan:'founder'});check(reserved.body.founderLeft,100,'a free reservation takes no founder seat');await api('waitlist',member,{});
  const after=await api('bootstrap',member);check([after.body.founder,after.body.founderLeft],[true,100],'founder request kept after a premium request');check((await api('admin',owner)).body.waitlist.find(w=>w.email===member.email).plan,'founder','founder visible to administrator');
  { const usual=structuredClone((await api('bootstrap',owner)).body.state);usual.profile.usualSpend=45;const saved=await api('state',owner,{state:usual,revision:(await api('bootstrap',owner)).body.revision});check(saved.status,200,'usual spending saved');usual.profile.usualSpend=0;check((await api('state',owner,{state:usual,revision:saved.body.revision})).status,400,'usual spending validated'); }
+ { // Instagram : images du carrousel publiques, publication réservée à la tâche du serveur et au propriétaire.
+  const img=await fetch(origin+'/api/instagram/image/recettes-lentilles-pas-cheres/1.jpg');check([img.status,img.headers.get('content-type')],[200,'image/jpeg'],'instagram slide is a jpeg');
+  const meta=await sharp(Buffer.from(await img.arrayBuffer())).metadata();check([meta.format,meta.width,meta.height],['jpeg',1080,1350],'instagram slide is 1080x1350');
+  check((await fetch(origin+'/api/instagram/image/recettes-lentilles-pas-cheres/99.jpg')).status,404,'unknown slide refused');check((await fetch(origin+'/api/instagram/image/inconnu/1.jpg')).status,404,'unknown article slide refused');
+  const pub=(secret)=>fetch(origin+'/api/instagram/publier',{method:'POST',headers:secret?{Authorization:'Bearer '+secret}:{}});
+  check((await pub()).status,401,'instagram publishing needs the cron secret');const idle=await pub(baseEnv.CRON_SECRET);check([idle.status,(await idle.json()).rien],[200,'Instagram n’est pas connecté.'],'nothing published without an account');
+  check((await request('/instagram',member)).status,404,'instagram page hidden from members');check((await request('/instagram',owner)).status,200,'instagram page open to the owner');
+  check((await request('/api/instagram',member,{action:'deconnecter'})).status,403,'members cannot change instagram settings'); }
  { const cron=(secret)=>fetch(origin+'/api/reminders',{method:'POST',headers:secret?{Authorization:'Bearer '+secret}:{}});
   check((await cron()).status,401,'reminders need the cron secret');check((await cron('mauvais-secret-1234567')).status,401,'wrong cron secret refused');
   check((await api('bootstrap',member)).body.reminders,true,'reminders on by default');
