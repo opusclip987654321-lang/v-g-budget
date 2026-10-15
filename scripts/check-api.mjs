@@ -165,6 +165,11 @@ try{
   assert.ok(posts.length>=9,'all blog articles in sitemap');checks++;const seen=new Map();
   const status=async(path)=>{if(!seen.has(path))seen.set(path,(await request(path)).status);return seen.get(path);};
   for(const path of posts){const page=await request(path);check(page.status,200,`${path} page`);assert.match(page.body,/"@type":"BlogPosting"/,`${path} BlogPosting`);
+   // Balises de référencement indispensables sur chaque article.
+   const head=page.body.split('</head>')[0];
+   assert.match(head,/<title>[^<]{15,}<\/title>/,`${path} balise title`);assert.match(head,/<meta name="description" content="[^"]{80,}"/,`${path} meta description`);
+   assert.match(head,new RegExp(`<link rel="canonical" href="[^"]*${path}"`),`${path} canonical`);assert.match(head,/<meta property="og:image" content="[^"]+\.jpg"/,`${path} image d'aperçu`);
+   check((page.body.match(/<h1[\s>]/g)??[]).length,1,`${path} un seul titre h1`);assert.match(page.body,/"@type":"BreadcrumbList"/,`${path} fil d'Ariane structuré`);assert.ok(!/<img(?![^>]*\balt=)[^>]*>/.test(page.body.split('<article')[1]??''),`${path} image sans texte alternatif`);checks+=6;
    const slug=path.split('/').pop();for(const ext of ['svg','jpg'])check(await status(`/images/blog/${slug}.${ext}`),200,`${path} illustration ${ext}`);
    const article=page.body.split('<article')[1]?.split('</article>')[0]??'';
    for(const href of new Set([...article.matchAll(/href="(\/[^"#?]*)/g)].map(m=>m[1])))assert.ok(await status(href)<400,`${path} lien interne cassé : ${href}`);checks++;} }

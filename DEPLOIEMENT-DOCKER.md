@@ -108,6 +108,8 @@ sudo mkdir -p /var/backups/vegebudget
 cd /opt/vegebudget && git pull && docker compose up -d --build && docker image prune -f
 ```
 
+Mise à jour automatique (installée une fois) : `bash /opt/vegebudget/scripts/mise-a-jour-auto.sh --installer`. Chaque heure (à h17), le serveur regarde si `main` a changé sur GitHub ; si oui, il fait la mise à jour ci-dessus, vérifie que le site répond et revient à la version précédente sinon. Il s'arrête sans rien toucher si un fichier a été modifié à la main dans `/opt/vegebudget`. Journal : `~/vegebudget-mise-a-jour.log`.
+
 ## 9. Référencement
 
 Voir `DEPLOIEMENT-OVH.md`, section « Référencement Google, Bing et assistants IA » : Search Console, sitemap et Bing.
