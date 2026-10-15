@@ -25,7 +25,7 @@ export default async function ArticlePage({ params }: Props) {
       <p className="pub-eyebrow">{a.category}</p>
       <h1>{a.title}</h1>
       <p className="pub-lead">{inline(a.lead)}</p>
-      <p className="pub-note">Par l’équipe VégéBudget · {dateLabel(a.date)} · {readingMinutes(a)} min de lecture</p>
+      <p className="pub-note">Par l’équipe VégéBudget · <time dateTime={a.date}>{dateLabel(a.date)}</time>{a.updated && a.updated !== a.date && <> · Mis à jour le <time dateTime={a.updated}>{dateLabel(a.updated)}</time></>} · {readingMinutes(a)} min de lecture</p>
       <figure className="blog-cover"><img src={blogCover(a)} alt={a.coverAlt} width={1200} height={675} /></figure>
       {toc.length > 2 && <nav className="blog-toc" aria-label="Sommaire"><strong>Au sommaire</strong><ol>{toc.map(t => <li key={t.id}><a href={`#${t.id}`}>{t.title}</a></li>)}</ol></nav>}
       <BlogContent body={a.body} />

@@ -6,6 +6,8 @@ import { dailyArticles } from '@/content/blog';
 export type Article = {
   slug: string; title: string; seoTitle?: string; description: string; lead: string; category: string; keywords: string[];
   date: string; updated?: string; coverAlt: string; photo?: boolean; body: string; faq: [string, string][]; sources: [string, string][];
+  // Liste ordonnée d'éléments de la page (ancres de ses intertitres), reprise dans les données structurées (ItemList).
+  itemList?: { name: string; items: { name: string; anchor: string }[] };
 };
 
 // Tous les articles sont dans content/blog (un fichier par article).

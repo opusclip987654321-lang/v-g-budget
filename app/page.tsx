@@ -33,7 +33,7 @@ export default async function Home() {
 
     <ul className="land-proof" aria-label="En bref">
       <li><strong>{recipes.length} recettes</strong> 100 % végétales</li>
-      <li><strong>Prix réels</strong> relevés chez Carrefour</li>
+      <li><strong>Prix réels</strong> relevés sur carrefour.fr</li>
       <li><strong>Sans compte</strong> pour la première semaine</li>
     </ul>
 
@@ -45,6 +45,7 @@ export default async function Home() {
       </div>
       <ol className="land-week">{week.map((r, n) => <li key={r.id}><Link href={START_PATH}><img src={recipeImage(r)} alt="" width={120} height={120} loading="lazy" /><span><small>{['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'][n]}</small><strong>{r.title}</strong><small>{r.minutes} min · {money(portionCost(r))} par portion</small></span></Link></li>)}</ol>
       <p className="pub-note">{PRICE_SOURCE}. Les prix peuvent varier selon le magasin. Le prix par portion correspond aux ingrédients utilisés.</p>
+      <p className="land-week-more"><Link href="/blog/menu-semaine-pas-cher">Voir une semaine complète, midi et soir</Link></p>
     </section>
 
     <section className="land-before-after" aria-labelledby="avant-apres">
