@@ -20,6 +20,28 @@ const field=(src,name)=>{const m=src.match(new RegExp(`\\b${name}: (['"\`])((?:\
 // Images JPEG : lit la taille dans l'en-tête SOF.
 function jpegSize(path){const b=readFileSync(path);if(b[0]!==0xff||b[1]!==0xd8)return null;let i=2;while(i<b.length){if(b[i]!==0xff){i++;continue;}const t=b[i+1];const len=b.readUInt16BE(i+2);if(t>=0xc0&&t<=0xcf&&![0xc4,0xc8,0xcc].includes(t))return {h:b.readUInt16BE(i+5),w:b.readUInt16BE(i+7)};i+=2+len;}return null;}
 
+// Calques de l'anglais : ces tournures ne sont jamais naturelles en français.
+const calques=[
+  [/\b(?:fait|faire|font|fera|ferait)\s+(?:du|plus de|beaucoup de)\s+sens\b/gi,'écrire « a du sens » ou « est logique »'],
+  [/\badress(?:er|ez|e|ons|ent)\s+(?:un|le|les|ce|ces|vos|votre)\s+(?:problème|problèmes|question|questions|besoin|besoins|enjeu|enjeux)/gi,'écrire « traiter », « régler » ou « répondre à »'],
+  [/\bprend(?:re)?\s+place\b/gi,'écrire « a lieu » ou « se passe »'],
+  [/\bêtre supposée?s? (?:de|à)\b|\b(?:est|sont|êtes) supposée?s? (?:de|à)\b/gi,'écrire « est censé »'],
+  [/\bmeal[ -]prep\b|\bmust[ -]have\b|\bfood[ -]?porn\b|\bcheck-?list\b|\btips?\b/gi,'mot anglais : dire « préparer ses repas à l’avance », « indispensable », « liste », « astuces »'],
+  [/\bsupporter\s+(?:les|nos|vos|des)\s+(?:producteurs|agriculteurs|éleveurs|paysans)\b/gi,'écrire « soutenir »'],
+];
+// Tournures souvent calquées sur l'anglais : signalées, pas bloquantes.
+const douteux=[
+  [/\bdéfinitivement\b/gi,'si le sens est « certainement », écrire « sans aucun doute »'],
+  [/\bréalis(?:er|ez|é|e) que\b/gi,'écrire « se rendre compte que »'],
+  [/\bimpact(?:er|ent|e|ez|é|ée|és)\b/gi,'écrire « avoir un effet sur », « toucher »'],
+  [/\bopportunités?\b/gi,'souvent « occasion »'],
+  [/\bbasée?s? sur\b/gi,'souvent « fondé sur », « à partir de »'],
+  [/\bau final\b/gi,'écrire « finalement », « au bout du compte »'],
+  [/\ben termes de\b/gi,'souvent « pour », « côté »'],
+  [/\bdigital(?:e|es|aux)?\b/gi,'écrire « numérique »'],
+  [/\bbooster\b/gi,'écrire « augmenter », « stimuler »'],
+];
+
 for(const f of files){
   const path=`content/blog/articles/${f}`;const src=readFileSync(path,'utf8');const name=f.replace(/\.ts$/,'');
   const where=`${path} :`;
@@ -63,6 +85,9 @@ for(const f of files){
   const photo=/\bphoto: true\b/.test(src);
   for(const ext of photo?['jpg']:['svg','jpg']){const img=`public/images/blog/${name}.${ext}`;if(!existsSync(img)||statSync(img).size===0)fail(`${where} illustration manquante : ${img}.`);}
   const jpg=`public/images/blog/${name}.jpg`;if(existsSync(jpg)){const s=jpegSize(jpg);if(!s||s.w!==1200||s.h!==675)fail(`${where} ${jpg} doit être un vrai JPEG de 1200 × 675 (trouvé ${s?`${s.w} × ${s.h}`:'autre format'}).`);}
+  // Français naturel (CONSIGNES §7 bis) : calques de l'anglais refusés, tournures douteuses signalées.
+  for(const [re,msg] of calques)for(const m of src.matchAll(re))fail(`${where} « ${m[0]} » sonne comme de l'anglais traduit : ${msg}.`);
+  for(const [re,msg] of douteux)for(const m of src.matchAll(re))warn(`${where} « ${m[0]} » : ${msg} (vérifier que la phrase est naturelle).`);
 }
 for(const [list,label] of [[slugs,'slug'],[titles,'titre']]){const seen=new Set();for(const v of list){if(seen.has(v))fail(`${label} en double : ${v}.`);seen.add(v);}}
 for(const m of index.matchAll(/from '\.\/articles\/([^']+)'/g))if(!files.includes(`${m[1]}.ts`))fail(`content/blog/index.ts importe un article absent : ${m[1]}.`);

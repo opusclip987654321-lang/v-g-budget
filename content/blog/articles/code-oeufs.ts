@@ -43,7 +43,7 @@ Ce marquage est obligatoire sur les œufs vendus en magasin dans toute l’Union
 
 Plus le chiffre est bas, plus la poule a de place et d’accès à l’extérieur. Pour le code 0, voyez aussi ce que garantit le [label bio AB](/blog/label-bio-ab).
 
-> **Et le Label Rouge ?** Les œufs Label Rouge viennent de poules élevées en plein air, avec des exigences en plus (taille des bâtiments, alimentation). Leur code commence donc par 1.
+> **Et le Label Rouge ?** Les œufs Label Rouge viennent de poules élevées en plein air, avec des exigences supplémentaires (taille des bâtiments, alimentation). Leur code commence donc par 1.
 
 ## Œufs de poules en cage : où en est-on en France ?
 
@@ -95,7 +95,7 @@ Coût estimé des ingrédients utilisés, par portion : prix relevés le 7 octob
 `,
     faq: [
       ['Que veut dire le code 0 sur un œuf ?', 'Le 0 signifie que la poule a été élevée en agriculture biologique : accès à l’extérieur, alimentation bio et moins de poules par bâtiment.'],
-      ['Quelle est la différence entre un œuf code 1 et code 2 ?', 'Avec le code 1, la poule a accès à un parcours en plein air. Avec le code 2, elle n’est pas en cage mais reste enfermée dans un bâtiment.'],
+      ['Quelle est la différence entre un œuf de code 1 et un œuf de code 2 ?', 'Avec le code 1, la poule a accès à un parcours en plein air. Avec le code 2, elle n’est pas en cage mais reste enfermée dans un bâtiment.'],
       ['Où trouver le code sur une boîte d’œufs ?', 'Le code est imprimé sur la coquille de chaque œuf. Le mode d’élevage est aussi écrit en toutes lettres sur la boîte.'],
       ['Les œufs Label Rouge ont-ils un code particulier ?', 'Non. Ils viennent de poules élevées en plein air, avec des exigences supplémentaires, et leur code commence donc par 1.'],
       ['Les œufs roux sont-ils meilleurs que les blancs ?', 'Non. La couleur de la coquille dépend seulement de la race de la poule.'],

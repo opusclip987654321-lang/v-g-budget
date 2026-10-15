@@ -85,7 +85,7 @@ Coût estimé des ingrédients utilisés, par portion : prix relevés le 7 octob
 @cta Essayez quelques soirs sans viande
 `,
     faq: [
-      ['Quelle est la différence entre un poulet standard et un poulet Label Rouge ?', 'Le poulet standard est abattu vers 35 à 40 jours, en bâtiment. Le poulet Label Rouge est d’une souche à croissance lente, a accès au plein air et vit au moins 81 jours.'],
+      ['Quelle est la différence entre un poulet standard et un poulet Label Rouge ?', 'Le poulet standard est abattu vers 35 à 40 jours, en bâtiment. Le poulet Label Rouge est issu d’une souche à croissance lente, a accès au plein air et vit au moins 81 jours.'],
       ['Que veut dire la note de l’étiquette bien-être animal ?', 'Elle va de A (niveau supérieur) à E (minimum légal) et prend en compte l’élevage, le transport et l’abattage des animaux. Elle est volontaire et surtout présente sur le poulet et le porc.'],
       ['Que veut dire « lait de pâturage » ?', 'Cette mention indique un nombre minimum de jours passés au pré dans l’année, selon des cahiers des charges privés. Le bio impose aussi l’accès au pâturage.'],
       ['Comment consacrer plus de budget à une viande mieux élevée ?', 'Remplacer certains repas de viande par des recettes de légumes secs peut modifier la répartition de votre budget. Le montant disponible dépend des produits choisis et de leurs prix.'],

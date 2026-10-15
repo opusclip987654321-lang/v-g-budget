@@ -64,7 +64,7 @@ Ces deux montants sont différents. Une partie des produits achetés peut rester
 
 1. **Des légumes secs comme base** : lentilles, pois chiches, haricots (voir [notre comparatif des protéines végétales](/blog/proteines-vegetales)).
 2. **Des ingrédients qui reviennent** : dans cet exemple, les petits pois servent mercredi et vendredi, et le riz lundi, mercredi et jeudi.
-3. **Du surgelé** pour les légumes verts : facile à doser pour prélever les quantités nécessaires.
+3. **Du surgelé** pour les légumes verts : facile à doser, vous ne prélevez que les quantités nécessaires.
 4. **Des marques distributeur** pour le riz, les pâtes et les conserves.
 5. **Le placard d’abord** : avant d’acheter, regardez ce que vous avez déjà.
 
@@ -85,7 +85,7 @@ Pour préparer ces cinq recettes, retrouvez ci-dessous les ingrédients regroup�
 
 Ce sont les quantités utilisées. En magasin, vous achetez des paquets entiers, et le reste sert pour d’autres repas.
 
-> **Pour aller plus vite :** [VégéBudget](/) compose vos dîners selon votre budget, tient compte de ce que vous avez déjà, selon les quantités renseignées, et calcule les produits à acheter dans leur format de vente.
+> **Pour aller plus vite :** [VégéBudget](/) compose vos dîners selon votre budget, tient compte de ce que vous avez déjà (d’après les quantités renseignées) et calcule les produits à acheter dans leur format de vente.
 
 ## En vidéo
 
