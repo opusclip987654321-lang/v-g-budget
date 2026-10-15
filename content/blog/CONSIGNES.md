@@ -1,6 +1,6 @@
 # Blog VégéBudget : consignes de l'article quotidien
 
-Un article par jour, écrit par un rédacteur puis relu par un copywriter. Deux objectifs, dans cet ordre :
+Un article par jour : un agent SEO étudie la concurrence et prépare un plan, un rédacteur écrit, puis l'agent SEO et un copywriter relisent (deux agents séparés, voulus par louis le 15/10/2026). Deux objectifs, dans cet ordre :
 1. **Amener le plus de lecteurs** : être trouvé sur Google et cité par les assistants IA (ChatGPT, Perplexity, Gemini).
 2. **Transformer ces lecteurs en clients** : qu'ils cliquent sur « Créer mes menus gratuitement », puis passent à Premium (4,99 € par mois, ou offre fondateur 19 € par an pour les 100 premiers).
 
@@ -77,7 +77,7 @@ Dans le corps (gabarit entre accents graves), écrire les apostrophes typographi
 - `public/images/blog/<slug>.svg`, 1200 × 675, dans le style des autres (dessin à plat, formes simples, aucun texte sauf la pastille de catégorie en haut à gauche). Couleurs : fond `#e8f0e9` ou `#f1f6ee`, vert foncé `#174c38`, vert citron `#d7f369`, rouge `#eb5757`, orange `#f2994a`, verts `#27ae60` `#8fd18f` `#b8d9b0`, brun `#c98a4b`. S'inspirer de `public/images/blog/circuit-court.svg`.
 - Puis `node scripts/blog-illustration.mjs <slug>` crée la version `.jpg` (aperçu Google et réseaux sociaux). Regarder le JPG pour vérifier qu'il est propre.
 
-## 7. La relecture copywriter (agent séparé)
+## 7. La relecture copywriter (agent séparé, après l'agent SEO)
 
 Le copywriter relit l'article comme un expert du référencement et de la conversion, et **corrige directement le fichier** :
 - **Lecteurs** : le mot-clé principal est dans le seoTitle, la description, le lead, un intertitre et le slug ; les intertitres reprennent les questions réelles ; la réponse est donnée tôt ; le titre donne envie de cliquer face aux résultats concurrents ; la FAQ couvre les questions restantes.
@@ -85,6 +85,25 @@ Le copywriter relit l'article comme un expert du référencement et de la conver
 - **Confiance** : chaque chiffre a sa source ; les prix viennent du site ; aucun fait douteux ; style conforme à la section 3 ; pas de remplissage ni de phrase creuse ; orthographe et typographie françaises.
 - Il rend un court compte rendu : ce qu'il a changé et pourquoi, et une note de 1 à 10 pour « trouvé sur Google » et « donne envie d'essayer ». En dessous de 7, le rédacteur reprend l'article et le copywriter relit à nouveau.
 
-## 8. Avant de publier
+## 8. L'agent SEO (agent séparé, deux passages)
+
+**Avant la rédaction : étude de la concurrence.** Il cherche la requête visée et ses variantes sur le web, ouvre les 5 premiers résultats et rend un plan au rédacteur :
+- la requête principale retenue et 3 à 6 requêtes secondaires (suggestions, « autres questions posées ») ;
+- pour chaque concurrent : titre, longueur approximative, intertitres, ce qu'il couvre bien, ce qui lui manque (prix réels, coût par portion, liste de courses, réponse directe, mise à jour récente) ;
+- l'angle qui permet de faire mieux qu'eux, le plan d'intertitres conseillé, la longueur visée, les questions à mettre en FAQ, les liens internes à placer (articles et recettes existants).
+Si la requête est déjà tenue par de très gros sites sans faille visible, il propose une requête plus précise.
+
+**Après la rédaction : contrôle des balises.** Il corrige directement le fichier et vérifie :
+- `seoTitle` de 60 caractères au plus, mot-clé au début ; `description` de 120 à 160 caractères avec le mot-clé ; slug court avec le mot-clé ;
+- un seul H1 (le titre), des H2 qui reprennent les requêtes secondaires, des H3 seulement sous un H2 ;
+- mot-clé principal dans le lead (les 100 premiers mots), dans un H2 et dans `coverAlt` ; variantes naturelles dans le texte, sans répétition forcée ;
+- au moins 3 liens internes avec des textes de lien descriptifs (pas « cliquez ici ») ; sources externes officielles ;
+- FAQ de 3 à 5 questions (données structurées FAQPage), `keywords` cohérents, date du jour ;
+- un passage court et autonome qui répond à la question principale, facile à citer par Google et les assistants IA ;
+- pas de cannibalisation : aucun autre article du blog ne vise la même requête (sinon il change l'angle ou relie les deux articles).
+Le rendu (balise title, meta description, canonical, image d'aperçu, un seul H1, données structurées BlogPosting, FAQPage et fil d'Ariane, textes alternatifs, liens internes) est vérifié automatiquement par `pnpm check:api`.
+Il rend ce qu'il a changé et une note de 1 à 10 « SEO ». En dessous de 7, le rédacteur reprend l'article.
+
+## 9. Avant de publier
 
 `npx tsc --noEmit -p .`, `pnpm check:blog`, `pnpm check:planner`, puis `rm -rf .next && pnpm build && pnpm check:api`. Tout doit passer. Ensuite pull request, puis fusion dans `main` : le serveur met le site à jour tout seul.
