@@ -16,7 +16,7 @@ Le site : vegebudget.fr prépare des menus de dîners sans viande selon un budge
 
 ## 2. Les faits et les prix : rien d'inventé
 
-- **Prix** : uniquement ceux du site. Dans le corps, écrire `${cost('id-recette')}` pour le coût par portion d'une recette (recalculé avec les prix du catalogue). Les identifiants des recettes sont dans `lib/catalog.ts` (`r('curry-corail', …)`). Mentionner la provenance comme le site : « coût estimé des ingrédients, prix relevés le 7 octobre 2026 sur carrefour.fr, marques distributeur, hors promotions » (voir `PRICE_SOURCE` dans `lib/pricing.ts`, et la date si elle a changé).
+- **Prix** : uniquement ceux du site. Dans le corps, écrire `${cost('id-recette')}` pour le coût par portion d'une recette (recalculé avec les prix du catalogue). Les identifiants des recettes sont dans `lib/catalog.ts` (`r('curry-corail', …)`). Pour un ingrédient (identifiants `i('green-lentils', …)` dans le même fichier) : `${packPrice('green-lentils')}` (« 1,35 € les 500 g »), `${kiloPrice('green-lentils')}` (prix au kilo), `${amountPrice('green-lentils', 70)}` (prix de 70 g). Ces fonctions viennent de `@/lib/blog-cost`. N'écrire aucun prix en dur. Mentionner la provenance comme le site : « coût estimé des ingrédients, prix relevés le 7 octobre 2026 sur carrefour.fr, marques distributeur, hors promotions » (voir `PRICE_SOURCE` dans `lib/pricing.ts`, et la date si elle a changé).
 - Ne jamais présenter le coût par portion comme le montant à payer en caisse : les courses comprennent des paquets entiers. Pas de « menu à X € la semaine » sans calcul réel.
 - **Chiffres et affirmations externes** (statistiques, réglementation, nutrition, conservation) : seulement depuis une source officielle ou reconnue, lue pendant la recherche (Ademe, Anses, Manger Bouger, Insee, Agence Bio, ministère de l'Agriculture, Santé publique France, FAO…). Chaque source utilisée va dans `sources`. Pas de chiffre sans source. En cas de doute, ne pas l'écrire.
 - Pas de promesse santé ou médicale. Pas de dénigrement des concurrents. Pas de garantie d'économie chiffrée (« vous économiserez 100 € ») : on montre des exemples et on laisse le lecteur comparer.
@@ -48,7 +48,7 @@ Fichier `content/blog/articles/<slug>.ts`, ajouté à la fin de la liste dans `c
 
 ```ts
 import type { Article } from '@/lib/blog-articles';
-import { cost } from '@/lib/blog-cost';
+import { cost } from '@/lib/blog-cost'; // et packPrice, kiloPrice, amountPrice si besoin
 
 export default {
   slug: 'lentilles-recettes-pas-cheres',            // court, sans accents, mots-clés principaux, = nom du fichier
