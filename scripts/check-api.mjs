@@ -138,6 +138,17 @@ try{
  const mine=await fetch(origin+'/api/app?action=export',{headers:{Cookie:cookie}});check((await mine.json()).email,'nouveau@example.invalid','session opens the account');
  check((await fetch(mail.link,{redirect:'manual'})).headers.get('location'),origin+'/app?connexion=expiree','login link works only once');
  check((await fetch(origin+'/api/app?action=export',{headers:{Cookie:cookie.slice(0,-3)+'abc'}})).status,401,'tampered session rejected');
+ { // Appli pour les stores : le lien rouvre l'appli avec la session, utilisée ensuite dans l'en-tête Authorization (sans cookie ni Origin).
+  check((await fetch(origin+'/api/auth/request',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:'appli@example.invalid',appli:true})})).status,200,'app login link requested');
+  const appMail=readFileSync(outbox,'utf8').trim().split('\n').map(l=>JSON.parse(l)).at(-1);assert.match(appMail.link,/&appli=1$/);checks++;
+  const page=await fetch(appMail.link,{redirect:'manual'});check(page.status,200,'app login page');check(page.headers.get('set-cookie'),null,'app login sets no cookie');
+  const session=decodeURIComponent((await page.text()).match(/vegebudget:\/\/connexion\?session=([^"&<]+)/)[1]);
+  const bearer={Authorization:`Bearer ${session}`};
+  check((await (await fetch(origin+'/api/app?action=export',{headers:bearer})).json()).email,'appli@example.invalid','bearer session opens the account');
+  const boot=await (await fetch(origin+'/api/app?action=bootstrap',{headers:bearer})).json();
+  check((await fetch(origin+'/api/app',{method:'POST',headers:{...bearer,'Content-Type':'application/json'},body:JSON.stringify({action:'state',state:{...boot.state,onboardingDone:true},revision:boot.revision})})).status,200,'app saves with bearer session');
+  check((await fetch(origin+'/api/app?action=export',{headers:{Authorization:`Bearer ${session.slice(0,-3)}abc`}})).status,401,'tampered bearer rejected');
+  assert.match(await (await fetch(appMail.link,{redirect:'manual'})).text(),/vegebudget:\/\/connexion\?erreur=expiree/);checks++; }
  for(let i=0;i<4;i++)await login('nouveau@example.invalid');check((await login('nouveau@example.invalid')).status,429,'login requests rate limited');
  const out=await fetch(origin+'/api/auth/logout',{redirect:'manual'});check(out.headers.get('set-cookie').includes('Max-Age=0'),true,'logout clears session');
  { const browser={'Content-Type':'application/json',Origin:origin,'User-Agent':'Mozilla/5.0 (test)'};

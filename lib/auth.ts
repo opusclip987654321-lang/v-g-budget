@@ -1,4 +1,4 @@
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { createHash, createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 
 // Connexion par lien envoyé par e-mail : pas de mot de passe. Le lien crée une
@@ -48,9 +48,16 @@ export function readSessionValue(value: string | undefined, now = Date.now()): S
   }
 }
 
+// Le site utilise le cookie ; l'appli pour les stores (dossier mobile/) envoie la même session
+// dans l'en-tête « Authorization: Bearer … ». Cet en-tête n'est jamais ajouté tout seul par un
+// navigateur, il ne permet donc pas d'agir à la place d'un membre depuis un autre site.
 export async function getCurrentUser(): Promise<SessionUser | null> {
-  return readSessionValue((await cookies()).get(SESSION_COOKIE)?.value);
+  const bearer = (await headers()).get('authorization')?.match(/^Bearer\s+(\S+)$/i)?.[1];
+  return readSessionValue(bearer ?? (await cookies()).get(SESSION_COOKIE)?.value);
 }
+
+// Adresse qui rouvre l'appli VégéBudget sur le téléphone après le clic dans l'e-mail.
+export const APP_LOGIN_URL = 'vegebudget://connexion';
 
 export function sessionCookie(value: string, maxAgeSeconds: number) {
   const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';

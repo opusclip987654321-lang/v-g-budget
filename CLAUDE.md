@@ -5,3 +5,4 @@
 - Le VPS est partagé avec Nūr Meet, Leviaro et le cerveau (Caddy commun) : ne rien changer à leurs dossiers depuis ce projet.
 - Vérifications avant de fusionner : `npx tsc --noEmit -p .`, `pnpm check:blog`, `pnpm check:planner`, puis `rm -rf .next && pnpm build && pnpm check:api`.
 - Blog : un article par jour est écrit par une tâche programmée de Claude. Consignes dans `content/blog/CONSIGNES.md`, sujets dans `content/blog/SUJETS.md`, un fichier par article dans `content/blog/articles/`.
+- Appli mobile (iPhone, Android) : dossier `mobile/` (Expo, React Native), avec ses propres règles dans `mobile/CLAUDE.md` et `mobile/README.md`. Vérifications : `cd mobile && npm run check`. Les vérifications du site et de l’appli tournent aussi sur GitHub à chaque pull request.

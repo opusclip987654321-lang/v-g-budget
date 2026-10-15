@@ -1,0 +1,50 @@
+# Vérifications automatiques à chaque pull request (et sur main) : un défaut est bloqué avant d'arriver chez les clients.
+name: Vérifications
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: verifications-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  site:
+    name: Site (vegebudget.fr)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: corepack enable && pnpm install --frozen-lockfile
+      - run: npx tsc --noEmit -p .
+      - run: pnpm check:blog
+      - run: pnpm check:planner
+      - run: rm -rf .next && pnpm build && pnpm check:api
+
+  appli:
+    name: Appli mobile (mobile/)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test -- --ci
+      # Construit le code de l'appli Android comme pour les stores : vérifie que tout se charge (moteur partagé compris).
+      - run: npx expo export --platform android --output-dir dist-check
+        env:
+          CI: 1

@@ -13,7 +13,8 @@ export async function POST(request: Request) { try {
   await db().prepare('DELETE FROM login_tokens WHERE expires_at<?').bind(now - 86400000).run();
   const token = newLoginToken();
   await db().prepare('INSERT INTO login_tokens (token_hash,email,expires_at,created_at) VALUES (?,?,?,?)').bind(hashToken(token), email, now + LOGIN_TOKEN_MINUTES * 60000, now).run();
-  await sendLoginEmail(email, `${siteOrigin(request)}/api/auth/verify?token=${encodeURIComponent(token)}`);
+  // « appli » : la demande vient de l'appli pour les stores, le lien la rouvrira au lieu du site.
+  await sendLoginEmail(email, `${siteOrigin(request)}/api/auth/verify?token=${encodeURIComponent(token)}${input.appli === true ? '&appli=1' : ''}`);
   await recordEvent(request, 'connexion_demandee').catch(() => {});
   return json({ ok: true });
 } catch (e) { return failure(e); } }
