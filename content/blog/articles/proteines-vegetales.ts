@@ -15,7 +15,7 @@ export default {
     body: `
 @essentiel
 - Dans notre comparatif, les lentilles sèches sont les protéines végétales les moins chères.
-- Les conserves de pois chiches et de haricots coûtent plus, mais sont prêtes à l’emploi.
+- Les conserves de pois chiches et de haricots coûtent plus cher, mais sont prêtes à l’emploi.
 - Le tofu est la source la plus chère du tableau.
 - Repère Manger Bouger : des légumes secs au moins 2 fois par semaine.
 
@@ -67,7 +67,7 @@ Les légumineuses (lentilles, pois chiches, haricots) et les céréales (riz, bl
 
 - **Riz et lentilles** : le curry de lentilles corail.
 - **Semoule et pois chiches** : le couscous aux légumes.
-- **Chili et maïs** : le chili doux aux haricots rouges.
+- **Haricots rouges et maïs** : le chili doux aux haricots rouges.
 
 ## Comment manger plus de légumes secs sans se compliquer la vie ?
 

@@ -14,7 +14,7 @@ export default {
     photo: true,
     body: `
 @essentiel
-- Prévoir vos repas aide à préparer une liste d’achats adaptée.
+- Prévoir ses repas aide à préparer une liste d’achats adaptée.
 - Regardez le placard et le frigo avant de partir faire les courses.
 - Ne confondez pas DLC (« à consommer jusqu’au ») et DDM (« de préférence avant »).
 - Les restes deviennent une soupe ou un riz sauté.

@@ -38,9 +38,9 @@ Fin 2025, environ 10 % des surfaces agricoles françaises étaient cultivées en
 
 ## Quels produits bio acheter en premier ?
 
-- **Les légumes secs et les céréales** : en bio, riz, pâtes ou flocons d’avoine coûtent quelques dizaines de centimes de plus par portion, pas des euros.
+- **Les légumes secs et les céréales** : en bio, riz, pâtes ou flocons d’avoine coûtent quelques dizaines de centimes de plus par portion, et non plusieurs euros.
 - **Moins de viande** : en la remplaçant deux à cinq soirs par semaine par des lentilles, des pois chiches ou des haricots, vous pouvez dégager une marge pour certains achats bio, selon les produits et les prix de votre magasin.
-- **Des fruits et légumes de saison** : une courge, un chou ou des carottes bio en octobre sont abondants. Gardez notre [calendrier des fruits et légumes de saison](/blog/fruits-legumes-de-saison) sous la main.
+- **Des fruits et légumes de saison** : en octobre, courges, choux et carottes bio sont abondants. Gardez notre [calendrier des fruits et légumes de saison](/blog/fruits-legumes-de-saison) sous la main.
 - **Ce que vous mangez le plus** : le pain, les pommes de terre, les pommes, les produits pour les enfants.
 - **Des produits bruts** : comparez le coût des ingrédients avec celui du plat préparé pour choisir ce qui convient à votre budget.
 - **Le surgelé** : épinards, petits pois, haricots verts ou brocoli bio, avec des quantités faciles à prélever selon vos besoins.

@@ -1,6 +1,6 @@
 # Blog VégéBudget : consignes de l'article quotidien
 
-Un article par jour : un agent SEO étudie la concurrence et prépare un plan, un rédacteur écrit, puis l'agent SEO et un copywriter relisent (deux agents séparés, voulus par louis le 15/10/2026). Deux objectifs, dans cet ordre :
+Un article par jour : un agent SEO étudie la concurrence et prépare un plan, un rédacteur écrit, puis l'agent SEO et un copywriter relisent (deux agents séparés, voulus par louis le 15/10/2026), et un relecteur de français passe en dernier (voulu par louis le 15/10/2026). Deux objectifs, dans cet ordre :
 1. **Amener le plus de lecteurs** : être trouvé sur Google et cité par les assistants IA (ChatGPT, Perplexity, Gemini).
 2. **Transformer ces lecteurs en clients** : qu'ils cliquent sur « Créer mes menus gratuitement », puis passent à Premium (4,99 € par mois, ou offre fondateur 19 € par an pour les 100 premiers).
 
@@ -125,6 +125,18 @@ Le copywriter relit l'article comme un expert du référencement et de la conver
 - **Confiance** : chaque chiffre a sa source ; les prix viennent du site ; aucun fait douteux ; style conforme à la section 3 ; pas de remplissage ni de phrase creuse ; orthographe et typographie françaises.
 - Il rend un court compte rendu : ce qu'il a changé et pourquoi, et une note de 1 à 10 pour « trouvé sur Google » et « donne envie d'essayer ». En dessous de 7, le rédacteur reprend l'article et le copywriter relit à nouveau.
 
+## 7 bis. Le relecteur de français (agent séparé, en dernier)
+
+Choix de louis (15/10/2026) : les textes ne doivent jamais sonner comme une traduction de l'anglais. Un agent séparé, relecteur natif, relit tout ce qui sera publié **après** le copywriter et l'agent SEO : `title`, `seoTitle`, `description`, `lead`, `coverAlt`, le corps (y compris `@essentiel`, `@chiffres`, `@recette`, `@cta-court`, `@cta`, légendes et textes alternatifs des photos) et la FAQ. Ces textes servent aussi au carrousel Instagram (titre, introduction, lignes de l'essentiel, recettes) : les relire, c'est relire Instagram.
+
+Il **corrige directement le fichier**, en changeant le moins possible :
+- **Français naturel** : chaque phrase doit pouvoir être dite par un Français à table. Il chasse les calques de l'anglais (« faire du sens », « adresser un problème », « définitivement » pour « certainement », « réaliser que » pour « se rendre compte que », « impacter », « opportunité » pour « occasion », « basé sur », « au final », « en termes de »), l'ordre des mots à l'anglaise, les titres avec une majuscule à chaque mot, le « vous » ou le « votre » répété là où un Français ne le mettrait pas, les tournures robotiques ou trop scolaires.
+- **Orthographe et grammaire** : accords, conjugaison, participes passés, pluriels, genre des mots.
+- **Typographie française** : espace avant `?` `!` `:` `;`, guillemets « », apostrophe ’ dans le corps, virgule décimale, « 250 g », « 4,99 € ».
+- Il ne touche ni aux faits, ni aux chiffres, ni aux sources, ni aux appels `${cost(…)}` et autres, ni aux blocs, ni aux liens, ni au slug.
+
+Il rend la liste de ses corrections (avant → après) et une note de 1 à 10 « français naturel ». En dessous de 8, le rédacteur reprend les passages signalés et le relecteur relit à nouveau. `pnpm check:blog` refuse aussi automatiquement les calques les plus courants (liste dans `scripts/check-blog.mjs`).
+
 ## 8. L'agent SEO (agent séparé, deux passages)
 
 **Avant la rédaction : étude de la concurrence.** Il cherche la requête visée et ses variantes sur le web, ouvre les 5 premiers résultats et rend un plan au rédacteur :
@@ -145,5 +157,7 @@ Le rendu (balise title, meta description, canonical, image d'aperçu, un seul H1
 Il rend ce qu'il a changé et une note de 1 à 10 « SEO ». En dessous de 7, le rédacteur reprend l'article.
 
 ## 9. Avant de publier
+
+Le relecteur de français passe en dernier : si l'agent SEO ou le copywriter retouchent le texte après lui, il relit à nouveau les passages modifiés.
 
 `npx tsc --noEmit -p .`, `pnpm check:blog`, `pnpm check:planner`, puis `rm -rf .next && pnpm build && pnpm check:api`. Tout doit passer. Ensuite pull request, puis fusion dans `main` : le serveur met le site à jour tout seul.

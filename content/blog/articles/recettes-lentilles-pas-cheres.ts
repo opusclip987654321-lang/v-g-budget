@@ -6,7 +6,7 @@ export default {
   title: 'Recettes de lentilles pas chères : 6 dîners faciles et leur coût',
   seoTitle: 'Recettes de lentilles pas chères : 6 dîners et leur coût',
   description: 'Recettes de lentilles pas chères pour le dîner : curry, bolognaise, velouté, salade, galettes. Le coût par portion de chacune et 5 astuces pour payer moins.',
-  lead: `Pour un dîner sans viande pas cher, les lentilles sèches sont un des meilleurs choix : une portion coûte environ ${amountPrice('green-lentils', 70)} en lentilles vertes et ${amountPrice('red-lentils', 70)} en lentilles corail. Voici 6 recettes faciles pour le soir, avec le prix de chacune.`,
+  lead: `Pour un dîner sans viande pas cher, les lentilles sèches sont l’un des meilleurs choix : une portion coûte environ ${amountPrice('green-lentils', 70)} en lentilles vertes et ${amountPrice('red-lentils', 70)} en lentilles corail. Voici 6 recettes faciles pour le soir, avec le prix de chacune.`,
   category: 'Recettes',
   keywords: ['recette lentilles pas cher', 'recettes de lentilles pas chères', 'recettes avec des lentilles', 'lentilles corail recette', 'lentilles vertes recette', 'quantité de lentilles par personne', 'dîner pas cher'],
   date: '2026-10-15',
@@ -17,9 +17,9 @@ export default {
 - 6 dîners aux lentilles de ${cost('salade-lentilles')} à ${cost('galettes-lentilles')} la portion (ingrédients).
 - Lentilles corail : cuisson rapide, pour les currys et les soupes.
 - Lentilles vertes : elles gardent leur forme, pour les salades et les plats mijotés.
-- Un paquet de 500 g fait plusieurs dîners.
+- Un paquet de 500 g suffit pour plusieurs dîners.
 
-@chiffres ${amountPrice('green-lentils', 70)} | la portion de lentilles vertes ; 10 min | de cuisson pour les corail ; 2 fois | par semaine, conseil Manger Bouger
+@chiffres ${amountPrice('green-lentils', 70)} | la portion de lentilles vertes ; 10 min | de cuisson pour les lentilles corail ; 2 fois | par semaine, conseil Manger Bouger
 
 ## Quelles recettes de lentilles pas chères faire pour le dîner ?
 
@@ -87,7 +87,7 @@ Manger Bouger conseille des légumes secs (lentilles, haricots, pois chiches…)
     ['Combien coûte une portion de lentilles ?', `Avec les prix relevés pour notre site, 70 g de lentilles vertes sèches (une portion pour un plat principal) coûtent environ ${amountPrice('green-lentils', 70)}, et 70 g de lentilles corail environ ${amountPrice('red-lentils', 70)}. Les prix varient selon le magasin.`],
     ['Faut-il faire tremper les lentilles ?', 'Pas toujours. Pour les légumes secs, Manger Bouger indique que le trempage est parfois nécessaire et que les lentilles corail cuisent en 10 minutes environ. Le plus simple : suivre les indications du paquet.'],
     ['Quelle quantité de lentilles par personne ?', 'Dans nos recettes, on compte de 50 à 85 g de lentilles sèches par personne pour un plat principal, 70 g le plus souvent, avec des légumes et souvent du riz ou des pâtes.'],
-    ['Lentilles corail ou vertes : quelle différence ?', 'Les lentilles corail cuisent vite et se défont : elles conviennent aux soupes, currys et sauces. Les lentilles vertes gardent leur forme : elles conviennent aux salades, aux plats mijotés et aux galettes.'],
+    ['Lentilles corail ou vertes : quelle différence ?', 'Les lentilles corail cuisent vite et se défont : elles conviennent aux soupes, aux currys et aux sauces. Les lentilles vertes gardent leur forme : elles conviennent aux salades, aux plats mijotés et aux galettes.'],
   ],
   sources: [
     ['Augmenter les légumes secs (Manger Bouger, Santé publique France)', 'https://www.mangerbouger.fr/l-essentiel/les-recommandations-sur-l-alimentation-l-activite-physique-et-la-sedentarite/augmenter/augmenter-les-legumes-secs'],

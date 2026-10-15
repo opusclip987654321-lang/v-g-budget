@@ -45,13 +45,13 @@ Un produit en circuit court n’est **pas forcément bio**. Le plus simple : dem
 
 ![Panier de légumes de producteur avec un chou, une courge, des poireaux et des carottes](/images/blog/circuit-court-panier.jpg "Un panier de légumes de saison, acheté en direct.")
 
-1. **Le marché** : choisissez les stands de producteurs plutôt que de revendeurs (peu de variétés, des produits de saison).
+1. **Le marché** : choisissez les stands de producteurs plutôt que ceux des revendeurs (on les reconnaît à leur choix plus restreint, uniquement de saison).
 2. **L’AMAP** : vous vous engagez sur une saison et recevez un panier chaque semaine, à un prix fixé à l’avance avec le producteur.
 3. **La vente à la ferme** : souvent la moins chère, surtout pour les pommes de terre, les pommes ou les œufs.
 4. **Les magasins de producteurs** : tenus par plusieurs fermes qui se relaient.
 5. **Les plateformes en ligne** : elles regroupent des producteurs locaux, avec un retrait chaque semaine.
 6. **La cueillette à la ferme** : vous ramassez vous-même, c’est souvent moins cher.
-7. **Certains rayons de supermarché** : ils achètent directement aux producteurs de la région.
+7. **Certains rayons de supermarché** : le magasin y vend des produits achetés directement aux producteurs de la région.
 
 @cta-court Un panier de légumes à cuisiner dans la semaine : VégéBudget compose vos dîners selon votre budget en tenant compte des ingrédients que vous avez déjà.
 
@@ -93,7 +93,7 @@ Coût estimé des ingrédients utilisés, par portion : prix relevés le 7 octob
     faq: [
       ['Quelle est la définition d’un circuit court ?', 'Un mode de vente avec au maximum un intermédiaire entre le producteur et le consommateur, selon la définition officielle reprise par la DGCCRF. Il n’y a pas de critère de distance.'],
       ['Un produit en circuit court est-il forcément local ?', 'Non. La définition ne fixe aucune distance. Dans les faits, la plupart des circuits courts sont locaux, mais ce n’est pas garanti.'],
-      ['Un produit en circuit court est-il bio ?', 'Pas forcément. Certains petits producteurs travaillent sans pesticides sans avoir le label, d’autres non. Le mieux est de demander au producteur comment il travaille.'],
+      ['Un produit en circuit court est-il bio ?', 'Pas forcément. Certains petits producteurs n’ont pas le label mais travaillent sans pesticides, d’autres non. Le mieux est de demander au producteur comment il travaille.'],
       ['Où trouver une AMAP près de chez moi ?', 'Les réseaux régionaux d’AMAP publient des annuaires (par exemple amap-idf.org en Île-de-France). Pour la vente à la ferme, le site Bienvenue à la ferme permet de chercher un producteur par produit et par commune.'],
     ],
     sources: [

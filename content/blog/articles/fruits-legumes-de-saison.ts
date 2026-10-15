@@ -46,7 +46,7 @@ Ces repères concernent la France métropolitaine. La disponibilité varie selon
 
 ![Une courge butternut, un petit potiron, des champignons de Paris et un chou vert sur un plan de travail en bois](/images/blog/fruits-legumes-de-saison-octobre.jpg "Courges, champignons et chou : le panier d’octobre.")
 
-Exemple pour le mois d’octobre : c’est la saison des **courges**, des **choux** et des **champignons**, et la fin des tomates. Une courge coûte ${kiloPrice('squash')} dans nos relevés et sert pour plusieurs dîners.
+Prenons octobre : c’est la saison des **courges**, des **choux** et des **champignons**, et la fin des tomates. Une courge coûte ${kiloPrice('squash')} dans nos relevés et sert pour plusieurs dîners.
 
 @recette courge-lentilles | Courge et lentilles corail cuites ensemble, puis mixées. Une soupe épaisse qui fait un vrai dîner.
 
@@ -75,7 +75,7 @@ Pour acheter auprès des producteurs, voyez notre guide du [circuit court](/blog
 ## Et hors saison : surgelés ou conserves ?
 
 - **Légumes surgelés** : épinards, petits pois, haricots verts ou brocoli sont cueillis et congelés en pleine saison.
-- **Petites quantités** : les surgelés peuvent être utilisés par petites quantités, selon vos besoins.
+- **Petites quantités** : avec les surgelés, vous ne prenez que ce dont vous avez besoin.
 - **Tomates en conserve** : pratiques en hiver pour les sauces.
 
 Dans nos relevés, les épinards surgelés coûtent ${kiloPrice('spinach')} et les petits pois surgelés ${kiloPrice('peas')}. Pour utiliser tout ce que vous achetez, lisez nos conseils pour [moins gaspiller à la maison](/blog/gaspillage-alimentaire).
@@ -88,7 +88,7 @@ Dans nos relevés, les épinards surgelés coûtent ${kiloPrice('spinach')} et l
       ['Quels légumes sont de saison en octobre ?', 'En octobre : courges et potirons, brocoli, chou-fleur, épinards, poireaux, céleri, champignons, ainsi que les pommes de terre, carottes et oignons.'],
       ['Quels fruits sont de saison en hiver ?', 'Pommes, poires, kiwis et agrumes (oranges, clémentines, pamplemousses).'],
       ['Quels légumes trouve-t-on toute l’année ?', 'Les pommes de terre, oignons, ail, carottes et choux se conservent ou se récoltent presque toute l’année en France métropolitaine.'],
-      ['Les légumes surgelés sont-ils aussi bons que les frais ?', 'Sur le plan nutritionnel, ils sont proches : ils sont congelés juste après la récolte. Ils peuvent aussi être utilisés par petites quantités, selon vos besoins.'],
+      ['Les légumes surgelés sont-ils aussi bons que les frais ?', 'Sur le plan nutritionnel, ils sont proches : ils sont congelés juste après la récolte. On peut aussi n’en prendre que la quantité nécessaire.'],
     ],
     sources: [
       ['Fruits et légumes de saison, mois par mois (Impact CO₂, Ademe)', 'https://impactco2.fr/outils/fruitsetlegumes'],
