@@ -1,8 +1,8 @@
 'use client';
 import { useState } from 'react';
-import type { Publication } from '@/lib/instagram';
+import type { Publication, Stats } from '@/lib/instagram';
 
-type Item = { slug: string; title: string; date: string; slides: number; caption: string; publication: Publication | null };
+type Item = { slug: string; title: string; date: string; slides: number; caption: string; publication: Publication | null; stats: Stats | null };
 
 async function send(payload: unknown) {
   const res = await fetch('/api/instagram', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
@@ -45,6 +45,7 @@ export function InstagramAdmin({ username, expiresAt, next, articles }: { userna
             ? (a.publication.permalink ? <a href={a.publication.permalink} target="_blank" rel="noopener">Publié le {new Date(a.publication.at).toLocaleDateString('fr-FR')}</a> : <span>Publié le {new Date(a.publication.at).toLocaleDateString('fr-FR')}</span>)
             : username && <button type="button" disabled={busy} onClick={() => confirm(`Publier « ${a.title} » sur Instagram maintenant ?`) && run({ action: 'publier', slug: a.slug }, 'Carrousel publié sur Instagram.')}>Publier maintenant</button>}
         </p>
+        {a.stats && <p style={{ margin: '4px 0 0', color: '#5f6b64' }}>{`${a.stats.reach ?? 0} comptes touchés · ${a.stats.saved ?? 0} enregistrements · ${a.stats.shares ?? 0} partages · ${a.stats.likes ?? 0} j’aime · ${a.stats.follows ?? 0} abonnés gagnés`}</p>}
         {open === a.slug && <div>
           <div style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '12px 0' }}>
             {Array.from({ length: a.slides }, (_, i) => <a key={i} href={`/api/instagram/image/${a.slug}/${i + 1}.jpg`} target="_blank" rel="noopener"><img src={`/api/instagram/image/${a.slug}/${i + 1}.jpg`} alt={`Image ${i + 1}`} width={162} height={203} loading="lazy" style={{ borderRadius: 8, border: '1px solid #eee' }} /></a>)}

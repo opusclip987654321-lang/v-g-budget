@@ -1,6 +1,6 @@
 import { timingSafeEqual } from 'node:crypto';
 import { json, failure, ApiError, siteOrigin, readSetting, writeSetting } from '@/lib/server';
-import { connection, nextArticle, parisNow, publications, publish } from '@/lib/instagram';
+import { connection, nextArticle, parisNow, publications, publish, refreshStats } from '@/lib/instagram';
 export const dynamic = 'force-dynamic';
 
 // Publication automatique du carrousel Instagram du jour, appelée chaque heure par scripts/mise-a-jour-auto.sh :
@@ -18,6 +18,8 @@ function authorized(request: Request) {
 export async function POST(request: Request) { try {
   if (!authorized(request)) throw new ApiError(401, 'Accès refusé.');
   if (!await connection()) return json({ ok: true, rien: 'Instagram n’est pas connecté.' });
+  // Chiffres des carrousels déjà publiés, pour le bilan (au plus toutes les 6 heures).
+  await refreshStats().catch(e => console.error('Instagram stats', e instanceof Error ? e.message : e));
   const { date, hour } = parisNow();
   if (hour < Number(process.env.INSTAGRAM_HEURE ?? 18)) return json({ ok: true, rien: 'Pas encore l’heure.' });
   const done = await publications();

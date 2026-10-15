@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { blogCoverJpg, blogPath, sortedArticles, findArticle, type Article } from './blog';
-import { findRecipe, portionCost, recipeImage } from './seo';
+import { findRecipe, portionCost, recipeImage, recipeIngredients } from './seo';
 import { money } from './planner';
 import { readSetting, writeSetting } from './server';
 
@@ -12,59 +12,70 @@ import { readSetting, writeSetting } from './server';
 // Connexion et publication à la main : page /instagram (réservée au propriétaire du site).
 
 export type Slide =
-  | { kind: 'couverture'; title: string; category: string; image: string }
-  | { kind: 'essentiel'; lines: string[] }
-  | { kind: 'chiffres'; items: [string, string][] }
-  | { kind: 'recette'; title: string; text: string; minutes: number; price: string; image: string }
+  | { kind: 'couverture'; title: string; pill: string; image: string }
+  | { kind: 'essentiel'; items: [string, string][]; lines: string[] }
+  | { kind: 'recette'; title: string; text: string; minutes: number; price: string; image: string; ingredients: [string, string][] }
   | { kind: 'fin'; path: string };
 
 // Texte brut : sans gras ni liens markdown.
 export const plain = (s: string) => s.replace(/\*\*(.+?)\*\*/g, '$1').replace(/\[([^\]]+)\]\([^)\s]+\)/g, '$1').trim();
 const sentences = (s: string) => plain(s).split(/(?<=[.!?])\s+(?=[A-ZÀ-Ý«])/).filter(Boolean);
 
-// 10 images au plus par carrousel : couverture, l'essentiel, les chiffres, 1 à 6 recettes, la fin.
+function recipesOf(a: Article) {
+  const out: { id: string; text: string }[] = [];
+  for (const b of a.body.trim().split(/\n\s*\n/).map(x => x.trim())) {
+    if (b.startsWith('@recette ')) { const [id, text = ''] = b.slice(9).split('|').map(x => x.trim()); out.push({ id, text: plain(text) }); }
+    if (b.startsWith('@recettes ')) for (const id of b.slice(10).split(',').map(x => x.trim())) out.push({ id, text: '' });
+  }
+  const seen = new Set<string>();
+  return out.filter(r => !seen.has(r.id) && seen.add(r.id)).flatMap(({ id, text }) => { const r = findRecipe(id); return r ? [{ r, text }] : []; });
+}
+
+// Format choisi après la veille du 15/10/2026 (voir content/instagram/BILANS.md) : 9 images au plus.
+// 1 couverture avec une promesse chiffrée ; 2 accroche (chiffres clés + l'essentiel), car Instagram remontre
+// souvent un carrousel à partir de l'image 2 ; puis une recette par image avec ses ingrédients (ce qu'on enregistre) ; la fin.
 export function slidesFor(a: Article): Slide[] {
   const blocks = a.body.trim().split(/\n\s*\n/).map(b => b.trim());
   const essentiel = blocks.find(b => b.startsWith('@essentiel'));
   const lines = essentiel ? essentiel.split('\n').slice(1).map(l => plain(l.replace(/^- /, ''))).filter(Boolean) : sentences(a.lead).slice(0, 3);
   const chiffres = blocks.find(b => b.startsWith('@chiffres '));
   const items = chiffres ? chiffres.slice(10).split(';').map(x => x.split('|').map(s => plain(s)) as [string, string]).filter(x => x[0] && x[1]).slice(0, 3) : [];
-  const recipes: { id: string; text: string }[] = [];
-  for (const b of blocks) {
-    if (b.startsWith('@recette ')) { const [id, text = ''] = b.slice(9).split('|').map(s => s.trim()); recipes.push({ id, text: plain(text) }); }
-    if (b.startsWith('@recettes ')) for (const id of b.slice(10).split(',').map(s => s.trim())) recipes.push({ id, text: '' });
-  }
-  const seen = new Set<string>();
-  const recipeSlides: Slide[] = recipes.filter(r => !seen.has(r.id) && seen.add(r.id)).flatMap(({ id, text }) => {
-    const r = findRecipe(id);
-    return r ? [{ kind: 'recette' as const, title: r.title, text: text || r.description, minutes: r.minutes, price: money(portionCost(r)), image: recipeImage(r) }] : [];
-  });
-  const head: Slide[] = [{ kind: 'couverture', title: a.title, category: a.category, image: blogCoverJpg(a) }];
-  if (lines.length) head.push({ kind: 'essentiel', lines: lines.slice(0, 4) });
-  if (items.length) head.push({ kind: 'chiffres', items });
-  return [...head, ...recipeSlides.slice(0, 9 - head.length), { kind: 'fin', path: blogPath(a) }];
+  const hasIntro = lines.length > 0 || items.length > 0;
+  const shown = recipesOf(a).slice(0, hasIntro ? 6 : 7);
+  // Accroche chiffrée de la couverture : le prix par part le plus bas parmi les recettes montrées.
+  const low = shown.length ? money(Math.min(...shown.map(({ r }) => portionCost(r)))) : null;
+  const recipeSlides: Slide[] = shown.map(({ r, text }) => ({
+    kind: 'recette' as const, title: r.title, text: sentences(text || r.description)[0] ?? '', minutes: r.minutes, price: money(portionCost(r)), image: recipeImage(r),
+    ingredients: recipeIngredients(r).filter(i => !/^(sel|poivre|eau)\b/i.test(i.name)).slice(0, 8).map(i => [i.name.split(',')[0], i.amount] as [string, string]),
+  }));
+  const head: Slide[] = [{ kind: 'couverture', title: a.title, pill: low ? `Dès ${low} la part` : a.category, image: blogCoverJpg(a) }];
+  if (hasIntro) head.push({ kind: 'essentiel', items, lines: lines.slice(0, 3) });
+  return [...head, ...recipeSlides, { kind: 'fin', path: blogPath(a) }];
 }
 
+// 5 hashtags au plus : Instagram n'en accepte plus davantage. Les mots-clés de la légende comptent plus pour la recherche.
 const hashtags: Record<string, string[]> = {
-  Recettes: ['#recettevégétarienne', '#dînerrapide', '#idéerepas'],
-  Budget: ['#économies', '#listedecourses', '#budgetfamille'],
-  'Bio et local': ['#bio', '#circuitcourt', '#mangerlocal'],
-  Saisons: ['#fruitsetlégumesdesaison', '#cuisinedesaison', '#produitsdesaison'],
-  Nutrition: ['#protéinesvégétales', '#alimentationsaine', '#nutrition'],
-  'Bien-être animal': ['#bienêtreanimal', '#consommerresponsable', '#moinsdeviande'],
+  Recettes: ['#recettevégétarienne', '#idéerepas'],
+  Budget: ['#budgetcourses', '#menudelasemaine'],
+  'Bio et local': ['#bio', '#circuitcourt'],
+  Saisons: ['#cuisinedesaison', '#recettevégétarienne'],
+  Nutrition: ['#protéinesvégétales', '#recettevégétarienne'],
+  'Bien-être animal': ['#bienêtreanimal', '#moinsdeviande'],
 };
 
 export function captionFor(a: Article) {
-  const lines = (slidesFor(a).find(s => s.kind === 'essentiel') as Extract<Slide, { kind: 'essentiel' }> | undefined)?.lines ?? [];
-  const tags = ['#mangerpascher', '#petitbudget', '#recettepascher', '#sansviande', '#recettefacile', '#menudelasemaine', '#budgetcourses', ...(hashtags[a.category] ?? [])];
+  const slides = slidesFor(a);
+  const s = slides.find(x => x.kind === 'essentiel') as Extract<Slide, { kind: 'essentiel' }> | undefined;
+  const pill = (slides[0] as Extract<Slide, { kind: 'couverture' }>).pill;
+  const low = pill.startsWith('Dès ') ? pill.slice(4, -8) : null;
+  const tags = ['#recettepascher', '#petitbudget', '#mangerpascher', ...(hashtags[a.category] ?? ['#recettevégétarienne', '#sansviande'])];
   return [
-    `${plain(a.title)} 👇`,
-    plain(a.lead),
-    lines.length ? `L’essentiel :\n${lines.map(l => `• ${l}`).join('\n')}` : '',
-    'Glissez pour les recettes et les prix 👉 Enregistrez la publication pour la retrouver ce soir 📌',
-    `L’article complet est sur notre site, lien dans la bio (vegebudget.fr${blogPath(a)}).`,
-    'VégéBudget prépare vos dîners sans viande de la semaine selon votre budget, avec la liste de courses. Première semaine gratuite, sans compte ni carte bancaire.',
-    tags.join(' '),
+    `${plain(a.title)}${low ? `, dès ${low} la part` : ''} 👇`,
+    s?.lines.length ? s.lines.map(l => `• ${l}`).join('\n') : plain(a.lead),
+    '📌 Enregistrez pour le jour des courses, et envoyez-la à la personne avec qui vous faites les courses.',
+    `Toutes les recettes et la liste de courses avec le coût estimé : lien dans la bio (vegebudget.fr${blogPath(a)}).`,
+    'VégéBudget prépare vos dîners sans viande selon votre budget. Première semaine gratuite.',
+    tags.slice(0, 5).join(' '),
   ].filter(Boolean).join('\n\n').slice(0, 2200);
 }
 
@@ -159,4 +170,33 @@ export function parisNow(now = new Date()) {
 export function nextArticle(done: Record<string, Publication>, today: string) {
   const since = new Date(Date.parse(`${today}T12:00:00Z`) - 6 * 86400000).toISOString().slice(0, 10);
   return sortedArticles().find(a => a.date <= today && a.date >= since && !done[a.slug]);
+}
+
+// ---- Bilan des carrousels (relu tous les 3 jours par une tâche programmée de Claude) ----
+
+export type Stats = Record<string, number>;
+const METRICS = ['reach', 'views', 'saved', 'shares', 'likes', 'comments', 'total_interactions', 'follows', 'profile_visits'];
+const SAFE_METRICS = ['reach', 'saved', 'shares', 'likes', 'comments'];
+
+async function mediaStats(c: Connection, mediaId: string): Promise<Stats> {
+  const read = async (metrics: string[]) => {
+    const r = await graph<{ data: { name: string; values?: { value: number }[]; total_value?: { value: number } }[] }>(`${mediaId}/insights`, { metric: metrics.join(','), access_token: c.token });
+    return Object.fromEntries(r.data.map(m => [m.name, m.total_value?.value ?? m.values?.[0]?.value ?? 0]));
+  };
+  // Si Instagram retire un indicateur, on se rabat sur ceux qui existent depuis longtemps.
+  return read(METRICS).catch(() => read(SAFE_METRICS));
+}
+
+// Relève les chiffres de chaque carrousel publié (au plus toutes les 6 heures), pour /api/instagram/bilan.
+export async function refreshStats(force = false) {
+  const saved = await readSetting<{ at: number; posts: Record<string, Stats>; followers?: number } | null>('instagram_stats', null);
+  if (!force && saved && Date.now() - saved.at < 6 * 3600000) return saved;
+  const c = await freshConnection();
+  if (!c) return saved;
+  const posts: Record<string, Stats> = {};
+  for (const [slug, p] of Object.entries(await publications())) posts[slug] = await mediaStats(c, p.mediaId).catch(() => saved?.posts[slug] ?? {});
+  const account = await graph<{ followers_count?: number }>('me', { fields: 'followers_count', access_token: c.token }).catch(() => ({ followers_count: saved?.followers }));
+  const next = { at: Date.now(), posts, followers: account.followers_count };
+  await writeSetting('instagram_stats', next);
+  return next;
 }
