@@ -6,7 +6,6 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 
 ## À faire
 
-- [ ] recettes avec des lentilles pas chères | Recettes | 10 dîners avec le coût par portion du site, lentilles corail, vertes, en conserve
 - [ ] repas pas cher pour 2 | Budget | idées de dîners avec le coût par portion réel, comment garder la note basse
 - [ ] liste de courses pas chère pour la semaine | Budget | une liste type pour 5 dîners, paquets entiers vs portions, le placard d'abord
 - [ ] courge et potimarron recettes faciles | Saisons | courge de saison, comment la cuisiner, recettes du site | octobre-novembre
@@ -43,3 +42,5 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [ ] résolutions : manger mieux sans dépenser plus | Budget | idées simples pour janvier | fin décembre-janvier
 
 ## Publiés
+
+- [x] recettes avec des lentilles pas chères | Recettes | publié 2026-10-15 → /blog/recettes-lentilles-pas-cheres
