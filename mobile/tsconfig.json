@@ -1,0 +1,28 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "types": [
+      "jest"
+    ]
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "../lib/planner.ts",
+    "../lib/catalog.ts",
+    "../lib/region.ts",
+    "../lib/region-prices.ts",
+    "../lib/pricing.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist-check",
+    "dist-check-web"
+  ]
+}
