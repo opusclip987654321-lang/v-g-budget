@@ -16,7 +16,7 @@ export async function GET() {
     '## Pages principales',
     `- [Accueil et application](${origin}/): créer ses menus gratuitement`,
     `- [Comment ça marche, prix et questions fréquentes](${origin}/comment-ca-marche)`,
-    `- [Les 24 recettes avec leur coût par portion](${origin}/recettes)`,
+    `- [Les ${recipes.length} recettes avec leur coût par portion](${origin}/recettes)`,
     `- [Le blog : bio, circuit court, saisons, bien-être animal, budget](${origin}/blog)`,
     '',
     '## Questions fréquentes',

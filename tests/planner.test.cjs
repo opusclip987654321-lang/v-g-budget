@@ -1,6 +1,6 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
-const {blankState,shopping,totals,generatePlan,isEligible,checkedForWeek,recordPurchases,weeklyBudget,cookMeal,portionStep,stepMinutes,challengeProgress,awardChallenges}=require('../.sites-runtime/planner-test/planner.js');
+const {recipeCost,blankState,shopping,totals,generatePlan,isEligible,checkedForWeek,recordPurchases,weeklyBudget,cookMeal,portionStep,stepMinutes,challengeProgress,awardChallenges}=require('../.sites-runtime/planner-test/planner.js');
 const {recipes,ingredients}=require('../.sites-runtime/planner-test/catalog.js');
 const entry=(recipeId,servings=2)=>({id:recipeId,recipeId,date:'2026-10-05',servings,cooked:false,locked:false});
 
@@ -74,4 +74,25 @@ test('legume challenge requires an actual lentil, chickpea or bean dish and awar
  const state=blankState();state.joinedChallenges=['one-discovery'];const plan={id:'x',weekStart:'2026-10-05',name:'Test',createdAt:new Date().toISOString(),entries:[{...entry('soupe-petits-pois'),cooked:true}]};assert.equal(challengeProgress(state,plan,'one-discovery'),0);
  plan.entries=[{...entry('curry-corail'),cooked:true}];const awarded=awardChallenges(state,plan);assert.equal(awarded.challengeAwards.length,1);assert.equal(awardChallenges(awarded,plan).challengeAwards.length,1);const later={...plan,weekStart:'2026-10-12',entries:[]};assert.equal(awardChallenges(awarded,later).challengeAwards.length,1);
 });
-test('all catalogue recipes have valid image assets and adaptable quantities',()=>{assert.equal(recipes.length,24);for(const r of recipes){assert.ok(r.image);if(r.imageTile){assert.ok(r.imageTile.column<r.imageTile.columns);assert.ok(r.imageTile.row<r.imageTile.rows);}for(const step of r.steps)assert.ok(!/\d+ ml/.test(step.replace(/\{[^}]+\}/g,'')),`${r.id}: unscaled liquid quantity`);}});
+test('all catalogue recipes have valid image assets and adaptable quantities',()=>{assert.ok(recipes.length>=24);for(const r of recipes){assert.ok(r.image);if(r.imageTile){assert.ok(r.imageTile.column<r.imageTile.columns);assert.ok(r.imageTile.row<r.imageTile.rows);}for(const step of r.steps)assert.ok(!/\d+ ml/.test(step.replace(/\{[^}]+\}/g,'')),`${r.id}: unscaled liquid quantity`);}});
+test('every catalogue recipe follows the recipe rules (content/recettes/CONSIGNES.md)',()=>{
+ const fs=require('node:fs');const categories=['Express','Bols','Mijotés','Pâtes','Salades','Poêlées','Soupes','Au four'];
+ const ids=new Set();const titles=new Set();
+ for(const r of recipes){
+  assert.match(r.id,/^[a-z0-9-]+$/,`${r.id}: identifiant`);assert.ok(!ids.has(r.id),`${r.id}: identifiant en double`);ids.add(r.id);
+  assert.ok(!titles.has(r.title.toLowerCase()),`${r.id}: titre en double`);titles.add(r.title.toLowerCase());
+  assert.ok(categories.includes(r.category),`${r.id}: catégorie inconnue`);
+  assert.ok(r.minutes>=10&&r.minutes<=40,`${r.id}: 10 à 40 minutes`);
+  assert.ok(r.steps.length>=3&&r.steps.length<=5,`${r.id}: 3 à 5 étapes`);
+  assert.ok(r.description.length>=20&&r.description.length<=90,`${r.id}: description de 20 à 90 caractères`);
+  assert.ok(r.tip.length>=20,`${r.id}: astuce manquante`);
+  for(const x of r.ingredients){assert.ok(ingredients.some(i=>i.id===x.id),`${r.id}: ingrédient inconnu ${x.id}`);assert.ok(x.qty>0,`${r.id}: quantité nulle`);}
+  const perPortion=recipeCost(r)/2;assert.ok(perPortion<=2,`${r.id}: ${perPortion.toFixed(2)} € par portion, au-delà de 2 €`);
+  const gluten=r.ingredients.some(x=>ingredients.find(i=>i.id===x.id).allergens.includes('Gluten'));
+  if(r.tags.includes('Sans gluten'))assert.ok(!gluten,`${r.id}: « Sans gluten » avec un ingrédient qui en contient`);
+  if(r.tags.includes('Moins de 25 min'))assert.ok(r.minutes<=25,`${r.id}: « Moins de 25 min » mais ${r.minutes} min`);
+  if(r.category==='Au four')assert.ok(r.tags.includes('Au four'),`${r.id}: étiquette « Au four »`);
+  assert.ok(fs.existsSync(`public/images/recettes/${r.id}.jpg`),`${r.id}: photo public/images/recettes/${r.id}.jpg manquante`);
+  assert.ok(r.image&&fs.existsSync(`public${r.image}`),`${r.id}: image de l’appli manquante`);
+ }
+});
