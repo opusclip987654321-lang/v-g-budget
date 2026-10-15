@@ -10,6 +10,8 @@ import sharp from 'sharp';
 
 // Lance le site construit (next start) avec une base et un dossier de photos
 // temporaires. Aucun service déployé, compte réel ni prestataire de paiement n'est contacté.
+// Nombre de recettes du catalogue (de nouvelles recettes s'ajoutent chaque semaine, voir content/recettes/CONSIGNES.md).
+const catalogSize=[...readFileSync('lib/catalog.ts','utf8').matchAll(/^\s*r\('[a-z0-9-]+'/gm)].length;
 const port=4173+Math.floor(Math.random()*500);
 const origin=`http://127.0.0.1:${port}`;
 const dataDir=mkdtempSync(join(tmpdir(),'vegebudget-check-'));
@@ -40,7 +42,7 @@ const api=(action,user,data)=>request('/api/app'+(data===undefined?'?action='+ac
 try{
  await startServer();let db=openDb();
  const page=await request('/');check(page.status,200,'server render');assert.match(page.body,/VégéBudget/);checks++;const appPage=await request('/app');check(appPage.status,200,'app render');
- const bootstrap=await api('bootstrap');check(bootstrap.status,200,'anonymous bootstrap');check(bootstrap.body.catalog.recipes.length,24,'initial catalogue');check(bootstrap.body.billingReady,false,'billing closed');
+ const bootstrap=await api('bootstrap');check(bootstrap.status,200,'anonymous bootstrap');check(bootstrap.body.catalog.recipes.length,catalogSize,'initial catalogue');check(bootstrap.body.billingReady,false,'billing closed');
  check((await api('state',undefined,{state:bootstrap.body.state,revision:0})).status,401,'anonymous write blocked');
  check((await request('/api/app',undefined,null)).status,400,'null JSON rejected');
  const early=await api('bootstrap',member);check(early.body.admin,false,'first public member cannot initialize administration');check((await api('posts')).status,401,'anonymous visitors cannot read member publications');const o=await api('bootstrap',owner);check(o.body.admin,true,'private owner administrator');
@@ -109,7 +111,7 @@ try{
  await api('catalog',owner,{prices:{rice:3.4}});check((await api('bootstrap',owner)).body.catalog.ingredients.find(i=>i.id==='rice').price,3.4,'shared price persists');
  const edited={...bootstrap.body.catalog.recipes[0],title:'Curry de test'};
  check((await api('catalog',owner,{recipe:edited})).status,200,'recipe editing');check((await api('bootstrap',owner)).body.catalog.recipes.find(r=>r.id===edited.id).title,edited.title,'recipe change read back');
- await api('catalog',owner,{toggleRecipe:edited.id});check((await api('bootstrap',owner)).body.catalog.recipes.length,23,'hidden recipe excluded');
+ await api('catalog',owner,{toggleRecipe:edited.id});check((await api('bootstrap',owner)).body.catalog.recipes.length,catalogSize-1,'hidden recipe excluded');
  await api('catalog',owner,{toggleRecipe:edited.id});
  await stopServer();await startServer({BILLING_ENABLED:'true',STRIPE_SECRET_KEY:'local-test-unused',STRIPE_PRICE_ID:'local-test-unused',STRIPE_WEBHOOK_SECRET:'local-test-unused'});
  check((await api('bootstrap',member)).body.billingReady,false,'payment credentials alone cannot open sales');check((await request('/api/billing',member,{action:'checkout'})).status,503,'checkout stays closed without publisher information');
