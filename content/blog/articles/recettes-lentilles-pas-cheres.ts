@@ -10,7 +10,8 @@ export default {
   category: 'Recettes',
   keywords: ['recette lentilles pas cher', 'recettes de lentilles pas chères', 'recettes avec des lentilles', 'lentilles corail recette', 'lentilles vertes recette', 'quantité de lentilles par personne', 'dîner pas cher'],
   date: '2026-10-15',
-  coverAlt: 'Une casserole de lentilles, un paquet de lentilles et des carottes',
+  coverAlt: 'Une casserole de lentilles corail aux tomates, un paquet de lentilles et des carottes',
+  photo: true,
   body: `
 ## Combien coûte une portion de lentilles ?
 
