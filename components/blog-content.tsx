@@ -1,11 +1,14 @@
 import Link from 'next/link';
 import { Fragment, type ReactNode } from 'react';
-import { Cta, RecipeCard } from './public-shell';
+import { Cta, CtaInline, RecipeCard, RecipeFeature } from './public-shell';
 import { anchor } from '@/lib/blog';
 
 // Mise en page des articles du blog, écrits en markdown simple :
 // « ## titre », listes « - » et « 1. », tableaux « | a | b | », encadré « > », image « ![texte](/chemin "légende") »,
-// et trois lignes spéciales : « @video ID | titre | chaîne », « @recettes id1, id2 », « @cta accroche ».
+// et des blocs spéciaux pour que l'article reste visuel :
+// « @essentiel » suivi de lignes « - » (l'essentiel en haut de l'article), « @chiffres valeur | libellé ; valeur | libellé »,
+// « @recette id | phrase » (grande carte avec photo), « @recettes id1, id2 » (grille de cartes), « @video ID | titre | chaîne »,
+// « @cta-court accroche » (bandeau d'essai au fil du texte) et « @cta accroche » (grand encadré final).
 // Tout est rendu en éléments React : aucun HTML brut n'est injecté.
 
 export function inline(text: string): ReactNode[] {
@@ -40,6 +43,10 @@ export function BlogContent({ body }: { body: string }) {
     if (b.startsWith('### ')) return <h3 key={n}>{inline(b.slice(4))}</h3>;
     if (b.startsWith('## ')) return <h2 key={n} id={anchor(b.slice(3))}>{inline(b.slice(3))}</h2>;
     if (b.startsWith('@video ')) { const [id, title, channel] = b.slice(7).split('|').map(s => s.trim()); return <Video key={n} id={id} title={title} channel={channel} />; }
+    if (lines[0] === '@essentiel') return <aside key={n} className="blog-essentiel"><strong>L’essentiel</strong><ul>{lines.slice(1).map((l, i) => <li key={i}>{inline(l.replace(/^- /, ''))}</li>)}</ul></aside>;
+    if (b.startsWith('@chiffres ')) return <ul key={n} className="blog-chiffres">{b.slice(10).split(';').map(x => x.split('|').map(s => s.trim())).map(([v, l], i) => <li key={i}><strong>{v}</strong><span>{inline(l)}</span></li>)}</ul>;
+    if (b.startsWith('@recette ')) { const [id, text] = b.slice(9).split('|').map(s => s.trim()); return <RecipeFeature key={n} id={id} text={text} />; }
+    if (b.startsWith('@cta-court ')) return <CtaInline key={n} lead={b.slice(11)} />;
     if (b.startsWith('@recettes ')) return <ul key={n} className="pub-grid blog-recipes">{b.slice(10).split(',').map(id => <li key={id}><RecipeCard id={id.trim()} /></li>)}</ul>;
     if (b.startsWith('@cta ')) return <Cta key={n} lead={b.slice(5)} />;
     const img = b.match(/^!\[([^\]]*)\]\((\S+)(?:\s+"([^"]+)")?\)$/);

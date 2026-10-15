@@ -1,13 +1,15 @@
 // Génère la photo réaliste d'un article du blog avec l'API images d'OpenAI (choix de louis, 15/10/2026),
 // puis l'enregistre en public/images/blog/<slug>.jpg (1200 × 675). Dans l'article, mettre photo: true.
-// Usage : node scripts/blog-photo.mjs <slug> "description de la scène"
+// Usage : node scripts/blog-photo.mjs <slug> "description de la scène" [nom]
+// Avec [nom] : photo pour le corps de l'article, enregistrée en public/images/blog/<slug>-<nom>.jpg
+// (à placer dans le texte avec « ![texte alternatif](/images/blog/<slug>-<nom>.jpg "légende") »).
 // Nécessite la variable d'environnement OPENAI_API_KEY (jamais dans le dépôt). Modèle : OPENAI_IMAGE_MODEL, par défaut gpt-image-1.
 import {writeFileSync,mkdtempSync,rmSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import {tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
 
-const [slug,scene]=process.argv.slice(2);
+const [slug,scene,name]=process.argv.slice(2);
 if(!slug||!scene)throw new Error('Usage : node scripts/blog-photo.mjs <slug> "description de la scène"');
 const key=process.env.OPENAI_API_KEY;
 if(!key){console.error('OPENAI_API_KEY absente : pas de photo, garder l’illustration SVG.');process.exit(2);}
@@ -24,7 +26,8 @@ if(!res.ok||!data.data?.[0]?.b64_json){console.error(`Échec de la génération 
 
 const dir=mkdtempSync(join(tmpdir(),'blog-photo-'));
 const raw=join(dir,'photo.png');writeFileSync(raw,Buffer.from(data.data[0].b64_json,'base64'));
-const out=resolve(`public/images/blog/${slug}.jpg`);
+const file=`${slug}${name?`-${name}`:''}.jpg`;
+const out=resolve(`public/images/blog/${file}`);
 execFileSync('convert',[raw,'-resize','1200x675^','-gravity','center','-extent','1200x675','-strip','-quality','84',out]);
 rmSync(dir,{recursive:true,force:true});
-console.log(`Photo créée : public/images/blog/${slug}.jpg (penser à photo: true dans l'article)`);
+console.log(name?`Photo créée : public/images/blog/${file} (à placer dans le corps de l'article)`:`Photo créée : public/images/blog/${file} (penser à photo: true dans l'article)`);

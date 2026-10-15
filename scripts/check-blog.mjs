@@ -46,8 +46,20 @@ for(const f of files){
   for(const m of src.matchAll(/^@recettes (.+)$/gm))for(const id of m[1].split(',').map(s=>s.trim()))if(!recipeIds.has(id))fail(`${where} recette inconnue dans @recettes : ${id}.`);
   for(const m of src.matchAll(/\]\(\/recettes\/([a-z0-9-]+)\)/g))if(!recipeIds.has(m[1]))fail(`${where} lien vers une recette inconnue : /recettes/${m[1]}.`);
   if(!/^@cta /m.test(src))fail(`${where} il manque l'appel à l'action « @cta … » dans le corps.`);
+  // Mise en page visuelle (choix de louis, 15/10/2026) : voir CONSIGNES.md section 4.
+  for(const m of src.matchAll(/^@recette ([a-z0-9-]+)/gm))if(!recipeIds.has(m[1]))fail(`${where} recette inconnue dans @recette : ${m[1]}.`);
+  if(!/^@essentiel$/m.test(src))fail(`${where} il manque le bloc « @essentiel » en haut du corps.`);
+  if(!/^@chiffres /m.test(src))fail(`${where} il manque la ligne « @chiffres … » en haut du corps.`);
+  if(!/^@cta-court /m.test(src))fail(`${where} il manque le bandeau « @cta-court … » au milieu du corps.`);
+  const pics=[...src.matchAll(/^!\[[^\]]*\]\((\/images\/[^)\s]+)/gm)].map(m=>m[1]);
+  if(!pics.length)fail(`${where} il faut au moins une photo dans le corps (« ![texte](/images/blog/${name}-nom.jpg \"légende\") »).`);
+  for(const pic of pics)if(!existsSync(`public${pic}`))fail(`${where} image introuvable : public${pic}.`);
+  const body=src.match(/\bbody: `([^]*?)`,\n/)?.[1]??'';
+  const blocks=body.trim().split(/\n\s*\n/).map(b=>b.trim());let run=0,maxRun=0;
+  for(const b of blocks){const plain=!/^(#|@|!\[|>|- |\d+\. |\|)/.test(b);run=plain?run+1:0;maxRun=Math.max(maxRun,run);}
+  if(maxRun>2)warn(`${where} ${maxRun} paragraphes de suite sans élément visuel (2 au plus).`);
   if(/€/.test(src.replace(/\$\{(?:cost|packPrice|kiloPrice|amountPrice)\([^}]*\)\}/g,''))&&!/\bsources: \[\s*\[/.test(src))warn(`${where} contient des montants en euros sans aucune source : vérifier qu'ils viennent du site.`);
-  const words=src.split(/\s+/).length;if(words<700)warn(`${where} article court (${words} mots).`);
+  const words=body.split(/\s+/).length;if(words<450)warn(`${where} article court (${words} mots dans le corps, viser 500 à 900).`);else if(words>1000)warn(`${where} article long (${words} mots dans le corps, viser 500 à 900) : couper.`);
   const photo=/\bphoto: true\b/.test(src);
   for(const ext of photo?['jpg']:['svg','jpg']){const img=`public/images/blog/${name}.${ext}`;if(!existsSync(img)||statSync(img).size===0)fail(`${where} illustration manquante : ${img}.`);}
   const jpg=`public/images/blog/${name}.jpg`;if(existsSync(jpg)){const s=jpegSize(jpg);if(!s||s.w!==1200||s.h!==675)fail(`${where} ${jpg} doit être un vrai JPEG de 1200 × 675 (trouvé ${s?`${s.w} × ${s.h}`:'autre format'}).`);}

@@ -6,95 +6,79 @@ export default {
   title: 'Recettes de lentilles pas chères : 6 dîners faciles et leur coût',
   seoTitle: 'Recettes de lentilles pas chères : 6 dîners et leur coût',
   description: 'Recettes de lentilles pas chères pour le dîner : curry, bolognaise, velouté, salade, galettes. Le coût par portion de chacune et 5 astuces pour payer moins.',
-  lead: `Pour un dîner sans viande pas cher, les lentilles sèches sont une valeur sûre : une portion de 70 g coûte environ ${amountPrice('green-lentils', 70)} en lentilles vertes et ${amountPrice('red-lentils', 70)} en lentilles corail. Voici 6 recettes de lentilles faciles pour le soir, du curry de lentilles corail (${cost('curry-corail')} la portion) aux galettes de lentilles vertes (${cost('galettes-lentilles')}), avec le coût estimé de chacune et les repères pour bien choisir vos lentilles.`,
+  lead: `Pour un dîner sans viande pas cher, les lentilles sèches sont un des meilleurs choix : une portion coûte environ ${amountPrice('green-lentils', 70)} en lentilles vertes et ${amountPrice('red-lentils', 70)} en lentilles corail. Voici 6 recettes faciles pour le soir, avec le prix de chacune.`,
   category: 'Recettes',
   keywords: ['recette lentilles pas cher', 'recettes de lentilles pas chères', 'recettes avec des lentilles', 'lentilles corail recette', 'lentilles vertes recette', 'quantité de lentilles par personne', 'dîner pas cher'],
   date: '2026-10-15',
   coverAlt: 'Une casserole de lentilles corail aux tomates, un paquet de lentilles et des carottes',
   photo: true,
   body: `
-## Combien coûte une portion de lentilles ?
+@essentiel
+- 6 dîners aux lentilles de ${cost('salade-lentilles')} à ${cost('galettes-lentilles')} la portion (ingrédients).
+- Lentilles corail : cuisson rapide, pour les currys et les soupes.
+- Lentilles vertes : elles gardent leur forme, pour les salades et les plats mijotés.
+- Un paquet de 500 g fait plusieurs dîners.
 
-Les lentilles sont vendues sèches et gonflent à la cuisson : un paquet de 500 g sert donc à plusieurs dîners. Voici les prix relevés pour les légumineuses utilisées dans nos recettes.
-
-| Produit | Prix du paquet | Prix au kilo |
-|---|---|---|
-| Lentilles vertes sèches | ${packPrice('green-lentils')} | ${kiloPrice('green-lentils')} |
-| Lentilles corail sèches | ${packPrice('red-lentils')} | ${kiloPrice('red-lentils')} |
-| Pois chiches cuits, égouttés | ${packPrice('chickpeas')} | ${kiloPrice('chickpeas')} |
-| Tofu nature | ${packPrice('tofu')} | ${kiloPrice('tofu')} |
-
-Prix relevés le 7 octobre 2026 sur carrefour.fr, marques distributeur, hors promotions. Les prix peuvent varier selon le magasin.
-
-Attention à la comparaison : les lentilles sont pesées sèches, alors que les pois chiches en conserve sont pesés déjà cuits. Le bon repère reste le coût d’une portion dans l’assiette. Nos recettes utilisent de 50 à 85 g de lentilles sèches par personne selon le plat. Avec 70 g, le repère le plus courant, la portion revient à environ ${amountPrice('green-lentils', 70)} en lentilles vertes et ${amountPrice('red-lentils', 70)} en lentilles corail.
-
-## Lentilles corail ou lentilles vertes : lesquelles choisir ?
-
-Les deux sont économiques, mais elles ne se cuisinent pas de la même façon.
-
-- **Les lentilles corail** cuisent en 10 minutes environ, selon Manger Bouger, et se défont à la cuisson. Elles épaississent les currys, les soupes et les sauces.
-- **Les lentilles vertes** gardent leur forme. Elles conviennent aux salades, aux plats mijotés et aux galettes. Leur cuisson est plus longue : suivez le temps indiqué sur le paquet.
-
-Rincez les lentilles avant de les cuire. Pour les légumes secs, le trempage est parfois nécessaire : lisez les indications du paquet.
+@chiffres ${amountPrice('green-lentils', 70)} | la portion de lentilles vertes ; 10 min | de cuisson pour les corail ; 2 fois | par semaine, conseil Manger Bouger
 
 ## Quelles recettes de lentilles pas chères faire pour le dîner ?
 
-| Recette | Lentilles | Temps | Coût par portion* |
-|---|---|---|---|
-| [Curry de lentilles corail](/recettes/curry-corail) | Corail | 25 min | ${cost('curry-corail')} |
-| [Bolognaise de lentilles](/recettes/bolognaise-lentilles) | Corail | 30 min | ${cost('bolognaise-lentilles')} |
-| [Velouté de courge et de lentilles corail](/recettes/courge-lentilles) | Corail | 30 min | ${cost('courge-lentilles')} |
-| [Lentilles vertes aux carottes](/recettes/mijote-lentilles) | Vertes | 40 min | ${cost('mijote-lentilles')} |
-| [Salade tiède de lentilles et de pommes de terre](/recettes/salade-lentilles) | Vertes | 35 min | ${cost('salade-lentilles')} |
-| [Galettes de lentilles et de carottes](/recettes/galettes-lentilles) | Vertes | 40 min | ${cost('galettes-lentilles')} |
+Six idées de notre catalogue, de la plus simple à la plus originale. Cliquez sur une recette pour voir les ingrédients et les étapes.
 
-*Coût estimé des ingrédients utilisés dans la recette, par portion (prix relevés le 7 octobre 2026 sur carrefour.fr, marques distributeur, hors promotions). En magasin, vous achetez des paquets entiers : le montant des courses est donc plus élevé, et une partie des produits reste pour d’autres repas.
+@recette curry-corail | Tout cuit dans une seule casserole : lentilles, tomates, épinards surgelés et lait de coco. La recette idéale pour commencer.
 
-### 1. Le curry de lentilles corail
+@recette bolognaise-lentilles | Les lentilles remplacent la viande hachée dans la sauce tomate. Sur des pâtes, toute la famille s’y retrouve.
 
-Les lentilles cuisent dans les tomates concassées avec du curry, puis on ajoute des épinards surgelés et du lait de coco. Le tout se prépare dans une seule casserole et se sert avec du riz. Peu d’étapes : une bonne première recette si vous cuisinez rarement les lentilles.
+@recette courge-lentilles | Une soupe épaisse d’automne. Avec les lentilles, elle devient un vrai dîner.
 
-### 2. La bolognaise de lentilles
+@cta-court Un paquet, trois dîners : pour deux, le curry, la bolognaise et le velouté utilisent ensemble 360 g de lentilles corail. VégéBudget compose vos dîners de la semaine selon votre budget pour que rien ne reste au placard.
 
-Les lentilles corail remplacent la viande hachée dans la sauce tomate, avec une carotte râpée, de l’oignon et de l’ail. Servie sur des pâtes, elle garde l’allure d’un plat familier, pratique pour présenter les lentilles à toute la famille.
+@recette mijote-lentilles | Le plat mijoté classique, avec carottes et pommes de terre. Faites-en le double : il se réchauffe très bien.
 
-### 3. Le velouté de courge et de lentilles corail
+@recette salade-lentilles | Lentilles vertes, pommes de terre, citron et moutarde. Tiède le soir, froide le lendemain midi.
 
-Une soupe épaisse pour l’automne : la courge et les lentilles cuisent ensemble environ 20 minutes, puis on mixe. Avec les lentilles, le velouté devient un dîner à part entière, pas seulement une entrée.
+@recette galettes-lentilles | Lentilles écrasées avec des flocons d’avoine, dorées à la poêle. Pour changer des plats en sauce.
 
-### 4. Les lentilles vertes aux carottes
+Coût estimé des ingrédients utilisés, par portion : prix relevés le 7 octobre 2026 sur carrefour.fr, marques distributeur, hors promotions. En magasin, vous achetez des paquets entiers, et le reste sert pour d’autres repas.
 
-Le plat mijoté classique, avec des carottes, des pommes de terre, des tomates et du paprika. Il se réchauffe très bien : préparez-en le double et gardez la deuxième moitié pour un autre soir.
+## Combien coûte une portion de lentilles ?
 
-### 5. La salade tiède de lentilles et de pommes de terre
+Les lentilles gonflent à la cuisson : un paquet de 500 g sert à plusieurs dîners. Le bon repère est donc le prix d’une portion, pas celui du paquet.
 
-Lentilles vertes, pommes de terre et carottes, assaisonnées avec du citron et de la moutarde. Elle se mange tiède le soir et froide le lendemain midi.
+| Produit | Le paquet | Une portion de 70 g |
+|---|---|---|
+| Lentilles corail | ${packPrice('red-lentils')} | ${amountPrice('red-lentils', 70)} |
+| Lentilles vertes | ${packPrice('green-lentils')} | ${amountPrice('green-lentils', 70)} |
 
-### 6. Les galettes de lentilles et de carottes
+Prix relevés le 7 octobre 2026 sur carrefour.fr, marques distributeur, hors promotions. Nos recettes comptent de 50 à 85 g de lentilles sèches par personne, 70 g le plus souvent. Pour comparer avec les pois chiches ou le tofu, voyez notre [comparatif des protéines végétales](/blog/proteines-vegetales).
 
-Les lentilles cuites sont écrasées avec des flocons d’avoine et une carotte râpée, puis dorées à la poêle. Servies avec un concombre au citron, elles changent des plats en sauce.
+## Lentilles corail ou lentilles vertes : lesquelles choisir ?
 
-> **Un paquet, trois dîners.** Pour deux personnes, le curry, la bolognaise et le velouté de courge utilisent ensemble 360 g de lentilles corail : plus des deux tiers du paquet de 500 g, au lieu d’un reste qui traîne au placard. C’est ce que fait [VégéBudget](/) : il compose vos dîners de la semaine selon votre budget, déduit ce que vous avez déjà et calcule la liste de courses en paquets entiers. La première semaine est gratuite, sans compte ni carte bancaire.
+![Un bol de lentilles corail et un bol de lentilles vertes, côte à côte](/images/blog/recettes-lentilles-pas-cheres-corail-vertes.jpg "À gauche, les lentilles corail ; à droite, les lentilles vertes.")
+
+| | Lentilles corail | Lentilles vertes |
+|---|---|---|
+| Cuisson | 10 min environ (Manger Bouger) | Plus longue : voir le paquet |
+| À la cuisson | Elles se défont | Elles gardent leur forme |
+| Idéales pour | Currys, soupes, sauces | Salades, plats mijotés, galettes |
+
+Dans les deux cas, rincez-les avant de les cuire et suivez les indications du paquet pour le trempage.
 
 ## Comment payer ses lentilles encore moins cher ?
 
-1. **Choisissez la marque distributeur.** Pour un produit aussi simple que des lentilles sèches, c’est souvent l’option la moins chère du rayon.
-2. **Comparez le prix au kilo**, pas le prix du paquet. Le vrac peut être intéressant, mais pas systématiquement : vérifiez l’étiquette.
-3. **Utilisez le même paquet pour deux ou trois dîners** dans la semaine : un curry le lundi, une bolognaise le jeudi. C’est le principe de notre [menu de la semaine](/blog/menu-semaine-pas-cher).
-4. **Complétez avec des légumes bon marché** : carottes, oignons, pommes de terre, courge en saison (voir notre [calendrier des fruits et légumes de saison](/blog/fruits-legumes-de-saison)), épinards surgelés.
-5. **Cuisinez en plus grande quantité.** Les plats de lentilles se conservent au réfrigérateur et se réchauffent bien : vous évitez un repas acheté tout prêt.
-
-Pour comparer les lentilles avec les autres sources de protéines, consultez notre [comparatif des protéines végétales](/blog/proteines-vegetales).
+- **Prenez la marque distributeur** : souvent la moins chère du rayon.
+- **Comparez le prix au kilo**, pas le prix du paquet (le vrac n’est pas toujours moins cher).
+- **Un paquet pour deux ou trois dîners** dans la semaine, comme dans notre [menu de la semaine pas cher](/blog/menu-semaine-pas-cher).
+- **Ajoutez des légumes bon marché** : carottes, oignons, pommes de terre, [légumes de saison](/blog/fruits-legumes-de-saison).
+- **Cuisinez en double** : les plats de lentilles se gardent au réfrigérateur.
 
 ## Combien de fois par semaine manger des lentilles ?
 
-Le site public Manger Bouger recommande de consommer des légumes secs (lentilles, haricots, pois chiches…) **au moins 2 fois par semaine**. Ils apportent des fibres et des protéines végétales.
-
-Si vous n’en mangez pas souvent, augmentez progressivement les quantités et buvez suffisamment d’eau : les fibres peuvent provoquer des ballonnements quand on en mange beaucoup d’un coup.
+Manger Bouger conseille des légumes secs (lentilles, haricots, pois chiches…) **au moins 2 fois par semaine**, pour leurs fibres et leurs protéines végétales. Si vous n’en avez pas l’habitude, commencez par de petites quantités.
 
 ## D’autres dîners aux légumineuses
 
-@recettes chili-haricots, epinards-pois-chiches, penne-pois-chiches, wrap-haricots
+@recettes chili-haricots, epinards-pois-chiches, penne-pois-chiches
 
 @cta Organisez vos dîners de la semaine selon votre budget
 `,
