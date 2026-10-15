@@ -20,6 +20,7 @@ export default async function Recipes() {
     <h1>Des recettes sans viande pour les petits budgets</h1>
     <p className="pub-lead">Découvrez {recipes.length} recettes faciles pour varier vos repas du soir, prêtes en {Math.min(...minutes)} à {Math.max(...minutes)} minutes, avec des ingrédients courants et un coût estimé pour chaque portion.</p>
     <p className="pub-note">Les prix correspondent aux quantités utilisées pour une personne, et non au montant des paquets à acheter. {PRICE_SOURCE}.</p>
+    <p className="pub-note"><Link href="/blog/menu-semaine-pas-cher">Voir une semaine complète, midi et soir</Link>, avec la liste de courses.</p>
     {categories.filter(c => c !== 'Toutes').map(c => {
       const list = sorted.filter(r => r.category === c);
       return list.length ? <section key={c}><h2>{c}</h2><ul className="pub-grid">{list.map(r => <li key={r.id}><RecipeCard id={r.id} /></li>)}</ul></section> : null;

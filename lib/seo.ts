@@ -59,6 +59,8 @@ export function organizationLd(origin: string) {
   return { '@type': 'Organization', '@id': `${origin}/#organisation`, name: SITE_NAME, url: `${origin}/`, logo: `${origin}/favicon.svg` };
 }
 
+const offerPrice = (label: string) => label.replace(/[^\d,]/g, '').replace(',', '.');
+
 export function homeLd(origin: string) {
   return {
     '@context': 'https://schema.org',
@@ -70,7 +72,9 @@ export function homeLd(origin: string) {
         description: HOME_DESCRIPTION,
         offers: [
           { '@type': 'Offer', name: 'Première semaine', price: '0', priceCurrency: 'EUR' },
-          { '@type': 'Offer', name: 'Premium', price: PREMIUM_PRICE_LABEL.replace(/[^\d,]/g, '').replace(',', '.'), priceCurrency: 'EUR' },
+          // Prix affichés sur l'accueil : 4,99 € par mois, et l'offre de lancement à 19 € par an.
+          { '@type': 'Offer', name: 'Premium', price: offerPrice(PREMIUM_PRICE_LABEL), priceCurrency: 'EUR', priceSpecification: { '@type': 'UnitPriceSpecification', price: offerPrice(PREMIUM_PRICE_LABEL), priceCurrency: 'EUR', billingDuration: 'P1M', referenceQuantity: { '@type': 'QuantitativeValue', value: 1, unitCode: 'MON' } } },
+          { '@type': 'Offer', name: 'Offre de lancement', description: `Premium pour un an, réservé aux ${FOUNDER_SEATS} premiers abonnés.`, price: offerPrice(FOUNDER_PRICE_LABEL), priceCurrency: 'EUR', priceSpecification: { '@type': 'UnitPriceSpecification', price: offerPrice(FOUNDER_PRICE_LABEL), priceCurrency: 'EUR', billingDuration: 'P1Y', referenceQuantity: { '@type': 'QuantitativeValue', value: 1, unitCode: 'ANN' } } },
         ],
       },
       { '@type': 'FAQPage', mainEntity: faq.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },

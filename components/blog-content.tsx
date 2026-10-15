@@ -20,6 +20,7 @@ export function inline(text: string): ReactNode[] {
     const k = out.length;
     if (m[1]) out.push(<strong key={k}>{inline(m[1])}</strong>);
     else if (m[3].startsWith('/')) out.push(<Link key={k} href={m[3]}>{m[2]}</Link>);
+    else if (m[3].startsWith('#')) out.push(<a key={k} href={m[3]}>{m[2]}</a>);
     else out.push(<a key={k} href={m[3]} target="_blank" rel="noopener">{m[2]}</a>);
     last = m.index! + m[0].length;
   }
@@ -40,7 +41,7 @@ export function BlogContent({ body }: { body: string }) {
   return <>{blocks.map((raw, n) => {
     const b = raw.trim();
     const lines = b.split('\n').map(l => l.trim());
-    if (b.startsWith('### ')) return <h3 key={n}>{inline(b.slice(4))}</h3>;
+    if (b.startsWith('### ')) return <h3 key={n} id={anchor(b.slice(4))}>{inline(b.slice(4))}</h3>;
     if (b.startsWith('## ')) return <h2 key={n} id={anchor(b.slice(3))}>{inline(b.slice(3))}</h2>;
     if (b.startsWith('@video ')) { const [id, title, channel] = b.slice(7).split('|').map(s => s.trim()); return <Video key={n} id={id} title={title} channel={channel} />; }
     if (lines[0] === '@essentiel') return <aside key={n} className="blog-essentiel"><strong>L’essentiel</strong><ul>{lines.slice(1).map((l, i) => <li key={i}>{inline(l.replace(/^- /, ''))}</li>)}</ul></aside>;
