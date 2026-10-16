@@ -9,6 +9,7 @@ import proteinesVegetales from './articles/proteines-vegetales';
 import menuSemainePasCher from './articles/menu-semaine-pas-cher';
 import gaspillageAlimentaire from './articles/gaspillage-alimentaire';
 import recettesLentillesPasCheres from './articles/recettes-lentilles-pas-cheres';
+import repasPasCherPour2 from './articles/repas-pas-cher-pour-2';
 
 // Articles du blog : un fichier par article dans ./articles (les 9 premiers datent du 7 octobre 2026),
 // illustration dans public/images/blog/<slug>.svg et .jpg. Ajouter chaque nouvel article à la fin de la liste.
@@ -25,4 +26,5 @@ export const dailyArticles: Article[] = [
   menuSemainePasCher,
   gaspillageAlimentaire,
   recettesLentillesPasCheres,
+  repasPasCherPour2,
 ];
