@@ -11,7 +11,6 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [ ] fruits et légumes de novembre | Saisons | calendrier du mois, idées de dîners | fin octobre-novembre
 - [ ] remplacer la viande sans dépenser plus | Budget | légumes secs, œufs, tofu : comparer le coût des protéines
 - [ ] faire ses courses avec 50 € par semaine | Budget | méthode, exemple de panier, erreurs à éviter
-- [ ] pois chiches recettes faciles | Recettes | conserve vs sec, idées de dîners, coût par portion
 - [ ] que manger en fin de mois avec peu d'argent | Budget | dîners avec les ingrédients du placard, recettes du site
 - [ ] légumes surgelés : moins chers que le frais ? | Budget | prix au kilo, nutrition (source officielle), quand les choisir
 - [ ] comparer le prix au kilo | Budget | comment lire l'étiquette, pièges des formats, exemples
@@ -44,3 +43,4 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 
 - [x] recettes avec des lentilles pas chères | Recettes | publié 2026-10-15 → /blog/recettes-lentilles-pas-cheres
 - [x] repas pas cher pour 2 | Budget | publié 2026-10-16 → /blog/repas-pas-cher-pour-2
+- [x] recettes de pois chiches faciles | Recettes | publié 2026-10-17 → /blog/recettes-pois-chiches
