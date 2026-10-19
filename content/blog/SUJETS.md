@@ -7,7 +7,6 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 ## À faire
 
 - [ ] liste de courses pas chère pour la semaine | Budget | une liste type pour 5 dîners, paquets entiers vs portions, le placard d'abord (attention : /blog/menu-semaine-pas-cher a déjà une liste de courses de la semaine, choisir un angle différent)
-- [ ] courge et potimarron recettes faciles | Saisons | courge de saison, comment la cuisiner, recettes du site | octobre-novembre
 - [ ] fruits et légumes de novembre | Saisons | calendrier du mois, idées de dîners | fin octobre-novembre
 - [ ] remplacer la viande sans dépenser plus | Budget | légumes secs, œufs, tofu : comparer le coût des protéines
 - [ ] faire ses courses avec 50 € par semaine | Budget | méthode, exemple de panier, erreurs à éviter
@@ -44,3 +43,4 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [x] repas pas cher pour 2 | Budget | publié 2026-10-16 → /blog/repas-pas-cher-pour-2
 - [x] recettes de pois chiches faciles | Recettes | publié 2026-10-17 → /blog/recettes-pois-chiches
 - [x] que manger en fin de mois avec peu d'argent | Budget | publié 2026-10-18 → /blog/que-manger-fin-de-mois
+- [x] courge recette facile pas chère (courge et potimarron) | Saisons | publié 2026-10-19 → /blog/courge-recette-facile
