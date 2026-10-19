@@ -23,6 +23,7 @@ jobs:
       - run: corepack enable && pnpm install --frozen-lockfile
       - run: npx tsc --noEmit -p .
       - run: pnpm check:blog
+      - run: pnpm check:instagram
       - run: pnpm check:planner
       - run: rm -rf .next && pnpm build && pnpm check:api
 

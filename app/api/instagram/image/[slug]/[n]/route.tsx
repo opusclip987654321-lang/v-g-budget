@@ -2,11 +2,10 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { ImageResponse } from 'next/og';
 import sharp from 'sharp';
-import { findArticle } from '@/lib/blog';
-import { publicDataUri, slidesFor, type Slide } from '@/lib/instagram';
+import { findPost, publicDataUri, type Slide } from '@/lib/instagram';
 export const dynamic = 'force-dynamic';
 
-// Une image du carrousel Instagram d'un article : /api/instagram/image/<slug>/<n>.jpg (1080 × 1350, JPEG
+// Une image d'un carrousel Instagram (« infos végé » ou article du blog) : /api/instagram/image/<slug>/<n>.jpg (1080 × 1350, JPEG
 // comme l'exige Instagram). Publique : Instagram vient la chercher au moment de la publication.
 const W = 1080, H = 1350, PAD = 72;
 const green = '#174c38', lime = '#d7f369', cream = '#f7f4ee', ink = '#1d2b24', grey = '#5f6b64';
@@ -36,8 +35,13 @@ async function render(s: Slide, n: number, total: number) {
   const logo = await publicDataUri('/favicon.svg');
   const page = { width: W, height: H, display: 'flex', flexDirection: 'column' as const, justifyContent: 'space-between', padding: PAD, background: cream, color: ink, fontFamily: 'Inter' };
   const counter = <div style={{ display: 'flex', fontSize: 28, color: grey, fontWeight: 600 }}>{`${n}/${total}`}</div>;
+  if (s.kind === 'couverture' && !s.image) return <div style={{ ...page, background: green, color: '#fff' }}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}><Pill>{s.pill}</Pill><div style={{ display: 'flex', fontSize: 32, fontWeight: 600, color: lime }}>Glissez →</div></div>
+    <div style={{ display: 'flex', fontSize: s.title.length > 45 ? 96 : 110, fontWeight: 800, lineHeight: 1.04, letterSpacing: -3 }}>{s.title}</div>
+    <Footer light logo={logo} />
+  </div>;
   if (s.kind === 'couverture') {
-    const photo = await publicDataUri(s.image);
+    const photo = await publicDataUri(s.image!);
     return <div style={page}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}><Pill>{s.pill}</Pill><div style={{ display: 'flex', fontSize: 32, fontWeight: 600, color: green }}>Glissez →</div></div>
       <Photo src={photo} height={700} />
@@ -58,6 +62,25 @@ async function render(s: Slide, n: number, total: number) {
         <div style={{ display: 'flex', flexShrink: 0, width: 52, height: 52, borderRadius: 26, background: lime, color: green, fontSize: 28, fontWeight: 800, alignItems: 'center', justifyContent: 'center' }}>{String(i + 1)}</div>
         <div style={{ display: 'flex', fontSize: 44, lineHeight: 1.25, fontWeight: 600 }}>{l}</div>
       </div>)}
+    </div>
+    <Footer logo={logo} />
+  </div>;
+  if (s.kind === 'info') return <div style={page}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 30 }}>
+      <div style={{ display: 'flex', fontSize: s.title.length > 30 ? 76 : 88, fontWeight: 800, color: green, lineHeight: 1.08, letterSpacing: -1.5 }}>{s.title}</div>{counter}
+    </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 56 }}>
+      {s.chiffre && <div style={{ display: 'flex', flexDirection: 'column', gap: 12, background: green, color: '#fff', borderRadius: 36, padding: '44px 48px' }}>
+        <div style={{ display: 'flex', fontSize: 170, fontWeight: 800, color: lime, letterSpacing: -4, lineHeight: 1 }}>{s.chiffre[0]}</div>
+        <div style={{ display: 'flex', fontSize: 46, lineHeight: 1.25, fontWeight: 600 }}>{s.chiffre[1]}</div>
+      </div>}
+      {s.text && <div style={{ display: 'flex', fontSize: s.chiffre ? 42 : (s.points ? 50 : 58), lineHeight: 1.3, fontWeight: s.chiffre ? 400 : 600, color: s.chiffre ? grey : ink }}>{s.text}</div>}
+      {s.points && <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
+        {s.points.map((l, i) => <div key={i} style={{ display: 'flex', gap: 26, alignItems: 'flex-start' }}>
+          <div style={{ display: 'flex', flexShrink: 0, width: 64, height: 64, borderRadius: 32, background: lime, color: green, fontSize: 34, fontWeight: 800, alignItems: 'center', justifyContent: 'center' }}>{String(i + 1)}</div>
+          <div style={{ display: 'flex', fontSize: 52, lineHeight: 1.22, fontWeight: 600 }}>{l}</div>
+        </div>)}
+      </div>}
     </div>
     <Footer logo={logo} />
   </div>;
@@ -85,7 +108,8 @@ async function render(s: Slide, n: number, total: number) {
       <div style={{ display: 'flex', fontSize: 84, fontWeight: 800, lineHeight: 1.05, letterSpacing: -2, color: lime }}>Vos dîners de la semaine, dans votre budget.</div>
       <div style={{ display: 'flex', fontSize: 42, lineHeight: 1.3 }}>Vos menus sans viande, la liste de courses et son coût estimé, préparés par VégéBudget.</div>
       <div style={{ display: 'flex', alignSelf: 'flex-start', background: lime, color: green, borderRadius: 999, padding: '22px 40px', fontSize: 40, fontWeight: 800 }}>Lien dans la bio · 1re semaine gratuite</div>
-      <div style={{ display: 'flex', fontSize: 36, lineHeight: 1.3, color: '#cfe0d6' }}>📌 Enregistrez pour le jour des courses. Envoyez-le à la personne avec qui vous faites les courses.</div>
+      <div style={{ display: 'flex', fontSize: 36, lineHeight: 1.3, color: '#cfe0d6' }}>{s.sources ? 'Enregistrez-le pour plus tard. Envoyez-le à quelqu’un que ça peut aider.' : 'Enregistrez pour le jour des courses. Envoyez-le à la personne avec qui vous faites les courses.'}</div>
+      {s.sources && <div style={{ display: 'flex', fontSize: 24, lineHeight: 1.35, color: '#a9c4b5' }}>{s.sources}</div>}
     </div>
     <Footer light logo={logo} />
   </div>;
@@ -93,10 +117,10 @@ async function render(s: Slide, n: number, total: number) {
 
 export async function GET(_request: Request, { params }: { params: Promise<{ slug: string; n: string }> }) {
   const { slug, n } = await params;
-  const article = findArticle(slug);
+  const post = findPost(slug);
   const index = Number(n.replace(/\.jpg$/, ''));
-  const slides = article ? slidesFor(article) : [];
-  if (!article || !Number.isInteger(index) || index < 1 || index > slides.length) return new Response('Image introuvable.', { status: 404 });
+  const slides = post?.slides ?? [];
+  if (!post || !Number.isInteger(index) || index < 1 || index > slides.length) return new Response('Image introuvable.', { status: 404 });
   const png = await new ImageResponse(await render(slides[index - 1], index, slides.length), { width: W, height: H, fonts: await loadFonts() }).arrayBuffer();
   const jpg = await sharp(Buffer.from(png)).jpeg({ quality: 88, mozjpeg: true }).toBuffer();
   return new Response(new Uint8Array(jpg), { headers: { 'Content-Type': 'image/jpeg', 'Cache-Control': 'public, max-age=3600', 'X-Robots-Tag': 'noindex' } });
