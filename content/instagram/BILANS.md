@@ -53,4 +53,9 @@ un carrousel « menu de la semaine » chaque vendredi, transformer de temps en t
 
 ## Journal des bilans
 
-(aucun bilan pour l'instant : le compte n'est pas encore connecté)
+### 19/10/2026 (bilan 1)
+
+- Chiffres : 4 carrousels publiés du 15 au 18/10 (saison, repas pour 2, pois chiches, fin de mois), 9 images chacun. Portée 0, vues 0, enregistrements 0, partages 0 sur les 4. Abonnés : 0. Visites du site venues d'Instagram : 3 (le 15/10, tests).
+- Lecture : les chiffres sont bien relevés (Instagram renvoie des zéros, pas une erreur). Un compte à 0 abonné n'a personne à qui montrer un carrousel : Instagram pousse surtout les carrousels aux abonnés, et les Reels aux non-abonnés. Le format ne peut donc pas encore être jugé.
+- Veille : les carrousels servent aux enregistrements et à l'engagement, les Reels à la portée hors abonnés ([Storrito](https://storrito.com/resources/how-instagram-carousels-beat-reels-for-engagement-in-2026-and-when-to-use-each/), [Contentdrips](https://contentdrips.com/blog/2026/06/instagram-reels-vs-carousels-2026-guide/)). Les envois en message privé pèseraient le plus selon Adam Mosseri (cité par [True Future Media](https://www.truefuturemedia.com/articles/instagram-carousel-strategy-2026), source indirecte).
+- Décision : format des carrousels inchangé. Le blocage est la diffusion, pas le format : question posée à louis (Reel quotidien automatique fait à partir des images du carrousel, et premiers abonnés amenés par lui).
