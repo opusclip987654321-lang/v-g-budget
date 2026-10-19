@@ -5,6 +5,10 @@ Demande de louis (19/10/2026) : chaque jour un carrousel différent pour mieux c
 végétaux, légumes de saison, nutrition, idées reçues, etc. Le site publie le suivant de la liste vers 18 h
 (`lib/instagram.ts`, `nextInfo`), dans l'ordre de `content/instagram/carrousels/index.ts`.
 
+Le lendemain vers 12 h, le même carrousel repart en **vidéo verticale** (les images l'une après l'autre, sans
+musique) : Reel Instagram, puis TikTok, YouTube Shorts et Facebook par Post for Me quand il est configuré
+(`lib/diffusion.ts`). Une image doit donc se lire en 4 secondes : peu de texte, un grand titre.
+
 ## Réserve
 
 Une tâche programmée de Claude vérifie chaque semaine la réserve (`reserve` dans

@@ -16,6 +16,8 @@ COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/.next ./.next
 COPY --from=build /app/public ./public
 COPY --from=build /app/drizzle ./drizzle
+# ffmpeg : vidéos des carrousels pour les Reels, TikTok et YouTube Shorts (lib/diffusion.ts).
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /data && chown node:node /data
 USER node
 VOLUME /data
