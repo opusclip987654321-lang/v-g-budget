@@ -178,7 +178,14 @@ try{
   check(p.visites,2,'one journey per visitor, bots, owner and foreign paths ignored');
   const full=p.dernieres.find(v=>v.pages===3);check(full.source,'google.com','journey keeps its traffic source');check(full.entree,'/blog/code-oeufs','entry page');check(full.sortie,'Offre Premium','exit page named');check(full.secondes,84,'time on page keeps the longest report');
   check(full.parcours.filter(x=>x.type==='page').map(x=>x.lu),[65,80,100],'scroll depth');check(full.parcours.some(x=>x.type==='clic'&&x.texte==='Composer ma semaine'),true,'clicks in the journey');check(full.plusLoin,'A cliqué sur payer / réserver','furthest funnel step');
-  check(p.dernieres.find(v=>v.pages===1).rebond,true,'bounce detected');check(p.entonnoir[0].visites,2,'funnel start');check(p.pages[0].chemin,'/blog/code-oeufs','pages ranked by views');check(p.constats.length>0,true,'plain-language findings'); }
+  check(p.dernieres.find(v=>v.pages===1).rebond,true,'bounce detected');check(p.entonnoir[0].visites,2,'funnel start');check(p.pages[0].chemin,'/blog/code-oeufs','pages ranked by views');check(p.constats.length>0,true,'plain-language findings');
+  // Avis des visiteurs pour la loop (content/loop/loop.ts) : une réponse par question et par jour, adresses et numéros retirés.
+  const avis=(data,headers={})=>fetch(origin+'/api/avis',{method:'POST',headers:{...browser,...headers},body:JSON.stringify(data)});
+  check((await avis({question:'menus-raison',choix:'Dépenser moins en courses',texte:'écrivez-moi à a.b@example.invalid ou au 06 12 34 56 78'})).status,200,'feedback recorded');
+  await avis({question:'menus-raison',choix:'Autre chose'});
+  check((await avis({question:'inconnue',choix:'Le prix'})).status,400,'unknown question refused');check((await avis({question:'offre-frein',choix:'pas dans la liste'})).status,400,'unknown choice refused');
+  const sl=await (await stats(baseEnv.CRON_SECRET)).json();check(sl.avis.length,1,'one answer per visitor and question per day');check(sl.avis[0].choix,'Dépenser moins en courses','feedback choice');
+  check(/@|06 12/.test(sl.avis[0].texte),false,'email and phone removed from feedback');check(sl.loop.version>=1,true,'loop version exposed');check(sl.loop.questions.length>0,true,'loop questions exposed'); }
  { // Appli installable : fiche, icônes, service hors connexion et page « Pas de connexion ».
   const manifest=await request('/manifest.webmanifest');check(manifest.status,200,'web app manifest');const m=typeof manifest.body==='string'?JSON.parse(manifest.body):manifest.body;check(m.display,'standalone','installable app');check(m.start_url,'/app?utm_source=appli','app opens on menus');
   for(const icon of m.icons){const r=await fetch(origin+icon.src);check(r.status,200,`icon ${icon.src}`);check((await sharp(Buffer.from(await r.arrayBuffer())).metadata()).width,Number(icon.sizes.split('x')[0]),`icon size ${icon.src}`);}
