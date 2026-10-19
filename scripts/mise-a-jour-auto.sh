@@ -32,6 +32,10 @@ main() {
   if [ -n "$secret" ]; then
     reponse=$(curl -sS --max-time 300 -X POST -H "Authorization: Bearer $secret" http://127.0.0.1:3100/api/instagram/publier 2>&1)
     case "$reponse" in *'"publie"'*|*'"error"'*|curl:*) note "Instagram : $reponse";; esac
+    # Diffusion (ajoutée le 20/10/2026, lib/diffusion.ts) : pages nouvelles signalées à Bing (IndexNow) et vidéo
+    # du jour (Reel Instagram, puis TikTok, YouTube et Facebook par Post for Me quand il est configuré).
+    reponse=$(curl -sS --max-time 600 -X POST -H "Authorization: Bearer $secret" http://127.0.0.1:3100/api/diffusion 2>&1)
+    case "$reponse" in *'"slug"'*|*'"envoyees"'*|*'"erreur"'*|*'"error"'*|curl:*) note "Diffusion : $reponse";; esac
   fi
 
   if [ -n "$(git status --porcelain --untracked-files=no)" ]; then

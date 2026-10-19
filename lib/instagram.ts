@@ -134,7 +134,7 @@ export type Publication = { at: string; mediaId: string; permalink?: string };
 export const connection = () => readSetting<Connection | null>('instagram', null);
 export const publications = () => readSetting<Record<string, Publication>>('instagram_publications', {});
 
-async function graph<T>(path: string, params: Record<string, string>, method: 'GET' | 'POST' = 'GET'): Promise<T> {
+export async function graph<T>(path: string, params: Record<string, string>, method: 'GET' | 'POST' = 'GET'): Promise<T> {
   const url = new URL(`${GRAPH}/${path}`);
   const init: RequestInit = { method, signal: AbortSignal.timeout(30000) };
   if (method === 'GET') for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
@@ -164,8 +164,9 @@ export async function freshConnection() {
   return next;
 }
 
-async function ready(c: Connection, id: string) {
-  for (let i = 0; i < 20; i++) {
+// Attend qu'Instagram ait préparé un média (une vidéo demande plus d'essais qu'une image).
+export async function ready(c: Connection, id: string, tries = 20) {
+  for (let i = 0; i < tries; i++) {
     const s = await graph<{ status_code?: string; status?: string }>(id, { fields: 'status_code,status', access_token: c.token });
     if (s.status_code === 'FINISHED' || s.status_code === 'PUBLISHED') return;
     if (s.status_code === 'ERROR' || s.status_code === 'EXPIRED') throw new Error(`Instagram refuse une image (${s.status ?? s.status_code}).`);
@@ -228,6 +229,8 @@ export async function refreshStats(force = false) {
   if (!c) return saved;
   const posts: Record<string, Stats> = {};
   for (const [slug, p] of Object.entries(await publications())) posts[slug] = await mediaStats(c, p.mediaId).catch(() => saved?.posts[slug] ?? {});
+  // Reels faits à partir des carrousels (lib/diffusion.ts), rangés sous « reel:<slug> ».
+  for (const [slug, p] of Object.entries(await readSetting<Record<string, Publication>>('instagram_reels', {}))) posts[`reel:${slug}`] = await mediaStats(c, p.mediaId).catch(() => saved?.posts[`reel:${slug}`] ?? {});
   const account = await graph<{ followers_count?: number }>('me', { fields: 'followers_count', access_token: c.token }).catch(() => ({ followers_count: saved?.followers }));
   const next = { at: Date.now(), posts, followers: account.followers_count };
   await writeSetting('instagram_stats', next);
