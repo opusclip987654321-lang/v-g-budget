@@ -35,8 +35,8 @@ export function InstagramAdmin({ username, expiresAt, next, articles }: { userna
       {message && <p role="status"><strong>{message}</strong></p>}
     </section>
     <section style={box}>
-      <h2>Articles</h2>
-      <p>Prochain carrousel automatique : {next ? <strong>{articles.find(a => a.slug === next)?.title ?? next}</strong> : 'aucun nouvel article pour le moment'}.</p>
+      <h2>Carrousels</h2>
+      <p>Prochain carrousel automatique : {next ? <strong>{articles.find(a => a.slug === next)?.title ?? next}</strong> : 'plus aucun carrousel en réserve'}.</p>
       {articles.map(a => <div key={a.slug} style={{ borderTop: '1px solid #eee', padding: '12px 0' }}>
         <p style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', margin: 0 }}>
           <button type="button" onClick={() => setOpen(open === a.slug ? '' : a.slug)} style={{ background: 'none', border: 0, padding: 0, textAlign: 'left', cursor: 'pointer', fontWeight: 600 }}>{a.title}</button>

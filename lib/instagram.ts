@@ -1,21 +1,26 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { blogCoverJpg, blogPath, sortedArticles, findArticle, type Article } from './blog';
+import { blogCoverJpg, blogPath, findArticle, type Article } from './blog';
 import { findRecipe, portionCost, recipeImage, recipeIngredients } from './seo';
 import { money } from './planner';
 import { readSetting, writeSetting } from './server';
+import { infos } from '@/content/instagram/carrousels';
+import type { Info } from './instagram-infos';
 
-// Instagram : chaque article du blog devient un carrousel (images 1080 × 1350 dessinées par
+// Instagram : depuis le 19/10/2026 (demande de louis), le carrousel du jour est un carrousel « infos végé »
+// (content/instagram/carrousels, voir lib/instagram-infos.ts) ; avant, c'était l'article du blog du jour.
+// Un article du blog peut toujours devenir un carrousel (images 1080 × 1350 dessinées par
 // app/api/instagram/image/[slug]/[n]/route.tsx) et une légende, publiés par l'API officielle d'Instagram.
 // Publication automatique : POST /api/instagram/publier, appelé chaque heure par scripts/mise-a-jour-auto.sh ;
 // il publie au plus un carrousel par jour, à partir de INSTAGRAM_HEURE (18 h, heure de Paris).
 // Connexion et publication à la main : page /instagram (réservée au propriétaire du site).
 
 export type Slide =
-  | { kind: 'couverture'; title: string; pill: string; image: string }
+  | { kind: 'couverture'; title: string; pill: string; image: string | null }
+  | { kind: 'info'; title: string; chiffre?: [string, string]; text?: string; points?: string[] }
   | { kind: 'essentiel'; items: [string, string][]; lines: string[] }
   | { kind: 'recette'; title: string; text: string; minutes: number; price: string; image: string; ingredients: [string, string][] }
-  | { kind: 'fin'; path: string };
+  | { kind: 'fin'; path: string; sources?: string };
 
 // Texte brut : sans gras ni liens markdown.
 export const plain = (s: string) => s.replace(/\*\*(.+?)\*\*/g, '$1').replace(/\[([^\]]+)\]\([^)\s]+\)/g, '$1').trim();
@@ -79,6 +84,40 @@ export function captionFor(a: Article) {
   ].filter(Boolean).join('\n\n').slice(0, 2200);
 }
 
+// ---- Carrousels « infos végé » ----
+
+export function infoSlides(i: Info): Slide[] {
+  return [
+    { kind: 'couverture', title: i.title, pill: i.pill, image: i.image ?? null },
+    ...i.slides.map(x => ({ kind: 'info' as const, ...x })),
+    { kind: 'fin', path: '/', sources: `Sources : ${i.sources.map(([name]) => name).join(' ; ')}` },
+  ];
+}
+
+export function infoCaption(i: Info) {
+  return [
+    i.hook,
+    i.slides.map(x => `• ${x.title.replace(/^\d+\.\s*/, '').replace(/[«»]/g, '').trim()}`).join('\n'),
+    '📌 Enregistrez-le pour plus tard, et envoyez-le à quelqu’un que ça peut aider.',
+    'Vos dîners végétariens de la semaine, avec la liste de courses et le coût : lien dans la bio. Première semaine gratuite.',
+    `Sources : ${i.sources.map(([name]) => name).join(' ; ')}.`,
+    i.hashtags.slice(0, 5).join(' '),
+  ].join('\n\n').slice(0, 2200);
+}
+
+export const findInfo = (slug: string) => infos.find(i => i.slug === slug);
+
+// Un carrousel : un carrousel « infos végé » ou un article du blog.
+export function findPost(slug: string) {
+  const info = findInfo(slug);
+  if (info) return { slug, title: info.title, slides: infoSlides(info), caption: infoCaption(info) };
+  const a = findArticle(slug);
+  return a ? { slug, title: a.title, slides: slidesFor(a), caption: captionFor(a) } : null;
+}
+
+// Prochain carrousel à publier tout seul : le premier carrousel « infos végé » pas encore sur Instagram.
+export const nextInfo = (done: Record<string, Publication>) => infos.find(i => !done[i.slug]);
+
 // Fichier de public/ en data URI, pour les images du carrousel.
 export async function publicDataUri(path: string) {
   const file = join(process.cwd(), 'public', path.replace(/^\/+/, ''));
@@ -138,20 +177,20 @@ async function ready(c: Connection, id: string) {
 export const imageUrl = (origin: string, slug: string, n: number) => `${origin}/api/instagram/image/${slug}/${n}.jpg`;
 
 export async function publish(origin: string, slug: string) {
-  const a = findArticle(slug);
-  if (!a) throw new Error('Article inconnu.');
+  const post = findPost(slug);
+  if (!post) throw new Error('Carrousel inconnu.');
   const c = await freshConnection();
   if (!c) throw new Error('Instagram n’est pas connecté.');
   const done = await publications();
-  if (done[slug]) throw new Error('Cet article est déjà publié sur Instagram.');
-  const slides = slidesFor(a);
+  if (done[slug]) throw new Error('Ce carrousel est déjà publié sur Instagram.');
+  const slides = post.slides;
   const children: string[] = [];
   for (let n = 1; n <= slides.length; n++) {
     const item = await graph<{ id: string }>(`${c.userId}/media`, { image_url: imageUrl(origin, slug, n), is_carousel_item: 'true', access_token: c.token }, 'POST');
     children.push(item.id);
   }
   for (const id of children) await ready(c, id);
-  const carousel = await graph<{ id: string }>(`${c.userId}/media`, { media_type: 'CAROUSEL', children: children.join(','), caption: captionFor(a), access_token: c.token }, 'POST');
+  const carousel = await graph<{ id: string }>(`${c.userId}/media`, { media_type: 'CAROUSEL', children: children.join(','), caption: post.caption, access_token: c.token }, 'POST');
   await ready(c, carousel.id);
   const media = await graph<{ id: string }>(`${c.userId}/media_publish`, { creation_id: carousel.id, access_token: c.token }, 'POST');
   const link = await graph<{ permalink?: string }>(media.id, { fields: 'permalink', access_token: c.token }).catch(() => ({ permalink: undefined }));
@@ -164,12 +203,6 @@ export async function publish(origin: string, slug: string) {
 export function parisNow(now = new Date()) {
   const p = Object.fromEntries(new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hourCycle: 'h23' }).formatToParts(now).map(x => [x.type, x.value]));
   return { date: `${p.year}-${p.month}-${p.day}`, hour: Number(p.hour) };
-}
-
-// Prochain article à publier tout seul : le plus récent de la semaine écoulée qui n'est pas encore sur Instagram.
-export function nextArticle(done: Record<string, Publication>, today: string) {
-  const since = new Date(Date.parse(`${today}T12:00:00Z`) - 6 * 86400000).toISOString().slice(0, 10);
-  return sortedArticles().find(a => a.date <= today && a.date >= since && !done[a.slug]);
 }
 
 // ---- Bilan des carrousels (relu tous les 3 jours par une tâche programmée de Claude) ----

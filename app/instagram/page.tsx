@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getCurrentUser } from '@/lib/auth';
 import { isAdmin, memberFor, readSetting } from '@/lib/server';
-import { sortedArticles } from '@/lib/blog';
-import { captionFor, connection, nextArticle, parisNow, publications, slidesFor, type Stats } from '@/lib/instagram';
+import { infos } from '@/content/instagram/carrousels';
+import { connection, findPost, nextInfo, publications, type Stats } from '@/lib/instagram';
 import { PublicShell } from '@/components/public-shell';
 import { InstagramAdmin } from './instagram-admin';
 export const dynamic = 'force-dynamic';
@@ -22,13 +22,14 @@ export default async function InstagramPage() {
   const c = await connection();
   const done = await publications();
   const stats = await readSetting<{ posts: Record<string, Stats> } | null>('instagram_stats', null);
-  const today = parisNow().date;
-  const next = nextArticle(done, today);
-  const list = sortedArticles().slice(0, 15).map(a => ({ slug: a.slug, title: a.title, date: a.date, slides: slidesFor(a).length, caption: captionFor(a), publication: done[a.slug] ?? null, stats: stats?.posts[a.slug] ?? null }));
+  const next = nextInfo(done);
+  // Carrousels « infos végé » dans l'ordre de publication, puis les carrousels déjà publiés qui n'en font pas partie (articles du blog).
+  const slugs = [...infos.map(i => i.slug), ...Object.keys(done).filter(slug => !infos.some(i => i.slug === slug))];
+  const list = slugs.flatMap((slug, k) => { const p = findPost(slug); return p ? [{ slug, title: p.title, date: k < infos.length ? `n° ${k + 1}` : 'article du blog', slides: p.slides.length, caption: p.caption, publication: done[slug] ?? null, stats: stats?.posts[slug] ?? null }] : []; });
   return <PublicShell minimal>
     <p className="pub-eyebrow">Instagram</p>
-    <h1>Carrousels du blog</h1>
-    <p className="pub-lead">Chaque jour vers {process.env.INSTAGRAM_HEURE ?? 18} h (heure de Paris), le site publie sur Instagram le carrousel du dernier article du blog, s’il n’est pas déjà publié.</p>
+    <h1>Carrousels Instagram</h1>
+    <p className="pub-lead">Chaque jour vers {process.env.INSTAGRAM_HEURE ?? 18} h (heure de Paris), le site publie sur Instagram le prochain carrousel « infos végé » de la liste. Claude en ajoute chaque semaine.</p>
     <InstagramAdmin username={c?.username ?? null} expiresAt={c?.expiresAt ?? null} next={next?.slug ?? null} articles={list} />
   </PublicShell>;
 }

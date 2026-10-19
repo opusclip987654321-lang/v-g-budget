@@ -1,6 +1,7 @@
 # Instagram VégéBudget : bilans des carrousels
 
-Chaque jour vers 18 h, le site publie le carrousel du dernier article du blog (voir `lib/instagram.ts`).
+Chaque jour vers 18 h, le site publie un carrousel « infos végé » (voir `content/instagram/CONSIGNES.md`) ;
+jusqu'au 19/10/2026, c'était le carrousel du dernier article du blog.
 Tous les 3 jours, une tâche programmée de Claude fait le bilan (demande de louis, 15/10/2026) :
 
 1. Lire les chiffres : `https://vegebudget.fr/api/instagram/bilan` (portée, enregistrements, partages, j'aime,
@@ -27,7 +28,17 @@ Repères de départ, sans source solide pour un petit compte : à remplacer par 
 
 Les partages en message privé sont le signal qui compte le plus pour toucher des non-abonnés (Adam Mosseri, Instagram).
 
-## Format actuel (version 2, 15/10/2026, après la veille)
+## Format actuel (version 3, 19/10/2026, demande de louis)
+
+- Sujet : un carrousel « infos végé » par jour (régimes, nutrition, animaux, planète, saisons, idées reçues),
+  plutôt que les menus. Fichiers dans `content/instagram/carrousels/`.
+- Image 1 : grand titre sur fond vert (ou photo), pastille du thème. Puis 3 à 6 images : titre, et un grand
+  chiffre, un court texte ou des points numérotés. Fin : lien dans la bio, enregistrer et envoyer, sources.
+- Légende : accroche, titres des images en points, appel à enregistrer et envoyer, lien dans la bio, sources,
+  5 hashtags au plus.
+- Ne pas changer de format avant au moins 3 carrousels de la version 3 avec une vraie portée.
+
+## Format version 2 (15/10/2026 au 18/10/2026, après la veille)
 
 - 9 images au plus, 1080 × 1350.
 - Image 1 : photo, titre de l'article, pastille « Dès X € la part » (prix le plus bas des recettes montrées).
@@ -52,6 +63,11 @@ un carrousel « menu de la semaine » chaque vendredi, transformer de temps en t
   blogdumoderateur.com (5 hashtags), socialinsider.io (étude carrousels).
 
 ## Journal des bilans
+
+### 19/10/2026 : nouveau sujet
+
+- louis change le sujet des carrousels : des infos sur le monde végétarien, un sujet différent chaque jour,
+  plutôt que les menus du blog. 14 carrousels écrits d'avance, réserve complétée chaque semaine par Claude.
 
 ### 19/10/2026 (bilan 1)
 

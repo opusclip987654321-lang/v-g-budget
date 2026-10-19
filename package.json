@@ -12,6 +12,7 @@
     "lint": "eslint . --ignore-pattern .next",
     "check:planner": "node scripts/check-planner.mjs",
     "check:blog": "node scripts/check-blog.mjs",
+    "check:instagram": "node scripts/check-instagram.mjs",
     "check:api": "node scripts/check-api.mjs",
     "db:generate": "drizzle-kit generate"
   },
