@@ -40,6 +40,8 @@ heures et volumes.
   `POSTFORME_COMPTES` (louis tape la commande).
 - **Outil vidéo à peser** (louis, 20/10/2026) : Remotion (motion design écrit en code, un modèle où seuls les textes
   changent, rendu sur le serveur) si les vidéos ffmpeg des carrousels n'amènent pas de vues.
+- **Méthodes à consulter** (louis, 20/10/2026) : skills marketing et design dans `.claude/skills/` (textes, conversion,
+  SEO, réseaux, inscription, offre payante, `frontend-design`). À utiliser si elles servent l'objectif, jamais contre les règles fixes.
 
 ## Ce que la loop peut changer seule
 
