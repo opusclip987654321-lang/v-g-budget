@@ -44,6 +44,10 @@ heures et volumes.
 Tout le site et ce dépôt : textes, accueil, ordre des blocs, offre mise en avant, parcours de l'appli, questions
 aux visiteurs (`questions`, une par moment, 5 choix au plus), sujets du blog et des carrousels, pages nouvelles.
 
+Piste design (louis, 20/10/2026) : si l'accueil retient mal, faire d'abord un audit de lisibilité façon skill
+« Impeccable » (typo, contraste, structure, place des blocs) et vérifier les pages avec Playwright. Les animations
+viennent en dernier, car elles ralentissent le mobile. Lire une skill tierce avant de l'installer.
+
 ## Trop radical : QCM à louis d'abord
 
 Changer le **prix** ou ce qui est **encaissé**, changer de **cible**, **abandonner** le végétal, **arrêter** un
