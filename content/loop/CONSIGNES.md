@@ -13,7 +13,9 @@ conséquence. Demander à louis seulement pour un changement trop radical (plus 
 2. **Comprendre.** Où se perd-on ? Une version se juge après **une semaine** ; sous 30 visiteurs, regarder les avis
    et les parcours, pas les taux.
 3. **Décider.** Un essai à la fois quand c'est possible. Données trop maigres : ne rien changer, ou travailler ce
-   qui fait venir du monde.
+   qui fait venir du monde. **Garder est une décision** : même sans changement, une entrée de `journal` à la même
+   `version`, `changements: []`, et un `pourquoi` chiffré (ce qu'on a remis en question, pourquoi on garde).
+   Le cerveau garde tout le journal, daté, dans Notion « Décisions des loops » (louis, 20/10/2026).
 4. **Faire.** Une pull request : le changement, `version` + 1, `depuis`, `essai`, une entrée de `journal` dans
    `loop.ts` (changements, pourquoi chiffré, ce qu'on mesurera). Contrôles de `CLAUDE.md`, fusion une fois vert.
 5. **Noter.** Dans `LECONS.md`, une ligne par essai jugé (essai, chiffre, gardé ou arrêté) ou par erreur à ne pas
