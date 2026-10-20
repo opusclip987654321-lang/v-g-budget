@@ -38,6 +38,8 @@ heures et volumes.
 - **Leviers.** Sujets et ordre des carrousels, `SECONDES`, `VIDEO_HEURE`, `INSTAGRAM_HEURE`, légendes, sujets du
   blog, pages qui visent une requête, liens internes. Une plateforme qui n'amène rien en 4 semaines peut sortir de
   `POSTFORME_COMPTES` (louis tape la commande).
+- **Outil vidéo à peser** (louis, 20/10/2026) : Remotion (motion design écrit en code, un modèle où seuls les textes
+  changent, rendu sur le serveur) si les vidéos ffmpeg des carrousels n'amènent pas de vues.
 
 ## Ce que la loop peut changer seule
 
