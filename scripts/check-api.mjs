@@ -148,6 +148,12 @@ try{
  const mine=await fetch(origin+'/api/app?action=export',{headers:{Cookie:cookie}});check((await mine.json()).email,'nouveau@example.invalid','session opens the account');
  check((await fetch(mail.link,{redirect:'manual'})).headers.get('location'),origin+'/app?connexion=expiree','login link works only once');
  check((await fetch(origin+'/api/app?action=export',{headers:{Cookie:cookie.slice(0,-3)+'abc'}})).status,401,'tampered session rejected');
+ { // Clic sur une offre avant connexion : le lien ramène au paiement de cette offre ; une valeur inconnue est ignorée.
+  const ask=(payer)=>fetch(origin+'/api/auth/request',{method:'POST',headers:{'Content-Type':'application/json',Origin:origin},body:JSON.stringify({email:'payeur@example.invalid',payer})});
+  const last=()=>readFileSync(outbox,'utf8').trim().split('\n').map(l=>JSON.parse(l)).at(-1).link;
+  check((await ask('founder')).status,200,'login link with plan requested');
+  check((await fetch(last(),{redirect:'manual'})).headers.get('location'),origin+'/app?payer=founder#offre','login after offer click returns to checkout');
+  await ask('gratuit');check((await fetch(last(),{redirect:'manual'})).headers.get('location'),origin+'/app#dashboard','unknown plan ignored'); }
  { // Appli pour les stores : le lien rouvre l'appli avec la session, utilisée ensuite dans l'en-tête Authorization (sans cookie ni Origin).
   check((await fetch(origin+'/api/auth/request',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:'appli@example.invalid',appli:true})})).status,200,'app login link requested');
   const appMail=readFileSync(outbox,'utf8').trim().split('\n').map(l=>JSON.parse(l)).at(-1);assert.match(appMail.link,/&appli=1$/);checks++;

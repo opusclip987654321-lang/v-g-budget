@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: Request) {
   const origin = siteOrigin(request);
   const url = new URL(request.url), token = url.searchParams.get('token') ?? '', appli = url.searchParams.get('appli') === '1';
+  const payer = ['premium', 'founder'].includes(url.searchParams.get('payer') ?? '') ? url.searchParams.get('payer') : null;
   const now = Date.now();
   const row = token ? await db().prepare('SELECT email FROM login_tokens WHERE token_hash=? AND used_at IS NULL AND expires_at>?').bind(hashToken(token), now).first<{ email: string }>() : null;
   if (!row) return appli ? appPage(`${APP_LOGIN_URL}?erreur=expiree`, 'Ce lien n’est plus valable', 'Demandez un nouveau lien depuis l’appli.') : Response.redirect(`${origin}/app?connexion=expiree`, 303);
@@ -13,7 +14,7 @@ export async function GET(request: Request) {
   const userId = member?.id ?? crypto.randomUUID();
   const session = createSessionValue(userId, row.email, now);
   if (appli) return appPage(`${APP_LOGIN_URL}?session=${encodeURIComponent(session)}`, 'Vous êtes connecté', 'Retournez dans l’appli VégéBudget.');
-  return new Response(null, { status: 303, headers: { Location: `${origin}/app#dashboard`, 'Set-Cookie': sessionCookie(session, SESSION_DAYS * 86400), 'Cache-Control': 'no-store' } });
+  return new Response(null, { status: 303, headers: { Location: payer ? `${origin}/app?payer=${payer}#offre` : `${origin}/app#dashboard`, 'Set-Cookie': sessionCookie(session, SESSION_DAYS * 86400), 'Cache-Control': 'no-store' } });
 }
 
 // Page de passage pour l'appli : elle rouvre l'appli tout de suite, avec un bouton si le téléphone demande confirmation.

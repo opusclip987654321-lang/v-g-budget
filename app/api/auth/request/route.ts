@@ -14,7 +14,9 @@ export async function POST(request: Request) { try {
   const token = newLoginToken();
   await db().prepare('INSERT INTO login_tokens (token_hash,email,expires_at,created_at) VALUES (?,?,?,?)').bind(hashToken(token), email, now + LOGIN_TOKEN_MINUTES * 60000, now).run();
   // « appli » : la demande vient de l'appli pour les stores, le lien la rouvrira au lieu du site.
-  await sendLoginEmail(email, `${siteOrigin(request)}/api/auth/verify?token=${encodeURIComponent(token)}${input.appli === true ? '&appli=1' : ''}`);
+  // « payer » : le visiteur a cliqué sur une offre avant de se connecter, le lien le ramène au paiement de cette offre.
+  const payer = input.appli !== true && (input.payer === 'premium' || input.payer === 'founder') ? `&payer=${input.payer}` : '';
+  await sendLoginEmail(email, `${siteOrigin(request)}/api/auth/verify?token=${encodeURIComponent(token)}${input.appli === true ? '&appli=1' : ''}${payer}`);
   await recordEvent(request, 'connexion_demandee').catch(() => {});
   return json({ ok: true });
 } catch (e) { return failure(e); } }
