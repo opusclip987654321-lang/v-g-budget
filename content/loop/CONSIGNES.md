@@ -43,6 +43,13 @@ heures et volumes.
 - **Méthodes à consulter** (louis, 20/10/2026) : skills marketing et design dans `.claude/skills/` (textes, conversion,
   SEO, réseaux, inscription, offre payante, `frontend-design`). À utiliser si elles servent l'objectif, jamais contre les règles fixes.
 
+- **Organique IA** (louis, 21/10/2026) : être cité par les IA (ChatGPT, Perplexity, Google) autant que par Google.
+  Pistes : l'accueil d'abord (34 visites sur 42 partent en moins de 15 s, le trafic serait perdu) ; Pinterest via
+  Post for Me (réseau organique n°1 des recettes) ; pages « menu végé à X € la semaine » en données Recipe et FAQ ;
+  robots des IA autorisés dans robots.txt. Mesure : visites venues de chatgpt.com, perplexity.ai, gemini, copilot,
+  et 5 questions types par semaine avec la recherche web.
+- **Recherche web** : autorisée sans demander à louis (21/10/2026), chaque fois qu'elle aide l'objectif.
+
 ## Ce que la loop peut changer seule
 
 Tout le site et ce dépôt : textes, accueil, ordre des blocs, offre mise en avant, parcours de l'appli, questions
