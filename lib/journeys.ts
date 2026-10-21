@@ -26,13 +26,15 @@ export async function recordStep(request: Request, input: Record<string, unknown
   const steps = await db().prepare('SELECT COUNT(*) AS n FROM parcours WHERE day=? AND visitor=?').bind(day, visitor).first<{ n: number }>();
   if ((steps?.n ?? 0) >= MAX_STEPS) return false;
   if (input.event === 'page') await db().prepare("INSERT INTO parcours (day,visitor,kind,view,path,seconds,scroll,created_at) VALUES (?,?,'page',?,?,?,?,?)").bind(day, visitor, input.view, path, clamp(input.seconds, 7200), clamp(input.scroll, 100), now).run();
-  else await db().prepare("INSERT INTO parcours (day,visitor,kind,path,detail,created_at) VALUES (?,?,'clic',?,?,?)").bind(day, visitor, path, clean(input.detail, 60) || '(sans texte)', now).run();
+  else await db().prepare('INSERT INTO parcours (day,visitor,kind,path,detail,created_at) VALUES (?,?,?,?,?,?)').bind(day, visitor, input.event === 'erreur' ? 'erreur' : 'clic', path, clean(input.detail, input.event === 'erreur' ? 160 : 60) || '(sans texte)', now).run();
   return true;
 }
 
 // L'appli est sur /app depuis le 12 octobre 2026 ; avant, elle était à la racine (« / » et « /#vue »).
-const APP_PAGES: Record<string, string> = { '/app': 'Accueil (appli)', '/app#dashboard': 'Tableau de bord', '/app#menus': 'Menus de la semaine', '/app#recettes': 'Recettes (appli)', '/app#placard': 'Placard', '/app#courses': 'Liste de courses', '/app#offre': 'Offre Premium', '/app#compte': 'Compte', '/app#club': 'Club', '/app#defis': 'Défis', '/app#admin': 'Administration', '/': 'Page d’accueil', '/#dashboard': 'Tableau de bord', '/#menus': 'Menus de la semaine', '/#recettes': 'Recettes (appli)', '/#placard': 'Placard', '/#courses': 'Liste de courses', '/#offre': 'Offre Premium', '/#compte': 'Compte', '/#club': 'Club', '/#defis': 'Défis', '/#admin': 'Administration' };
+const APP_PAGES: Record<string, string> = { '/app': 'Accueil (appli)', '/app#dashboard': 'Tableau de bord', '/app#menus': 'Menus de la semaine', '/app#recettes': 'Recettes (appli)', '/app#placard': 'Placard', '/app#courses': 'Liste de courses', '/app#offre': 'Offre Premium', '/app#compte': 'Compte', '/app#premiere-semaine-1': '1re semaine : budget', '/app#premiere-semaine-2': '1re semaine : dîners', '/app#premiere-semaine-3': '1re semaine : placard', '/app#club': 'Club', '/app#defis': 'Défis', '/app#admin': 'Administration', '/': 'Page d’accueil', '/#dashboard': 'Tableau de bord', '/#menus': 'Menus de la semaine', '/#recettes': 'Recettes (appli)', '/#placard': 'Placard', '/#courses': 'Liste de courses', '/#offre': 'Offre Premium', '/#compte': 'Compte', '/#club': 'Club', '/#defis': 'Défis', '/#admin': 'Administration' };
 export const pageName = (path: string) => APP_PAGES[path] ?? path;
+// Préfixe des clics répétés (3 clics en moins d'une seconde au même endroit), posé par lib/track.ts.
+export const REPEAT = 'clics répétés : ';
 
 // Étapes de l'entonnoir, de l'arrivée au clic sur « payer ».
 const STEPS = [
@@ -62,7 +64,7 @@ export async function journeys(days = 7, now = new Date()) {
   const visits = [...groups.entries()].map(([key, steps]) => {
     const [day, visitor] = key.split('|');
     const own = events.filter(e => e.day === day && e.visitor === visitor);
-    const pages = steps.filter(s => s.kind === 'page'), clicks = steps.filter(s => s.kind === 'clic');
+    const pages = steps.filter(s => s.kind === 'page'), clicks = steps.filter(s => s.kind === 'clic'), errors = steps.filter(s => s.kind === 'erreur');
     const reached = new Set<string>(['arrivee']);
     if (clicks.length || pages.length > 1) reached.add('interaction');
     if (pages.some(p => p.path === '/app' || p.path.startsWith('/app#') || p.path.startsWith('/#'))) reached.add('appli');
@@ -71,7 +73,7 @@ export async function journeys(days = 7, now = new Date()) {
     const timeline = [
       ...steps.map(s => s.kind === 'page'
         ? { quand: s.created_at, type: 'page', page: pageName(s.path), secondes: s.seconds, lu: s.scroll }
-        : { quand: s.created_at, type: 'clic', page: pageName(s.path), texte: s.detail ?? '' }),
+        : { quand: s.created_at, type: s.kind, page: pageName(s.path), texte: s.detail ?? '' }),
       ...own.filter(e => e.name !== 'visite').map(e => ({ quand: e.created_at, type: 'etape', texte: STEPS.find(s => s.id === EVENT_STEP[e.name])?.libelle ?? e.name, detail: e.detail })),
     ].sort((a, b) => a.quand - b.quand).map(({ quand, ...rest }) => ({ heure: clock(quand), ...rest }));
     const seconds = pages.reduce((sum, p) => sum + p.seconds, 0);
@@ -79,7 +81,7 @@ export async function journeys(days = 7, now = new Date()) {
       visiteur: visitor.slice(0, 6), jour: day, heure: clock(steps[0].created_at), debut: steps[0].created_at,
       source: own.find(e => e.name === 'visite')?.detail ?? 'navigation interne',
       entree: pageName(pages[0]?.path ?? steps[0].path), sortie: pageName(pages.at(-1)?.path ?? steps.at(-1)!.path),
-      pages: pages.length, clics: clicks.length, secondes: seconds,
+      pages: pages.length, clics: clicks.length, erreurs: errors.length, clicsRepetes: clicks.filter(c => c.detail?.startsWith(REPEAT)).length, secondes: seconds,
       rebond: pages.length <= 1 && !clicks.length && seconds < 15,
       plusLoin: furthest.libelle, reached, parcours: timeline,
     };
@@ -97,6 +99,9 @@ export async function journeys(days = 7, now = new Date()) {
   for (const r of rows.filter(r => r.kind === 'clic')) { const k = `${pageName(r.path)}\u0000${r.detail}`; clickCount.set(k, (clickCount.get(k) ?? 0) + 1); }
   const clics = [...clickCount.entries()].map(([k, n]) => { const [page, texte] = k.split('\u0000'); return { page, texte, n }; }).sort((a, b) => b.n - a.n).slice(0, 20);
   const bounces = visits.filter(v => v.rebond).length;
+  const errorCount = new Map<string, number>();
+  for (const r of rows.filter(r => r.kind === 'erreur')) { const k = `${pageName(r.path)}\u0000${r.detail}`; errorCount.set(k, (errorCount.get(k) ?? 0) + 1); }
+  const erreurs = [...errorCount.entries()].map(([k, n]) => { const [page, texte] = k.split('\u0000'); return { page, texte, n }; }).sort((a, b) => b.n - a.n).slice(0, 20);
 
   // Constats en clair : où les visiteurs s'arrêtent le plus.
   const constats: string[] = [];
@@ -107,11 +112,15 @@ export async function journeys(days = 7, now = new Date()) {
     if (bounces) constats.push(`${bounces} visite(s) sur ${visits.length} repartent en moins de 15 secondes sans rien cliquer.`);
     const exit = [...pageRows].filter(p => p.sorties >= 2).sort((a, b) => b.sorties - a.sorties)[0];
     if (exit) constats.push(`Page d’où l’on part le plus : ${exit.page} (${exit.sorties} départs sur ${exit.vues} vues, ${exit.secondesMoy} s en moyenne, ${exit.luMoyPct} % de la page lue).`);
+    const withErrors = visits.filter(v => v.erreurs).length;
+    if (withErrors) constats.push(`${withErrors} visite(s) ont rencontré une erreur sur la page (la plus fréquente : « ${erreurs[0].texte} » sur ${erreurs[0].page}).`);
+    const repeats = clics.filter(c => c.texte.startsWith(REPEAT));
+    if (repeats.length) constats.push(`Clics répétés sans effet apparent : « ${repeats[0].texte.slice(REPEAT.length)} » sur ${repeats[0].page} (${repeats[0].n} fois). Le bouton répond peut-être mal.`);
     for (const p of pageRows.filter(p => p.vues >= 3 && p.luMoyPct < 40).slice(0, 2)) constats.push(`Sur ${p.page}, on ne lit en moyenne que ${p.luMoyPct} % de la page : ce qui est plus bas est peu vu.`);
   }
   return {
     jours: days, du: first, visites: visits.length, rebonds: bounces,
-    entonnoir: funnel, pages: pageRows.slice(0, 25), clics, constats,
+    entonnoir: funnel, pages: pageRows.slice(0, 25), clics, erreurs, constats,
     dernieres: visits.slice(0, 40).map(v => ({ ...v, reached: undefined, debut: undefined })),
   };
 }
