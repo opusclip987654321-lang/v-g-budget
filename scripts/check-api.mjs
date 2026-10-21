@@ -91,7 +91,9 @@ try{
   const bilan=await request('/api/instagram/bilan');check([bilan.status,bilan.body.compte,bilan.body.posts,bilan.body.reserve?.[0]],[200,null,[],'semaine-5-diners-pour-2'],'instagram report readable without an account');
   { const diff=(secret)=>fetch(origin+'/api/diffusion',{method:'POST',headers:secret?{Authorization:'Bearer '+secret}:{}});
     check((await diff()).status,401,'diffusion needs the cron secret');const d=await diff(baseEnv.CRON_SECRET);const db2=await d.json();check([d.status,db2.indexnow?.rien],[200,'Site local : rien à signaler.'],'indexnow skipped on a local site');
+    check(db2.telegram?.rien,'TELEGRAM_BOT_TOKEN n’est pas configuré.','telegram skipped without a bot');
     const report=await request('/api/diffusion');check([report.status,report.body.videos,report.body.postforme],[200,[],'indisponible'],'diffusion report readable');
+    check([report.body.telegram?.configure,report.body.telegram?.envoyes,report.body.telegram?.enAttente>0],[false,0,true],'telegram report readable');
     const key=await request('/indexnow-cle.txt');check([key.status,/^[0-9a-f]{32}$/.test(key.body)],[200,true],'indexnow key published');
     check((await fetch(origin+'/api/diffusion/video/inconnu.mp4')).status,404,'unknown video refused');
     const v=await fetch(origin+'/api/diffusion/video/vegetarien-vegetalien-vegan.mp4');const bytes=Buffer.from(await v.arrayBuffer());
