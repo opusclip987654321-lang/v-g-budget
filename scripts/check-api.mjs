@@ -94,6 +94,15 @@ try{
     check(db2.telegram?.rien,'TELEGRAM_BOT_TOKEN n’est pas configuré.','telegram skipped without a bot');
     const report=await request('/api/diffusion');check([report.status,report.body.videos,report.body.postforme],[200,[],'indisponible'],'diffusion report readable');
     check([report.body.telegram?.configure,report.body.telegram?.envoyes,report.body.telegram?.enAttente>0],[false,0,true],'telegram report readable');
+    check(report.body.prospection?.createurs>0,true,'prospection report readable');
+    const pr=await request('/api/prospection');check([pr.status,pr.body.envoyes,pr.body.reponses],[200,0,0],'prospection summary public');
+    check((await fetch(origin+'/api/prospection',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({compte:'1repas1euro',action:'envoye'})})).status,401,'prospection needs the owner');
+    check((await request('/api/prospection',member,{compte:'1repas1euro',action:'envoye'})).status,403,'prospection refused to members');
+    const mk=await request('/api/prospection',owner,{compte:'1repas1euro',action:'repondu'});check([mk.status,!!mk.body.etat?.envoye,!!mk.body.etat?.repondu],[200,true,true],'owner marks a reply');
+    check((await request('/api/prospection')).body.reponses,1,'reply counted');
+    check((await request('/api/prospection',owner,{compte:'inconnu',action:'envoye'})).status,404,'unknown creator refused');
+    check((await request('/api/prospection',owner,{compte:'1repas1euro',action:'annuler'})).body.etat,{},'owner cancels');
+    const pp=await request('/prospection',owner);check(pp.status,200,'prospection page');assert.match(pp.body,/Duos avec des créateurs/);checks++;
     const key=await request('/indexnow-cle.txt');check([key.status,/^[0-9a-f]{32}$/.test(key.body)],[200,true],'indexnow key published');
     check((await fetch(origin+'/api/diffusion/video/inconnu.mp4')).status,404,'unknown video refused');
     const v=await fetch(origin+'/api/diffusion/video/vegetarien-vegetalien-vegan.mp4');const bytes=Buffer.from(await v.arrayBuffer());
