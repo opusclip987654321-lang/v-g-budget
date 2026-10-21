@@ -139,6 +139,23 @@ try{
  await db.prepare("UPDATE members SET subscription_status='none' WHERE id=?").bind(member.id).run();
  check((await api('delete-account',member,{confirm:'SUPPRIMER'})).status,200,'member deletion');
  check((await db.prepare('SELECT COUNT(*) AS n FROM waitlist').first()).n,0,'waitlist cascade');
+ { // Menu gratuit de la semaine par e-mail : confirmation, menu envoyé tout de suite, désinscription, bilan sans adresse.
+  const ask=(email)=>fetch(origin+'/api/menu-gratuit',{method:'POST',headers:{'Content-Type':'application/json',Origin:origin},body:JSON.stringify({email,source:'/blog/test'})});
+  const mails=()=>readFileSync(outbox,'utf8').trim().split('\n').map(l=>JSON.parse(l));
+  check((await ask('pas-une-adresse')).status,400,'free menu: invalid email rejected');
+  check((await ask('Menu@Example.invalid')).status,200,'free menu: requested');
+  const confirm=mails().at(-1);check([confirm.kind,confirm.to],['menu-confirmer','menu@example.invalid'],'free menu: confirmation sent');
+  check((await fetch(confirm.link.replace(/s=[^&]+$/,'s=faux'))).status,200,'free menu: forged link shows a page');
+  check(mails().length,mails().length,'free menu: nothing sent on forged link');
+  const before=mails().length;const page=await fetch(confirm.link);check(page.status,200,'free menu: confirmed');
+  const menu=mails().at(-1);check([mails().length,menu.kind],[before+1,'menu-gratuit'],'free menu: menu sent right after confirmation');
+  assert.match(menu.text,/Lundi : .+ la portion/);assert.match(menu.text,/Ne plus recevoir le menu : http/);checks+=2;
+  await fetch(confirm.link);check(mails().length,before+1,'free menu: second click sends nothing');
+  const bilan=await (await fetch(origin+'/api/menu-gratuit')).json();check([bilan.abonnes,bilan.sources[0]?.source],[1,'/blog/test'],'free menu: public summary');
+  assert.ok(!JSON.stringify(bilan).includes('@'));checks++;
+  check((await fetch(menu.text.match(/Ne plus recevoir le menu : (\S+)/)[1])).status,200,'free menu: unsubscribe');
+  check((await (await fetch(origin+'/api/menu-gratuit')).json()).abonnes,0,'free menu: unsubscribed');
+ }
  const login=(email)=>fetch(origin+'/api/auth/request',{method:'POST',headers:{'Content-Type':'application/json',Origin:origin},body:JSON.stringify({email})});
  check((await login('pas-une-adresse')).status,400,'invalid login email rejected');
  check((await login('Nouveau@Example.invalid')).status,200,'login link requested');

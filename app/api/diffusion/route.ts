@@ -2,10 +2,11 @@ import { timingSafeEqual } from 'node:crypto';
 import { json, failure, ApiError, siteOrigin, readSetting } from '@/lib/server';
 import { envois, indexNow, reels, videoDuJour, videoPath, type IndexNow } from '@/lib/diffusion';
 import { findPost, type Stats } from '@/lib/instagram';
+import { bilanMenu, menuDuVendredi } from '@/lib/menu-gratuit';
 export const dynamic = 'force-dynamic';
 
 // Diffusion sans publicité (lib/diffusion.ts). POST : appelé chaque heure par scripts/mise-a-jour-auto.sh avec
-// « Authorization: Bearer CRON_SECRET » ; signale les pages nouvelles à IndexNow et publie la vidéo du jour.
+// « Authorization: Bearer CRON_SECRET » ; signale les pages nouvelles à IndexNow, publie la vidéo du jour et, le vendredi, envoie le menu gratuit.
 // GET : bilan public (rien de personnel), lu par la revue du lundi de la loop (content/loop/CONSIGNES.md).
 function authorized(request: Request) {
   const secret = process.env.CRON_SECRET;
@@ -20,7 +21,8 @@ export async function POST(request: Request) { try {
   const origin = siteOrigin(request);
   const indexnow = await indexNow(origin).catch(e => ({ erreur: e instanceof Error ? e.message : String(e) }));
   const videoJour = await videoDuJour(origin).catch(e => ({ erreur: e instanceof Error ? e.message : String(e) }));
-  return json({ ok: true, indexnow, video: videoJour });
+  const menu = await menuDuVendredi(origin).catch(e => ({ erreur: e instanceof Error ? e.message : String(e) }));
+  return json({ ok: true, indexnow, video: videoJour, menu });
 } catch (e) { return failure(e); } }
 
 export async function GET() { try {
@@ -38,6 +40,7 @@ export async function GET() { try {
     postforme: process.env.POSTFORME_API_KEY && process.env.POSTFORME_COMPTES ? 'configuré' : 'indisponible',
     indexnow: await readSetting<IndexNow | null>('indexnow_dernier', null),
     releveInstagram: stats ? new Date(stats.at).toISOString() : null,
+    menuGratuit: await bilanMenu(),
   });
 } catch (e) { return failure(e); } }
 
