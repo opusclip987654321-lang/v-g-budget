@@ -102,6 +102,12 @@ try{
     check((await request('/api/prospection')).body.reponses,1,'reply counted');
     check((await request('/api/prospection',owner,{compte:'inconnu',action:'envoye'})).status,404,'unknown creator refused');
     check((await request('/api/prospection',owner,{compte:'1repas1euro',action:'annuler'})).body.etat,{},'owner cancels');
+    await db.prepare("INSERT INTO settings (key,value) VALUES ('prospection_emails',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").bind(JSON.stringify({lapetiteokara:{at:'x',emails:['contact@agence-web.invalid','marion@lapetiteokara.fr']},'1repas1euro':{at:'x',emails:['contact@agence-web.invalid']}})).run();
+    const pm=await (await diff(baseEnv.CRON_SECRET)).json();check(pm.prospectionMail,{mail:'lapetiteokara'},'duo mail sent to the creator own address only');
+    const duo=readFileSync(outbox,'utf8').trim().split('\n').map(l=>JSON.parse(l)).at(-1);check([duo.kind,duo.to],['duo','marion@lapetiteokara.fr'],'duo mail in outbox');assert.match(duo.text,/utm_source=duo-lapetiteokara/);assert.match(duo.text,/ne plus recevoir|plus recevoir/);checks+=2;
+    check((await (await diff(baseEnv.CRON_SECRET)).json()).prospectionMail?.rien,'Aucun créateur à contacter par mail.','one mail per creator');
+    check((await fetch(duo.link.replace(/s=[^&]+$/,'s=faux'))).status,200,'bad stop link answered');check((await request('/api/prospection')).body.refus,0,'bad stop link ignored');
+    check((await fetch(duo.link)).status,200,'stop link');const after=(await request('/api/prospection')).body;check([after.refus,after.mails],[1,1],'creator opted out');
     const pp=await request('/prospection',owner);check(pp.status,200,'prospection page');assert.match(pp.body,/Duos avec des créateurs/);checks++;
     const key=await request('/indexnow-cle.txt');check([key.status,/^[0-9a-f]{32}$/.test(key.body)],[200,true],'indexnow key published');
     check((await fetch(origin+'/api/diffusion/video/inconnu.mp4')).status,404,'unknown video refused');

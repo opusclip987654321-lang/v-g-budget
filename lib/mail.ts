@@ -68,3 +68,12 @@ export async function sendFreeMenu(to: string, m: FreeMenu) {
     html: `<p>Bonjour,</p><p>Voici vos ${m.dinners.length} dîners sans viande pour 2 personnes, semaine du ${escape(m.weekLabel)} :</p><ul>${m.dinners.map((d, n) => `<li><strong>${days[n]}</strong> : <a href="${escape(m.origin + d.path)}" style="color:#174c38">${escape(d.title)}</a> · ${d.minutes} min · ${escape(d.portion)} la portion</li>`).join('')}</ul><p>Courses estimées : <strong>environ ${escape(m.total)}</strong> (paquets entiers, prix relevés sur carrefour.fr).</p><p>Pour la liste de courses exacte, sans racheter ce que vous avez déjà, et un menu adapté à votre budget :</p>${button(m.appLink, 'Créer ma liste de courses')}<p>La première semaine est gratuite. Ensuite, l’offre de lancement est à ${escape(m.founder)} par an.</p><p style="color:#666;font-size:13px"><a href="${escape(m.stopLink)}" style="color:#666">Ne plus recevoir le menu</a></p>`,
   });
 }
+
+// Proposition de duo à un créateur (lib/prospection.ts), à son adresse de contact publique, avec un lien pour ne plus être contacté.
+export async function sendDuo(to: string, d: { subject: string; text: string; stopLink: string }) {
+  const text = `${d.text}\n\nL’équipe VégéBudget\nbonjour@vegebudget.fr · vegebudget.fr\n\nVous ne souhaitez plus recevoir de message de notre part ? ${d.stopLink}`;
+  await send({
+    to, link: d.stopLink, kind: 'duo', subject: d.subject, text,
+    html: `${d.text.split('\n\n').map(p => `<p>${escape(p)}</p>`).join('')}<p>L’équipe VégéBudget<br>bonjour@vegebudget.fr · <a href="https://vegebudget.fr">vegebudget.fr</a></p><p style="color:#666;font-size:13px">Vous ne souhaitez plus recevoir de message de notre part ? <a href="${escape(d.stopLink)}">Cliquez ici</a>.</p>`,
+  });
+}

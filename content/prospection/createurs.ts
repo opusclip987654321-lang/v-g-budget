@@ -32,3 +32,18 @@ export const messageDuo = (c: Createur) => `Bonjour${c.prenom ? ` ${c.prenom}` :
 Je vous propose un duo sans rien à préparer : je vous fais une vidéo prête à publier, « Ma semaine de dîners pour 2 à petit prix », à poster en Collab (elle apparaît sur votre compte et sur le nôtre). En échange : Premium offert à vie, et 30 % de chaque abonnement payé venu par votre lien perso ${lienPerso(c)}.
 
 Ça vous tente ? Je vous envoie un exemple de vidéo.`;
+
+// Version mail (adresse de contact publique du site du créateur) : même offre ; pour un blog sans Instagram, un
+// article prêt à publier au lieu d'une vidéo en Collab.
+export const mailDuo = (c: Createur) => ({
+  subject: c.instagram === false ? 'Un menu de la semaine à petit prix, prêt pour votre blog' : 'Une vidéo prête à publier pour votre compte ?',
+  text: c.instagram === false
+    ? `Bonjour${c.prenom ? ` ${c.prenom}` : ''},
+
+Je vous écris à l'adresse de contact de votre site. Nous faisons VégéBudget (vegebudget.fr) : des menus végétariens de la semaine, avec la liste de courses et son prix réel, dès 0,50 € la part. ${c.accroche}
+
+Je vous propose un article prêt à publier sur votre blog, « 5 dîners pour 2 à petit prix, avec la liste de courses », photos comprises, que vous adaptez comme vous voulez. En échange : Premium offert à vie, et 30 % de chaque abonnement payé venu par votre lien perso ${lienPerso(c)}.
+
+Ça vous intéresse ? Répondez simplement à ce mail et je vous envoie l'article.`
+    : messageDuo(c).replace(/^Bonjour([^!]*) !/, `Bonjour$1,\n\nJe vous écris à l'adresse de contact de votre site.`).replace("Je m'occupe de VégéBudget", 'Nous faisons VégéBudget').replace('Je vous envoie un exemple de vidéo.', 'Répondez simplement à ce mail et je vous envoie un exemple de vidéo.'),
+});
