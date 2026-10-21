@@ -5,7 +5,7 @@ import { readSetting, writeSetting } from './server';
 // part, demande-moi sur Telegram »). Claude ajoute un message dans content/telegram/messages.ts par une pull request ;
 // une fois le site à jour, l'appel horaire POST /api/diffusion l'envoie une seule fois.
 // Réglage du .env : TELEGRAM_BOT_TOKEN (bot créé par Walid avec @BotFather). La conversation est celle de la première
-// personne qui a écrit /start au bot, retenue ensuite (ou TELEGRAM_CHAT_ID si on veut l'imposer).
+// personne qui a écrit au bot (/start ou n'importe quel message), retenue ensuite (ou TELEGRAM_CHAT_ID si on veut l'imposer).
 
 const api = async <T>(method: string, body: Record<string, unknown>) => {
   const res = await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/${method}`, {
@@ -23,7 +23,7 @@ async function chatId() {
   const saved = await readSetting<string | null>('telegram_chat', null);
   if (saved) return saved;
   const updates = await api<Update[]>('getUpdates', { allowed_updates: ['message'] });
-  const start = updates.find(u => u.message?.chat?.type === 'private' && u.message.text?.startsWith('/start'));
+  const start = updates.find(u => u.message?.chat?.type === 'private');
   if (!start) return null;
   const id = String(start.message!.chat!.id);
   await writeSetting('telegram_chat', id);
@@ -52,7 +52,7 @@ async function envoyer() {
   const todo = messages.filter(m => !done[m.id]).slice(0, 5);
   if (!todo.length) return { rien: 'Aucun message à envoyer.' };
   const chat = await chatId();
-  if (!chat) return { rien: 'Personne n’a encore écrit /start au bot.' };
+  if (!chat) return { rien: 'Personne n’a encore écrit au bot (ou ses messages ont déjà été lus par un autre outil qui utilise la même clé).' };
   const sent: string[] = [];
   for (const m of todo) {
     for (let i = 0; i < m.texte.length; i += 4000) await api('sendMessage', { chat_id: chat, text: m.texte.slice(i, i + 4000), disable_web_page_preview: true });
