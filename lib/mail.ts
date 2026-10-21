@@ -46,3 +46,25 @@ export async function sendWeeklyReminder(to: string, data: { link: string; stopL
     html: `<p>Bonjour,</p>${data.recap.length ? '<p>Votre semaine passée :</p>' : ''}${recapHtml}<p>Prenez un moment pour prévoir vos dîners de la semaine du ${escape(data.weekLabel)} et vérifier ce que vous avez déjà à la maison. Vos menus et votre liste de courses vous attendent dans VégéBudget.</p>${button(data.link, 'Préparer mes menus')}<p style="color:#666;font-size:13px"><a href="${escape(data.stopLink)}" style="color:#666">Ne plus recevoir ce rappel</a></p>`,
   });
 }
+
+// Menu gratuit de la semaine (lib/menu-gratuit.ts) : d'abord la confirmation de l'adresse, puis le menu.
+export async function sendMenuConfirm(to: string, link: string) {
+  await send({
+    to, link, kind: 'menu-confirmer',
+    subject: 'Confirmez pour recevoir votre menu gratuit',
+    text: `Bonjour,\n\nCliquez sur ce lien pour recevoir tout de suite le menu de la semaine (5 dîners sans viande pour 2, avec le coût), puis un nouveau chaque vendredi :\n${link}\n\nSi vous n’avez rien demandé, ignorez cet e-mail : vous ne recevrez rien.\n\nVégéBudget`,
+    html: `<p>Bonjour,</p><p>Cliquez sur ce bouton pour recevoir tout de suite le menu de la semaine (5 dîners sans viande pour 2, avec le coût), puis un nouveau chaque vendredi.</p>${button(link, 'Recevoir mon menu')}<p style="color:#666;font-size:13px">Si vous n’avez rien demandé, ignorez cet e-mail : vous ne recevrez rien.</p>`,
+  });
+}
+
+type FreeMenu = { weekLabel: string; dinners: { title: string; path: string; minutes: number; portion: string }[]; total: string; origin: string; appLink: string; stopLink: string; founder: string };
+export async function sendFreeMenu(to: string, m: FreeMenu) {
+  const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+  const lines = m.dinners.map((d, n) => `${days[n]} : ${d.title} (${d.minutes} min, ${d.portion} la portion)`);
+  await send({
+    to, link: m.appLink, kind: 'menu-gratuit',
+    subject: `Vos ${m.dinners.length} dîners de la semaine du ${m.weekLabel}, environ ${m.total} pour 2`,
+    text: `Bonjour,\n\nVoici vos ${m.dinners.length} dîners sans viande pour 2 personnes, semaine du ${m.weekLabel} :\n\n${lines.join('\n')}\n\nCourses estimées : environ ${m.total} (paquets entiers, prix relevés sur carrefour.fr).\n\nPour la liste de courses exacte, sans racheter ce que vous avez déjà, et adapter le menu à votre budget : ${m.appLink}\n\nLa première semaine est gratuite. Ensuite, l’offre de lancement est à ${m.founder} par an.\n\nNe plus recevoir le menu : ${m.stopLink}\n\nVégéBudget`,
+    html: `<p>Bonjour,</p><p>Voici vos ${m.dinners.length} dîners sans viande pour 2 personnes, semaine du ${escape(m.weekLabel)} :</p><ul>${m.dinners.map((d, n) => `<li><strong>${days[n]}</strong> : <a href="${escape(m.origin + d.path)}" style="color:#174c38">${escape(d.title)}</a> · ${d.minutes} min · ${escape(d.portion)} la portion</li>`).join('')}</ul><p>Courses estimées : <strong>environ ${escape(m.total)}</strong> (paquets entiers, prix relevés sur carrefour.fr).</p><p>Pour la liste de courses exacte, sans racheter ce que vous avez déjà, et un menu adapté à votre budget :</p>${button(m.appLink, 'Créer ma liste de courses')}<p>La première semaine est gratuite. Ensuite, l’offre de lancement est à ${escape(m.founder)} par an.</p><p style="color:#666;font-size:13px"><a href="${escape(m.stopLink)}" style="color:#666">Ne plus recevoir le menu</a></p>`,
+  });
+}

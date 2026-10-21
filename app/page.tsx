@@ -8,6 +8,7 @@ import { FOUNDER_PRICE_LABEL, FOUNDER_SEATS, PREMIUM_PRICE_LABEL, PRICE_SOURCE }
 import { faq, homeExample, homeLd, ldScript, portionCost, publicOrigin, recipeImage } from '@/lib/seo';
 import { PublicShell, START_PATH } from '@/components/public-shell';
 import { AppLinkRedirect } from '@/components/app-link-redirect';
+import { MenuGratuitForm } from '@/components/menu-gratuit-form';
 export const dynamic = 'force-dynamic';
 
 // Page d'accueil publique : elle présente le service et mène à l'appli (/app).
@@ -46,6 +47,7 @@ export default async function Home() {
       <ol className="land-week">{week.map((r, n) => <li key={r.id}><Link href={START_PATH}><img src={recipeImage(r)} alt="" width={120} height={120} loading="lazy" /><span><small>{['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'][n]}</small><strong>{r.title}</strong><small>{r.minutes} min · {money(portionCost(r))} par portion</small></span></Link></li>)}</ol>
       <p className="pub-note">{PRICE_SOURCE}. Les prix peuvent varier selon le magasin. Le prix par portion correspond aux ingrédients utilisés.</p>
       <p className="land-week-more"><Link href="/blog/menu-semaine-pas-cher">Voir une semaine complète, midi et soir</Link></p>
+      <MenuGratuitForm title="Pas le temps maintenant ? Recevez ce genre de menu chaque semaine." />
     </section>
 
     <section className="land-before-after" aria-labelledby="avant-apres">

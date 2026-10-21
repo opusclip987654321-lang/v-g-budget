@@ -5,6 +5,7 @@ import { articleLd, articles, blogCover, blogCoverJpg, blogPath, dateLabel, find
 import { ldScript, publicOrigin } from '@/lib/seo';
 import { BlogContent, inline } from '@/components/blog-content';
 import { Cta, PublicShell } from '@/components/public-shell';
+import { MenuGratuitForm } from '@/components/menu-gratuit-form';
 
 type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -32,6 +33,7 @@ export default async function ArticlePage({ params }: Props) {
       {a.faq.length > 0 && <section><h2 id="questions-frequentes">Questions fréquentes</h2><div className="pub-faq">{a.faq.map(([q, r]) => <details key={q}><summary>{q}</summary><p>{inline(r)}</p></details>)}</div></section>}
       {a.sources.length > 0 && <section className="blog-sources"><h2>Sources</h2><ul>{a.sources.map(([label, url]) => <li key={url}><a href={url} target="_blank" rel="noopener">{label}</a></li>)}</ul></section>}
       {!a.body.includes('@cta ') && <Cta lead="Des dîners sans viande, dans votre budget." />}
+      <MenuGratuitForm />
       <section><h2>À lire aussi</h2><ul className="blog-grid">{others.map(o => <li key={o.slug}><Link href={blogPath(o)} className="blog-card"><img src={blogCover(o)} alt="" width={600} height={338} loading="lazy" /><span className="blog-card-title">{o.title}</span><span className="pub-card-meta">{readingMinutes(o)} min de lecture</span></Link></li>)}</ul></section>
     </article>
   </PublicShell>;

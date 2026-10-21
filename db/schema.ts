@@ -9,3 +9,4 @@ export const reports=sqliteTable('reports',{id:text('id').primaryKey(),post:text
 export const waitlist=sqliteTable('waitlist',{owner:text('owner').primaryKey().references(()=>members.id,{onDelete:'cascade'}),createdAt:text('created_at').notNull(),plan:text('plan').notNull().default('premium')});
 export const billingEvents=sqliteTable('billing_events',{id:text('id').primaryKey(),createdAt:text('created_at').notNull()});
 export const loginTokens=sqliteTable('login_tokens',{tokenHash:text('token_hash').primaryKey(),email:text('email').notNull(),expiresAt:integer('expires_at').notNull(),usedAt:integer('used_at'),createdAt:integer('created_at').notNull()},t=>[index('idx_login_tokens_email_created').on(t.email,t.createdAt)]);
+export const menuAbonnes=sqliteTable('menu_abonnes',{email:text('email').primaryKey(),source:text('source'),createdAt:text('created_at').notNull(),confirmedAt:text('confirmed_at'),stoppedAt:text('stopped_at'),lastWeek:text('last_week')});
