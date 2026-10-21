@@ -59,6 +59,13 @@ Piste design (louis, 20/10/2026) : si l'accueil retient mal, faire d'abord un au
 « Impeccable » (typo, contraste, structure, place des blocs) et vérifier les pages avec Playwright. Les animations
 viennent en dernier, car elles ralentissent le mobile. Lire une skill tierce avant de l'installer.
 
+## Filet : annuler seule ce qui casse (louis, 21/10/2026)
+
+Après chaque changement, vérifier que tout marche encore : CI verte, puis le site répond, l'inscription, le
+paiement Premium et la diffusion (`/api/diffusion`) passent. Si c'est cassé, annuler SON changement aussitôt,
+sans attendre louis, et le noter au journal (cause comprise) et dans `LECONS.md`. Pas de seuil d'arrêt sur les
+résultats : une version qui rapporte moins n'est pas annulée d'office, la revue du lundi en juge.
+
 ## Trop radical : QCM à louis d'abord
 
 Changer le **prix** ou ce qui est **encaissé**, changer de **cible**, **abandonner** le végétal, **arrêter** un
