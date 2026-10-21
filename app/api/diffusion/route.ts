@@ -3,10 +3,12 @@ import { json, failure, ApiError, siteOrigin, readSetting } from '@/lib/server';
 import { envois, indexNow, reels, videoDuJour, videoPath, type IndexNow } from '@/lib/diffusion';
 import { findPost, type Stats } from '@/lib/instagram';
 import { bilanMenu, menuDuVendredi } from '@/lib/menu-gratuit';
+import { bilanTelegram, envoyerTelegram } from '@/lib/telegram';
 export const dynamic = 'force-dynamic';
 
 // Diffusion sans publicité (lib/diffusion.ts). POST : appelé chaque heure par scripts/mise-a-jour-auto.sh avec
-// « Authorization: Bearer CRON_SECRET » ; signale les pages nouvelles à IndexNow, publie la vidéo du jour et, le vendredi, envoie le menu gratuit.
+// « Authorization: Bearer CRON_SECRET » ; signale les pages nouvelles à IndexNow, publie la vidéo du jour, envoie le menu gratuit le vendredi
+// et les messages de content/telegram/messages.ts à Walid sur Telegram.
 // GET : bilan public (rien de personnel), lu par la revue du lundi de la loop (content/loop/CONSIGNES.md).
 function authorized(request: Request) {
   const secret = process.env.CRON_SECRET;
@@ -22,7 +24,8 @@ export async function POST(request: Request) { try {
   const indexnow = await indexNow(origin).catch(e => ({ erreur: e instanceof Error ? e.message : String(e) }));
   const videoJour = await videoDuJour(origin).catch(e => ({ erreur: e instanceof Error ? e.message : String(e) }));
   const menu = await menuDuVendredi(origin).catch(e => ({ erreur: e instanceof Error ? e.message : String(e) }));
-  return json({ ok: true, indexnow, video: videoJour, menu });
+  const telegram = await envoyerTelegram().catch(e => ({ erreur: e instanceof Error ? e.message : String(e) }));
+  return json({ ok: true, indexnow, video: videoJour, menu, telegram });
 } catch (e) { return failure(e); } }
 
 export async function GET() { try {
@@ -41,6 +44,7 @@ export async function GET() { try {
     indexnow: await readSetting<IndexNow | null>('indexnow_dernier', null),
     releveInstagram: stats ? new Date(stats.at).toISOString() : null,
     menuGratuit: await bilanMenu(),
+    telegram: await bilanTelegram(),
   });
 } catch (e) { return failure(e); } }
 

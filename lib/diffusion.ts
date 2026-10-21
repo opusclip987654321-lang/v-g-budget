@@ -2,12 +2,13 @@ import { spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { copyFile, mkdir, mkdtemp, readFile, rename, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
+import type { Writable } from 'node:stream';
 import { dirname, join } from 'node:path';
 import { dataDir } from '@/db';
 import { infos } from '@/content/instagram/carrousels';
 import sitemap from '@/app/sitemap';
 import { readSetting, writeSetting } from './server';
-import { slideJpeg } from './instagram-image';
+import { slideFrame, videoBand } from './instagram-image';
 import { findPost, freshConnection, graph, parisNow, publications, ready, type Publication } from './instagram';
 
 // Diffusion sans publicité (demande de louis du 20/10/2026, volet acquisition de la loop) :
@@ -21,43 +22,65 @@ import { findPost, freshConnection, graph, parisNow, publications, ready, type P
 // ---- Vidéo ----
 
 // 720 × 1280 suffit sur un téléphone et garde ffmpeg sous 150 Mo de mémoire (le conteneur a 512 Mo).
-const VIDEO = { w: 720, h: 1280, slideH: 900 };
+const VIDEO = { w: 720, h: 1280, slideH: 900, fps: 24 };
+// Chaque image entre par la droite et ses éléments apparaissent un à un pendant ANIMATION secondes (« motion design »
+// dessiné par le site, Walid 21/10/2026 : la vidéo est ce qui a été vu), puis reste affichée jusqu'à sa durée.
 const SECONDES = { couverture: 3, image: 4, fin: 4.5 };
+const ANIMATION = 1.6;
 export const videoPath = (slug: string) => `/api/diffusion/video/${slug}.mp4`;
 const videoFile = (slug: string) => join(dataDir(), 'videos', `${slug}.mp4`);
 const building = new Map<string, Promise<string>>();
 
-function run(command: string, args: string[], cwd: string) {
+// Lance ffmpeg ; feed écrit les images sur son entrée.
+function run(command: string, args: string[], cwd: string, feed?: (input: Writable) => Promise<void>) {
   return new Promise<void>((resolve, reject) => {
-    const child = spawn(command, args, { cwd, stdio: ['ignore', 'ignore', 'pipe'] });
+    const child = spawn(command, args, { cwd, stdio: [feed ? 'pipe' : 'ignore', 'ignore', 'pipe'] });
     let err = '';
-    child.stderr.on('data', d => { err = (err + d).slice(-800); });
-    const timer = setTimeout(() => child.kill('SIGKILL'), 180000);
+    child.stderr!.on('data', d => { err = (err + d).slice(-800); });
+    const timer = setTimeout(() => child.kill('SIGKILL'), 300000);
     child.on('error', e => { clearTimeout(timer); reject(new Error((e as NodeJS.ErrnoException).code === 'ENOENT' ? 'ffmpeg n’est pas installé sur le serveur.' : e.message)); });
     child.on('close', code => { clearTimeout(timer); if (code === 0) resolve(); else reject(new Error(`ffmpeg a échoué (${code}) : ${err.trim()}`)); });
+    if (feed && child.stdin) {
+      child.stdin.on('error', () => {}); // ffmpeg arrêté : l'erreur arrive par « close »
+      feed(child.stdin).then(() => child.stdin!.end(), e => { child.kill('SIGKILL'); reject(e); });
+    }
   });
 }
+
+const write = (input: Writable, data: Buffer) => new Promise<void>((resolve, reject) => {
+  if (input.write(data)) resolve(); else input.once('drain', resolve).once('error', reject);
+});
 
 async function build(slug: string) {
   const post = findPost(slug);
   if (!post) throw new Error('Carrousel inconnu.');
   const dir = await mkdtemp(join(tmpdir(), 'vegebudget-video-'));
   try {
-    const list: string[] = [];
     const total = post.slides.length;
-    for (let n = 1; n <= total; n++) {
-      const jpg = await slideJpeg(slug, n);
-      if (!jpg) throw new Error(`Image ${n} introuvable.`);
-      await writeFile(join(dir, `${n}.jpg`), jpg);
-      list.push(`file '${n}.jpg'`, `duration ${n === 1 ? SECONDES.couverture : n === total ? SECONDES.fin : SECONDES.image}`);
-    }
-    list.push(`file '${total}.jpg'`); // ffmpeg ne tient compte de la dernière durée que si l'image est répétée
-    await writeFile(join(dir, 'liste.txt'), list.join('\n'));
-    // Images centrées sur fond vert VégéBudget, piste son muette (certaines plateformes refusent une vidéo sans son).
-    await run('ffmpeg', ['-loglevel', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', 'liste.txt', '-f', 'lavfi', '-i', 'anullsrc=r=44100:cl=stereo',
-      '-vf', `scale=${VIDEO.w}:${VIDEO.slideH},pad=${VIDEO.w}:${VIDEO.h}:0:${(VIDEO.h - VIDEO.slideH) / 2}:color=0x174c38,setsar=1,fps=30,format=yuv420p`,
-      '-map', '0:v', '-map', '1:a', '-shortest', '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '21', '-threads', '1',
-      '-c:a', 'aac', '-b:a', '64k', '-movflags', '+faststart', 'video.mp4'], dir);
+    const durations = post.slides.map((_, i) => i === 0 ? SECONDES.couverture : i === total - 1 ? SECONDES.fin : SECONDES.image);
+    const length = durations.reduce((a, b) => a + b, 0);
+    const animated = Math.round(ANIMATION * VIDEO.fps);
+    const feed = async (input: Writable) => {
+      for (let n = 1; n <= total; n++) {
+        const frames = Math.round(durations[n - 1] * VIDEO.fps);
+        let jpg: Buffer | null = null;
+        for (let f = 0; f < frames; f++) {
+          if (f <= animated) jpg = await slideFrame(slug, n, f / animated);
+          if (!jpg) throw new Error(`Image ${n} introuvable.`);
+          await write(input, jpg);
+        }
+      }
+    };
+    // Images centrées sur fond vert VégéBudget, titre en haut, barre de progression citron en bas, piste son muette (certaines
+    // plateformes refusent une vidéo sans son).
+    const bar = 10, band = (VIDEO.h - VIDEO.slideH) / 2;
+    await writeFile(join(dir, 'bandeau.png'), await videoBand(slug, VIDEO.w, band));
+    await run('ffmpeg', ['-loglevel', 'error', '-y', '-f', 'image2pipe', '-framerate', String(VIDEO.fps), '-c:v', 'mjpeg', '-i', '-',
+      '-f', 'lavfi', '-i', 'anullsrc=r=44100:cl=stereo', '-f', 'lavfi', '-i', `color=c=0xd7f369:s=${VIDEO.w}x${bar}:r=${VIDEO.fps}`, '-i', 'bandeau.png',
+      '-filter_complex', `[0:v]scale=${VIDEO.w}:${VIDEO.slideH},pad=${VIDEO.w}:${VIDEO.h}:0:${band}:color=0x174c38,setsar=1[p];[p][3:v]overlay=0:0[v];` +
+        `[v][2:v]overlay=x='-W+W*t/${length}':y=H-${bar * 4}:shortest=1,fps=${VIDEO.fps},format=yuv420p[out]`,
+      '-map', '[out]', '-map', '1:a', '-shortest', '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '21', '-threads', '1',
+      '-c:a', 'aac', '-b:a', '64k', '-movflags', '+faststart', 'video.mp4'], dir, feed);
     const file = videoFile(slug);
     await mkdir(dirname(file), { recursive: true });
     // Copie puis renommage : le dossier temporaire et DATA_DIR ne sont pas sur le même disque.
