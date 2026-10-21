@@ -4,11 +4,12 @@ import { envois, indexNow, reels, videoDuJour, videoPath, type IndexNow } from '
 import { findPost, type Stats } from '@/lib/instagram';
 import { bilanMenu, menuDuVendredi } from '@/lib/menu-gratuit';
 import { bilanTelegram, envoyerTelegram } from '@/lib/telegram';
+import { bilanProspection, chercherEmails } from '@/lib/prospection';
 export const dynamic = 'force-dynamic';
 
 // Diffusion sans publicité (lib/diffusion.ts). POST : appelé chaque heure par scripts/mise-a-jour-auto.sh avec
 // « Authorization: Bearer CRON_SECRET » ; signale les pages nouvelles à IndexNow, publie la vidéo du jour, envoie le menu gratuit le vendredi
-// et les messages de content/telegram/messages.ts à Walid sur Telegram.
+// et les messages de content/telegram/messages.ts à Walid sur Telegram, et cherche l'adresse mail d'un créateur (prospection).
 // GET : bilan public (rien de personnel), lu par la revue du lundi de la loop (content/loop/CONSIGNES.md).
 function authorized(request: Request) {
   const secret = process.env.CRON_SECRET;
@@ -25,7 +26,8 @@ export async function POST(request: Request) { try {
   const videoJour = await videoDuJour(origin).catch(e => ({ erreur: e instanceof Error ? e.message : String(e) }));
   const menu = await menuDuVendredi(origin).catch(e => ({ erreur: e instanceof Error ? e.message : String(e) }));
   const telegram = await envoyerTelegram().catch(e => ({ erreur: e instanceof Error ? e.message : String(e) }));
-  return json({ ok: true, indexnow, video: videoJour, menu, telegram });
+  const prospection = await chercherEmails(origin).catch(e => ({ erreur: e instanceof Error ? e.message : String(e) }));
+  return json({ ok: true, indexnow, video: videoJour, menu, telegram, prospection });
 } catch (e) { return failure(e); } }
 
 export async function GET() { try {
@@ -45,6 +47,7 @@ export async function GET() { try {
     releveInstagram: stats ? new Date(stats.at).toISOString() : null,
     menuGratuit: await bilanMenu(),
     telegram: await bilanTelegram(),
+    prospection: await bilanProspection(),
   });
 } catch (e) { return failure(e); } }
 
