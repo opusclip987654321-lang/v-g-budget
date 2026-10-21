@@ -33,8 +33,21 @@ async function chatId() {
 export const envoyes = () => readSetting<Record<string, string>>('telegram_envoyes', {});
 
 // Envoie les messages pas encore partis (au plus 5 par appel). Telegram limite un message à 4096 caractères.
+// La dernière erreur est gardée pour le bilan public (aide au diagnostic : webhook déjà posé sur le bot, mauvaise clé…).
 export async function envoyerTelegram() {
   if (!process.env.TELEGRAM_BOT_TOKEN) return { rien: 'TELEGRAM_BOT_TOKEN n’est pas configuré.' };
+  try {
+    const out = await envoyer();
+    await writeSetting('telegram_erreur', 'rien' in out && out.rien !== 'Aucun message à envoyer.' ? { at: new Date().toISOString(), message: out.rien } : null);
+    return out;
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    await writeSetting('telegram_erreur', { at: new Date().toISOString(), message });
+    throw e;
+  }
+}
+
+async function envoyer() {
   const done = await envoyes();
   const todo = messages.filter(m => !done[m.id]).slice(0, 5);
   if (!todo.length) return { rien: 'Aucun message à envoyer.' };
@@ -58,5 +71,6 @@ export async function bilanTelegram() {
     conversation: Boolean(process.env.TELEGRAM_CHAT_ID || await readSetting<string | null>('telegram_chat', null)),
     envoyes: Object.keys(done).length,
     enAttente: messages.filter(m => !done[m.id]).length,
+    erreur: await readSetting<{ at: string; message: string } | null>('telegram_erreur', null),
   };
 }
