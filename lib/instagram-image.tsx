@@ -101,6 +101,73 @@ async function render(s: Slide, n: number, total: number) {
       <Footer logo={logo} />
     </div>;
   }
+  // Ticket de caisse : papier blanc, lignes en pointillés, total en gras (format très repris par les comptes budget).
+  if (s.kind === 'ticket') return <div style={page}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 30 }}>
+      <div style={{ display: 'flex', fontSize: s.title.length > 30 ? 66 : 78, fontWeight: 800, color: green, lineHeight: 1.08, letterSpacing: -1.5 }}>{s.title}</div>{counter}
+    </div>
+    <div style={{ display: 'flex', flexDirection: 'column', background: '#fff', borderRadius: 12, padding: '40px 48px', gap: s.lines.length > 9 ? 10 : 16, boxShadow: '0 12px 40px rgba(0,0,0,.08)' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', fontSize: 28, fontWeight: 800, letterSpacing: 6, color: grey }}>TICKET DE CAISSE</div>
+      {s.lines.map(([name, price], i) => <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: s.lines.length > 9 ? 30 : 36, borderBottom: '2px dashed #ddd6c8', paddingBottom: 8 }}><span>{name}</span><span style={{ fontWeight: 600 }}>{price}</span></div>)}
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 52, fontWeight: 800, color: green, paddingTop: 8 }}><span>TOTAL</span><span>{s.total}</span></div>
+    </div>
+    <Footer logo={logo} />
+  </div>;
+  if (s.kind === 'quiz') return <div style={{ ...page, background: lime, color: green }}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}><div style={{ display: 'flex', fontSize: 34, fontWeight: 800 }}>Votre réponse en commentaire</div>{counter}</div>
+    <div style={{ display: 'flex', fontSize: s.title.length > 40 ? 80 : 96, fontWeight: 800, lineHeight: 1.05, letterSpacing: -2 }}>{s.title}</div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      {s.choix.map((c, i) => <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 28, background: '#fff', borderRadius: 28, padding: '28px 36px', fontSize: 48, fontWeight: 700 }}>
+        <div style={{ display: 'flex', width: 72, height: 72, borderRadius: 36, background: green, color: lime, alignItems: 'center', justifyContent: 'center', fontSize: 40, fontWeight: 800 }}>{'ABCD'[i]}</div>{c}
+      </div>)}
+    </div>
+    <Footer logo={logo} />
+  </div>;
+  if (s.kind === 'grand') return <div style={{ ...page, background: green, color: '#fff' }}>
+    <div style={{ display: 'flex', justifyContent: 'flex-end' }}><div style={{ display: 'flex', fontSize: 28, color: lime, fontWeight: 600 }}>{`${n}/${total}`}</div></div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 36 }}>
+      <div style={{ display: 'flex', fontSize: s.title.length > 60 ? 88 : 108, fontWeight: 800, lineHeight: 1.04, letterSpacing: -3 }}>{s.title}</div>
+      {s.text && <div style={{ display: 'flex', fontSize: 46, lineHeight: 1.3, color: lime, fontWeight: 600 }}>{s.text}</div>}
+    </div>
+    <Footer light logo={logo} />
+  </div>;
+  if (s.kind === 'semaine') {
+    const photos = await Promise.all(s.days.map(d => publicDataUri(d.image)));
+    return <div style={page}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 30 }}>
+        <div style={{ display: 'flex', fontSize: s.title.length > 30 ? 62 : 74, fontWeight: 800, color: green, lineHeight: 1.08, letterSpacing: -1.5 }}>{s.title}</div>{counter}
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+        {s.days.map((d, i) => <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 26, background: '#fff', borderRadius: 24, padding: 14 }}>
+          {photos[i] ? <img src={photos[i]!} width={130} height={130} alt="" style={{ borderRadius: 18, objectFit: 'cover' }} /> : <div style={{ display: 'flex', width: 130, height: 130 }} />}
+          <div style={{ display: 'flex', flexDirection: 'column', flex: 1, gap: 6 }}>
+            <div style={{ display: 'flex', fontSize: 26, fontWeight: 800, color: grey, letterSpacing: 2 }}>{['LUNDI', 'MARDI', 'MERCREDI', 'JEUDI', 'VENDREDI', 'SAMEDI', 'DIMANCHE'][i]}</div>
+            <div style={{ display: 'flex', fontSize: d.title.length > 34 ? 32 : 36, fontWeight: 700, lineHeight: 1.15 }}>{d.title}</div>
+          </div>
+          <div style={{ display: 'flex', fontSize: 34, fontWeight: 800, color: green, paddingRight: 14 }}>{d.price}</div>
+        </div>)}
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: green, color: '#fff', borderRadius: 28, padding: '26px 36px' }}>
+        <div style={{ display: 'flex', fontSize: 36, fontWeight: 600 }}>Courses pour 2</div><div style={{ display: 'flex', fontSize: 60, fontWeight: 800, color: lime }}>{s.total}</div>
+      </div>
+      <Footer logo={logo} />
+    </div>;
+  }
+  if (s.kind === 'classement') return <div style={page}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 30 }}>
+      <div style={{ display: 'flex', fontSize: s.title.length > 30 ? 66 : 78, fontWeight: 800, color: green, lineHeight: 1.08, letterSpacing: -1.5 }}>{s.title}</div>{counter}
+    </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {s.rows.map(([name, price], i) => <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 26, background: i === 0 ? green : '#fff', color: i === 0 ? '#fff' : ink, borderRadius: 24, padding: '24px 30px' }}>
+        <div style={{ display: 'flex', fontSize: 48, fontWeight: 800, color: i === 0 ? lime : green, width: 60 }}>{String(i + 1)}</div>
+        <div style={{ display: 'flex', flex: 1, fontSize: 40, fontWeight: 700 }}>{name}</div>
+        <div style={{ display: 'flex', fontSize: 36, fontWeight: 800, color: i === 0 ? lime : green }}>{price}</div>
+      </div>)}
+    </div>
+    {s.note ? <div style={{ display: 'flex', fontSize: 30, lineHeight: 1.3, color: grey }}>{s.note}</div> : <div style={{ display: 'flex' }} />}
+    <Footer logo={logo} />
+  </div>;
+  if (s.kind !== 'fin') return null as never;
   return <div style={{ ...page, background: green, color: '#fff' }}>
     <div style={{ display: 'flex', justifyContent: 'flex-end' }}><div style={{ display: 'flex', fontSize: 28, color: lime, fontWeight: 600 }}>{`${n}/${total}`}</div></div>
     <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>

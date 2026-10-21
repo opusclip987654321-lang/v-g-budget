@@ -36,6 +36,20 @@ elle en écrit 7 nouveaux, lance les contrôles du dépôt, ouvre la pull reques
 - Contrôles : `pnpm check:instagram`, puis les contrôles de `CLAUDE.md`. Regarder les images avant de fusionner :
   `/api/instagram/image/<slug>/<n>.jpg` sur le site lancé en local.
 
+## Autres formats (Walid, 21/10/2026)
+
+Pour tester des posts très différents, une image peut aussi être (détail dans `lib/instagram-infos.ts`) :
+`{ recette: id }` (fiche recette du catalogue), `{ ticket: titre, items: [ids d'ingrédients] }` (ticket de caisse),
+`{ quiz: question, choix: [...] }` (réponse sur l'image suivante), `{ grand: phrase, text? }` (grande phrase),
+`{ semaine: titre, recettes: [3 à 5 ids] }` (dîners du lundi au vendredi et total des courses pour 2),
+`{ classement: titre, items: [ids], note? }` (ingrédients rangés au kilo). Les prix sont toujours calculés depuis
+`lib/catalog.ts` ; dans un quiz ou une grande phrase, écrire `{prix:id-recette}`, jamais un prix à la main.
+La couverture peut prendre la photo d'une recette (`/images/recettes/<id>.jpg`). Le texte d'une image ne doit
+jamais affirmer un classement que les prix calculés pourraient démentir.
+
+Les 10 premiers carrousels de `index.ts` sont ce test de formats. On les juge sur la portée, les enregistrements
+et les partages (`/api/instagram/bilan`), puis le ou les meilleurs passent en publicité.
+
 ## Sujets déjà traités
 
 Voir `index.ts`. Idées pour la suite : vitamine D, iode, zinc, tofu et tempeh, seitan, laits végétaux,
