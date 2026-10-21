@@ -200,7 +200,7 @@ try{
   check(today.inscrits>=1,true,'signups counted');check(s.sources.map(x=>x.source).sort(),['direct','google.com','instagram'],'traffic sources');
   check(s.totaux.membres>=2,true,'member total');
   await track({event:'page',view:'vue001',path:'/blog/code-oeufs',seconds:0,scroll:0});await track({event:'page',view:'vue001',path:'/blog/code-oeufs',seconds:42,scroll:65});await track({event:'page',view:'vue001',path:'/blog/code-oeufs',seconds:5,scroll:10});
-  await track({event:'clic',path:'/blog/code-oeufs',detail:'Composer ma semaine'});await track({event:'page',view:'vue002',path:'/',seconds:12,scroll:80});await track({event:'page',view:'vue003',path:'/#offre',seconds:30,scroll:100});
+  await track({event:'clic',path:'/blog/code-oeufs',detail:'Composer ma semaine'});await track({event:'erreur',path:'/blog/code-oeufs',detail:'Cannot read properties of undefined'});await track({event:'clic',path:'/blog/code-oeufs',detail:'clics répétés : Voir l’offre'});await track({event:'page',view:'vue002',path:'/',seconds:12,scroll:80});await track({event:'page',view:'vue003',path:'/#offre',seconds:30,scroll:100});
   await track({event:'page',view:'vue004',path:'/blog/code-oeufs',seconds:4,scroll:20},{'X-Forwarded-For':'203.0.113.9'});
   await track({event:'page',view:'vue005',path:'https://ailleurs.invalid/x'},{'X-Forwarded-For':'203.0.113.11'});await track({event:'page',view:'vue006',path:'/'},{'User-Agent':'Googlebot/2.1'});
   await track({event:'page',view:'vue007',path:'/#admin',seconds:9},{Cookie:sessionFor(owner)});
@@ -209,6 +209,7 @@ try{
   const full=p.dernieres.find(v=>v.pages===3);check(full.source,'google.com','journey keeps its traffic source');check(full.entree,'/blog/code-oeufs','entry page');check(full.sortie,'Offre Premium','exit page named');check(full.secondes,84,'time on page keeps the longest report');
   check(full.parcours.filter(x=>x.type==='page').map(x=>x.lu),[65,80,100],'scroll depth');check(full.parcours.some(x=>x.type==='clic'&&x.texte==='Composer ma semaine'),true,'clicks in the journey');check(full.plusLoin,'A cliqué sur payer / réserver','furthest funnel step');
   check(p.dernieres.find(v=>v.pages===1).rebond,true,'bounce detected');check(p.entonnoir[0].visites,2,'funnel start');check(p.pages[0].chemin,'/blog/code-oeufs','pages ranked by views');check(p.constats.length>0,true,'plain-language findings');
+  check([full.erreurs,full.clicsRepetes,full.parcours.some(x=>x.type==='erreur')],[1,1,true],'errors and repeated clicks in the journey');check(p.erreurs[0].texte,'Cannot read properties of undefined','errors listed');check(p.constats.some(c=>c.includes('erreur'))&&p.constats.some(c=>c.includes('Clics répétés')),true,'errors and repeated clicks in the findings');
   // Avis des visiteurs pour la loop (content/loop/loop.ts) : une réponse par question et par jour, adresses et numéros retirés.
   const avis=(data,headers={})=>fetch(origin+'/api/avis',{method:'POST',headers:{...browser,...headers},body:JSON.stringify(data)});
   check((await avis({question:'menus-raison',choix:'Dépenser moins en courses',texte:'écrivez-moi à a.b@example.invalid ou au 06 12 34 56 78'})).status,200,'feedback recorded');
