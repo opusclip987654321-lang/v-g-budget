@@ -65,10 +65,11 @@ export async function refuser(compte: string) {
 // Une adresse n'est retenue que si elle est sur le domaine du site du créateur, ou une boîte grand public
 // (gmail, outlook…) : une adresse d'agence web ou d'hébergeur trouvée en bas de page n'est pas la sienne.
 const PUBLIQUES = /@(gmail|googlemail|outlook|hotmail|live|yahoo|icloud|me|orange|free|sfr|laposte|wanadoo|protonmail|proton)\./i;
-export function adresseDuCreateur(c: Createur, found: string[]) {
-  const host = c.site ? new URL(c.site).hostname.replace(/^www\./, '') : '';
+export function adresseDuSite(site: string | undefined, found: string[]) {
+  const host = site ? new URL(site).hostname.replace(/^www\./, '') : '';
   return found.find(e => host && e.endsWith(`@${host}`)) ?? found.find(e => PUBLIQUES.test(e)) ?? null;
 }
+export const adresseDuCreateur = (c: Createur, found: string[]) => adresseDuSite(c.site, found);
 
 const jourParis = (iso: string) => parisNow(new Date(iso)).date;
 

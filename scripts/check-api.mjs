@@ -18,6 +18,19 @@ const dataDir=mkdtempSync(join(tmpdir(),'vegebudget-check-'));
 const outbox=join(dataDir,'outbox.jsonl');
 const secret='local-test-secret-local-test-secret-0123456789';
 const baseEnv={DATA_DIR:dataDir,AUTH_SECRET:secret,SITE_ORIGIN:origin,OWNER_EMAIL:'owner@example.invalid',CRON_SECRET:'cron-secret-de-test-1234',BILLING_ENABLED:'false',MAIL_OUTBOX:outbox};
+// Faux sites pour la recherche de prospects d'affiliation (lib/affiliation.ts), un port par site : aucun vrai site
+// n'est contacté. « cuisine » (donné par Claude) renvoie vers « vegan » et « garage » (trouvés par ses liens).
+const recette='<p>Recette de cuisine végétarienne pour les familles : les ingrédients, la cuisson des légumes, un menu, un plat et un dessert pour vos repas, avec des recettes simples.</p>';
+const fauxSites={};const fauxSite=(nom)=>`http://127.0.0.1:${fauxSites[nom].address().port}/`;
+const pages={
+ cuisine:{'/':()=>`<html lang="fr"><title>Ma cuisine &amp; moi</title>${recette}<a href="/contact">Contact</a><a href="${fauxSite('vegan')}article">vegan</a><a href="${fauxSite('garage')}">garage</a><a href="https://www.facebook.com/macuisine">fb</a>`,'/contact':()=>'<a href="mailto:cuisine.moi@outlook.fr">écrire</a> <a href="mailto:dev@agence.invalid">agence</a>'},
+ vegan:{'/':()=>`<html lang="fr-FR"><title>Vegan Futé | recettes</title>${recette} Recettes vegan et végétales, sans viande. <a href="mailto:lea.cuisine@gmail.com">mail</a>`},
+ garage:{'/':()=>'<html lang="fr"><title>Garage</title><p>Pneus, vidange, freins.</p>'},
+ anglais:{'/':()=>`<html lang="en"><title>Cooking</title>${recette}`},
+ absent:{},
+};
+for(const nom of Object.keys(pages)){fauxSites[nom]=createServer((req,res)=>{const page=pages[nom][req.url];res.writeHead(page?200:404,{'Content-Type':'text/html; charset=utf-8'});res.end(page?page():'introuvable');});await new Promise(r=>fauxSites[nom].listen(0,'127.0.0.1',r));}
+baseEnv.AFFILIATION_SITES=JSON.stringify([['cuisine','Ma cuisine'],['anglais','Cooking'],['absent','Disparu']].map(([p,nom])=>({site:fauxSite(p),nom,theme:'vegetarien',ajoute:'2026-10-22'})));
 let server;
 async function startServer(extra={}){
  server=spawn(process.execPath,['node_modules/next/dist/bin/next','start','-p',String(port),'-H','127.0.0.1'],{env:{...process.env,...baseEnv,...extra},stdio:['ignore','ignore','inherit']});
@@ -108,6 +121,12 @@ try{
     check((await (await diff(baseEnv.CRON_SECRET)).json()).prospectionMail?.rien,'Aucun créateur à contacter par mail.','one mail per creator');
     check((await fetch(duo.link.replace(/s=[^&]+$/,'s=faux'))).status,200,'bad stop link answered');check((await request('/api/prospection')).body.refus,0,'bad stop link ignored');
     check((await fetch(duo.link)).status,200,'stop link');const after=(await request('/api/prospection')).body;check([after.refus,after.mails],[1,1],'creator opted out');
+    await diff(baseEnv.CRON_SECRET);check((await (await diff(baseEnv.CRON_SECRET)).json()).affiliation?.rien,'Aucun site à visiter.','each site visited once');
+    const ab=await request('/api/affiliation');check([ab.status,ab.body.sites,ab.body.trouvesParLiens,ab.body.aVisiter,ab.body.retenus,ab.body.avecMail,ab.body.ecartes,ab.body.parTheme.vegetarien],[200,5,2,0,2,2,3,2],'affiliation summary public');
+    check(ab.body.raisons,{'pas en français':1,'ne répond pas':1,'ne parle pas de cuisine':1},'affiliation rejections explained');assert.doesNotMatch(JSON.stringify(ab.body),/@/);checks++;
+    check((await request('/api/affiliation?format=csv')).status,401,'affiliation list needs the owner');check((await request('/api/affiliation?format=csv',member)).status,403,'affiliation list refused to members');
+    const ac=await request('/api/affiliation?format=csv',owner);check(ac.status,200,'affiliation csv');assert.match(ac.body,/cuisine\.moi@outlook\.fr/);assert.match(ac.body,/lea\.cuisine@gmail\.com/);assert.match(ac.body,/Ma cuisine & moi/);assert.match(ac.body,/"Vegan Futé"/);assert.doesNotMatch(ac.body,/agence\.invalid|Garage|facebook/);checks+=5;
+    const ap=await request('/affiliation',owner);check(ap.status,200,'affiliation page');assert.match(ap.body,/Sites à contacter/);checks++;
     const pp=await request('/prospection',owner);check(pp.status,200,'prospection page');assert.match(pp.body,/Duos avec des créateurs/);checks++;
     const key=await request('/indexnow-cle.txt');check([key.status,/^[0-9a-f]{32}$/.test(key.body)],[200,true],'indexnow key published');
     check((await fetch(origin+'/api/diffusion/video/inconnu.mp4')).status,404,'unknown video refused');
@@ -309,4 +328,4 @@ try{
   }finally{await new Promise(r=>stripeServer.close(r));}
  }
  console.log(`${checks} API and persistence assertions passed.`);
-}finally{await stopServer();rmSync(dataDir,{recursive:true,force:true});}
+}finally{await stopServer();for(const f of Object.values(fauxSites))f.close();rmSync(dataDir,{recursive:true,force:true});}
