@@ -64,6 +64,18 @@ un carrousel « menu de la semaine » chaque vendredi, transformer de temps en t
 
 ## Journal des bilans
 
+### 22/10/2026 (bilan 2)
+
+- Chiffres : 7 carrousels publiés depuis le 15/10, dont 3 « infos végé » (19, 20 et 21/10). Portée totale : 1 compte
+  (carrousel « Végétarien, végétalien, vegan », 1 vue), 0 partout ailleurs. Abonnés : 0. Aucune visite du site venue
+  d'Instagram depuis le 15/10. Seul le carrousel du 19/10 a plus de 2 jours parmi les « infos végé ».
+- Lecture : même blocage qu'au bilan 1, le compte n'a pas d'audience. Le changement de sujet ne peut pas encore se juger.
+- Veille : les « Trial Reels » d'Instagram sont montrés d'abord à des non-abonnés, mais plusieurs guides disent
+  qu'il faut environ 1 000 abonnés pour y avoir accès ([Publer](https://publer.com/blog/instagram-trial-reels-guide/),
+  [TechCrunch](https://techcrunch.com/2024/05/31/instagram-tests-trial-reels-that-dont-display-to-a-creators-followers)).
+- Décision : aucun changement de format ici. Un autre fil teste déjà 10 formats très différents (PR #52, demande du
+  21/10) et des vidéos Reels des carrousels (PR #41) : changer le format en même temps fausserait ce test.
+
 ### 19/10/2026 : nouveau sujet
 
 - louis change le sujet des carrousels : des infos sur le monde végétarien, un sujet différent chaque jour,
