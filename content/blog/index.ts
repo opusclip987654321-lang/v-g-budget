@@ -15,6 +15,7 @@ import queMangerFinDeMois from './articles/que-manger-fin-de-mois';
 import courgeRecetteFacile from './articles/courge-recette-facile';
 import remplacerLaViandePasCher from './articles/remplacer-la-viande-pas-cher';
 import courses50EurosParSemaine from './articles/courses-50-euros-par-semaine';
+import legumesSurgelesPrix from './articles/legumes-surgeles-prix';
 
 // Articles du blog : un fichier par article dans ./articles (les 9 premiers datent du 7 octobre 2026),
 // illustration dans public/images/blog/<slug>.svg et .jpg. Ajouter chaque nouvel article à la fin de la liste.
@@ -37,4 +38,5 @@ export const dailyArticles: Article[] = [
   courgeRecetteFacile,
   remplacerLaViandePasCher,
   courses50EurosParSemaine,
+  legumesSurgelesPrix,
 ];
