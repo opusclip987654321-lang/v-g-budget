@@ -7,7 +7,6 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 ## À faire
 
 - [ ] liste de courses pas chère pour la semaine | Budget | une liste type pour 5 dîners, paquets entiers vs portions, le placard d'abord (attention : /blog/menu-semaine-pas-cher a déjà une liste de courses de la semaine, choisir un angle différent)
-- [ ] fruits et légumes de novembre | Saisons | calendrier du mois, idées de dîners | fin octobre-novembre
 - [ ] comparer le prix au kilo | Budget | comment lire l'étiquette, pièges des formats, exemples
 - [ ] marques distributeur ou grandes marques | Budget | ce qui change vraiment, où ça vaut le coup
 - [ ] batch cooking pas cher | Recettes | préparer plusieurs dîners d'un coup, organisation, recettes qui se gardent
@@ -44,3 +43,4 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [x] remplacer la viande pas cher (par quoi remplacer la viande hachée, bolognaise, chili, hachis) | Budget | publié 2026-10-20 → /blog/remplacer-la-viande-pas-cher
 - [x] faire ses courses avec 50 € par semaine (courses 50 euros par semaine) | Budget | publié 2026-10-21 → /blog/courses-50-euros-par-semaine
 - [x] légumes surgelés : moins chers que le frais ? (légumes surgelés moins cher que frais) | Budget | publié 2026-10-22 → /blog/legumes-surgeles-prix
+- [x] fruits et légumes de novembre | Saisons | publié 2026-11-06 → /blog/fruits-legumes-novembre
