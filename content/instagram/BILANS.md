@@ -64,6 +64,18 @@ un carrousel « menu de la semaine » chaque vendredi, transformer de temps en t
 
 ## Journal des bilans
 
+### 07/11/2026 (bilan 3)
+
+- Bilans du 25/10 au 04/11 non faits : la tâche programmée n'avait plus accès (« no access » de Claude Code).
+- Chiffres : 11 carrousels publiés du 15 au 25/10, portée totale 1 compte, 0 abonné. Les 7 Reels faits avec les
+  mêmes images (23 au 26/10, PR #41) ont touché 237 comptes au total (9 à 66 chacun), sans enregistrement ni partage.
+  Visites du site venues d'Instagram : 1 (27/10).
+- Publication arrêtée depuis le 25/10 (carrousels) et le 26/10 (Reels), alors que le compte est toujours connecté
+  et que 17 carrousels attendent : enquête en cours dans le fil de la loop (PR #67, erreur affichée dans le bilan).
+- Lecture : sur un compte sans abonnés, les carrousels ne sont montrés à personne ; les Reels, si.
+- Proposition à louis : ne publier que les Reels (faits à partir des mêmes images). Pas de changement tant qu'il
+  n'a pas répondu et que la publication n'est pas réparée.
+
 ### 22/10/2026 (bilan 2)
 
 - Chiffres : 7 carrousels publiés depuis le 15/10, dont 3 « infos végé » (19, 20 et 21/10). Portée totale : 1 compte
