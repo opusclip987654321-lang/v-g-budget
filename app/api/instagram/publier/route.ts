@@ -30,6 +30,15 @@ export async function POST(request: Request) { try {
   const attempt = await readSetting<{ slug: string; at: number } | null>('instagram_essai', null);
   if (attempt?.slug === post.slug && Date.now() - attempt.at < 50 * 60000) return json({ ok: true, rien: 'Essai déjà en cours.' });
   await writeSetting('instagram_essai', { slug: post.slug, at: Date.now() });
-  const publication = await publish(siteOrigin(request), post.slug);
-  return json({ ok: true, publie: post.slug, ...publication });
+  // La dernière erreur est gardée pour le bilan public (/api/instagram/bilan) : sans elle, un carrousel qui échoue
+  // chaque heure bloque la publication sans que personne le voie (arrêt du 25/10 au 07/11/2026).
+  try {
+    const publication = await publish(siteOrigin(request), post.slug);
+    await writeSetting('instagram_erreur', null);
+    return json({ ok: true, publie: post.slug, ...publication });
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    await writeSetting('instagram_erreur', { at: new Date().toISOString(), slug: post.slug, message });
+    throw e;
+  }
 } catch (e) { return failure(e instanceof ApiError ? e : new ApiError(502, e instanceof Error ? e.message : 'Publication Instagram impossible.')); } }
