@@ -16,7 +16,6 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [ ] courses étudiant pas cher | Budget | budget serré, dîners simples, peu d'ustensiles
 - [ ] repas végétarien pour une famille de 4 pas cher | Budget | dîners qui plaisent aux enfants, coût par portion
 - [ ] riz : idées de dîners pas chers | Recettes | riz sauté, bols, curry ; coût par portion
-- [ ] soupe maison pas chère | Recettes | soupe maison vs brique, recettes, conservation | automne-hiver
 - [ ] tofu : prix et comment le cuisiner | Recettes | où l'acheter, comment le rendre bon, recettes du site
 - [ ] fer et alimentation végétarienne | Nutrition | sources de fer végétal (Anses), aliments pas chers
 - [ ] congeler ses aliments pour économiser | Budget | ce qui se congèle, durées (source officielle), organisation
@@ -44,3 +43,4 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [x] faire ses courses avec 50 € par semaine (courses 50 euros par semaine) | Budget | publié 2026-10-21 → /blog/courses-50-euros-par-semaine
 - [x] légumes surgelés : moins chers que le frais ? (légumes surgelés moins cher que frais) | Budget | publié 2026-10-22 → /blog/legumes-surgeles-prix
 - [x] fruits et légumes de novembre | Saisons | publié 2026-11-06 → /blog/fruits-legumes-novembre
+- [x] soupe maison pas chère | Recettes | publié 2026-11-07 → /blog/soupe-maison-pas-chere
