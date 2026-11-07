@@ -23,6 +23,9 @@ export const exclus = [
   'mangerbouger.fr', 'vegebudget.fr',
   'ricardocuisine.com', 'noovomoi.ca', 'salutbonjour.ca', 'radio-canada.ca', 'recettes.qc.ca', 'jow.fr', 'herta.fr', 'swissmilk.ch',
   'bettybossi.ch', 'consoglobe.com', 'recettes.de',
+  'strongrfastr.com', 'greenweez.com', 'parismatch.be', 'mrcook.app', 'sherpas.com', 'diplomeo.com', '24matins.fr', 'lanutrition.fr',
+  'les-calories.com', 'francine.com', 'prospre.io', 'elle.be', 'kitchenaid.fr', 'student.be', 'fatsecret.fr', 'larousse.fr',
+  'letribunaldunet.fr', 'buzzwebzine.fr', 'e-sante.fr',
 ];
 
 export const sites: Site[] = [
@@ -103,4 +106,20 @@ export const sites: Site[] = [
   { site: 'https://edithetsacuisine.fr/', nom: 'Edith et sa cuisine', theme: 'vegetarien', ajoute: '2026-11-06' },
   { site: 'https://unpasplusvert.fr/', nom: 'Un Pas Plus Vert', theme: 'vegetarien', ajoute: '2026-11-06' },
   { site: 'https://www.notrecuisinefacile.com/', nom: 'Notre cuisine facile', theme: 'cuisine', ajoute: '2026-11-06' },
+  { site: 'https://recettesdejulie.fr/', nom: 'Recettes de Julie', theme: 'vegetarien', ajoute: '2026-11-07' },
+  { site: 'https://www.kilometre-0.fr/', nom: 'Kilomètre-0', theme: 'cuisine', ajoute: '2026-11-07' },
+  { site: 'https://clemfoodie.com/', nom: 'Clem Foodie', theme: 'cuisine', ajoute: '2026-11-07' },
+  { site: 'https://aufilduthym.fr/', nom: 'Au fil du thym', theme: 'cuisine', ajoute: '2026-11-07' },
+  { site: 'https://tangerinezest.com/', nom: 'Tangerine Zest', theme: 'vegetarien', ajoute: '2026-11-07' },
+  { site: 'https://dubocalalassiette.fr/', nom: 'Du bocal à l’assiette', theme: 'cuisine', ajoute: '2026-11-07' },
+  { site: 'https://mariefoodtips.com/', nom: 'Marie Food Tips', theme: 'cuisine', ajoute: '2026-11-07' },
+  { site: 'https://cuisineetcreation.fr/', nom: 'Cuisine et Création', theme: 'vegetarien', ajoute: '2026-11-07' },
+  { site: 'https://www.apero-bordeaux.fr/', nom: 'Apéro Bordeaux', theme: 'cuisine', ajoute: '2026-11-07' },
+  { site: 'https://casseroleetchocolat.fr/', nom: 'Casserole et Chocolat', theme: 'cuisine', ajoute: '2026-11-07' },
+  { site: 'https://www.quatresaisonsaujardin.com/', nom: 'Quatre saisons au jardin', theme: 'cuisine', ajoute: '2026-11-07' },
+  { site: 'https://www.cuisinedaubery.com/', nom: 'Cuisine d’Aubéry', theme: 'cuisine', ajoute: '2026-11-07' },
+  { site: 'https://mitainecarlate.com/', nom: 'Mitaine Carlate', theme: 'cuisine', ajoute: '2026-11-07' },
+  { site: 'https://vegancocotte.com/', nom: 'Vegan Cocotte', theme: 'vegetarien', ajoute: '2026-11-07' },
+  { site: 'https://gateauetcuisinerachida.com/', nom: 'Gâteau et cuisine Rachida', theme: 'cuisine', ajoute: '2026-11-07' },
+  { site: 'https://www.amourdecuisine.fr/', nom: 'Amour de cuisine', theme: 'cuisine', ajoute: '2026-11-07' },
 ];
