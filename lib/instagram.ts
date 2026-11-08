@@ -179,9 +179,29 @@ export async function graph<T>(path: string, params: Record<string, string>, met
   if (method === 'GET') for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
   else init.body = new URLSearchParams(params);
   const res = await fetch(url, init);
-  const data = await res.json().catch(() => ({})) as T & { error?: { message?: string } };
-  if (!res.ok || data.error) throw new Error(`Instagram : ${data.error?.message ?? `erreur ${res.status}`}`);
+  // Consommation du quota de l'appli Meta (en %), gardée pour le bilan : l'erreur « Application request limit
+  // reached » a bloqué la publication du 25/10 au 08/11/2026 sans qu'on sache qui consommait le quota.
+  const usage = res.headers.get('x-app-usage') ?? res.headers.get('x-business-use-case-usage');
+  if (usage) await writeSetting('instagram_quota', { at: new Date().toISOString(), usage }).catch(() => {});
+  const data = await res.json().catch(() => ({})) as T & { error?: { message?: string; code?: number } };
+  if (!res.ok || data.error) {
+    const err = new Error(`Instagram : ${data.error?.message ?? `erreur ${res.status}`}`) as Error & { code?: number };
+    err.code = data.error?.code;
+    throw err;
+  }
   return data;
+}
+
+// Quota de l'appli Meta dépassé (codes 4, 17, 32, 613) : on laisse Instagram tranquille quelques heures,
+// sinon chaque essai horaire consomme encore le quota et le blocage ne se lève jamais.
+export const LIMITE_PAUSE_MS = 6 * 3600000;
+export const isRateLimit = (e: unknown) => {
+  const code = (e as { code?: number })?.code;
+  return [4, 17, 32, 613].includes(code ?? -1) || /request limit|rate limit|too many calls/i.test(e instanceof Error ? e.message : String(e));
+};
+export async function enPauseQuota() {
+  const erreur = await readSetting<{ at: string; message: string; limite?: boolean } | null>('instagram_erreur', null);
+  return !!erreur?.limite && Date.now() - new Date(erreur.at).getTime() < LIMITE_PAUSE_MS;
 }
 
 // Vérifie un jeton (copié depuis le tableau de bord Meta) et l'enregistre.
@@ -209,7 +229,7 @@ export async function ready(c: Connection, id: string, tries = 20) {
     const s = await graph<{ status_code?: string; status?: string }>(id, { fields: 'status_code,status', access_token: c.token });
     if (s.status_code === 'FINISHED' || s.status_code === 'PUBLISHED') return;
     if (s.status_code === 'ERROR' || s.status_code === 'EXPIRED') throw new Error(`Instagram refuse une image (${s.status ?? s.status_code}).`);
-    await new Promise(r => setTimeout(r, 3000));
+    await new Promise(r => setTimeout(r, 5000)); // moins d'appels : chaque vérification compte dans le quota
   }
   throw new Error('Instagram n’a pas fini de préparer les images à temps.');
 }

@@ -1,6 +1,6 @@
 import { timingSafeEqual } from 'node:crypto';
 import { json, failure, ApiError, siteOrigin, readSetting, writeSetting } from '@/lib/server';
-import { connection, nextInfo, parisNow, publications, publish, refreshStats } from '@/lib/instagram';
+import { connection, enPauseQuota, isRateLimit, nextInfo, parisNow, publications, publish, refreshStats } from '@/lib/instagram';
 export const dynamic = 'force-dynamic';
 
 // Publication automatique du carrousel Instagram du jour, appelée chaque heure par scripts/mise-a-jour-auto.sh :
@@ -18,6 +18,7 @@ function authorized(request: Request) {
 export async function POST(request: Request) { try {
   if (!authorized(request)) throw new ApiError(401, 'Accès refusé.');
   if (!await connection()) return json({ ok: true, rien: 'Instagram n’est pas connecté.' });
+  if (await enPauseQuota()) return json({ ok: true, rien: 'Quota Instagram dépassé récemment : pause de 6 heures.' });
   // Chiffres des carrousels déjà publiés, pour le bilan (au plus toutes les 6 heures).
   await refreshStats().catch(e => console.error('Instagram stats', e instanceof Error ? e.message : e));
   const { date, hour } = parisNow();
@@ -38,7 +39,7 @@ export async function POST(request: Request) { try {
     return json({ ok: true, publie: post.slug, ...publication });
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e);
-    await writeSetting('instagram_erreur', { at: new Date().toISOString(), slug: post.slug, message });
+    await writeSetting('instagram_erreur', { at: new Date().toISOString(), slug: post.slug, message, limite: isRateLimit(e) });
     throw e;
   }
 } catch (e) { return failure(e instanceof ApiError ? e : new ApiError(502, e instanceof Error ? e.message : 'Publication Instagram impossible.')); } }
