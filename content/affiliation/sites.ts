@@ -26,6 +26,10 @@ export const exclus = [
   'strongrfastr.com', 'greenweez.com', 'parismatch.be', 'mrcook.app', 'sherpas.com', 'diplomeo.com', '24matins.fr', 'lanutrition.fr',
   'les-calories.com', 'francine.com', 'prospre.io', 'elle.be', 'kitchenaid.fr', 'student.be', 'fatsecret.fr', 'larousse.fr',
   'letribunaldunet.fr', 'buzzwebzine.fr', 'e-sante.fr',
+  'allodocteurs.fr', 'bonial.fr', 'decathlon.fr', 'futura-sciences.com', 'rtbf.be', 'lalibre.be', 'darwin-nutrition.fr', 'cookidoo.be', 'cookidoo.ch',
+  'cookidoo.ca', 'cookidoo.international', 'test-achats.be', 'quechoisir.org', 'superprof.fr', 'labanquepostale.fr', 'gaultmillau.ch', 'gaultmillau.com', 'yahoo.com',
+  'paris.fr', 'canada.ca', 'hellofresh.fr', 'hellofresh.ca', 'macommune.info', 'fitadium.com', 'nrmagazine.com', 'lyoncapitale.fr', 'dhnet.be',
+  'moulinex.fr', 'bora.com', 'panasonic.com', 'doitinparis.com', 'aroma-zone.com', 'routard.com', 'viralmag.fr', 'kolsquare.com',
 ];
 
 export const sites: Site[] = [
@@ -122,4 +126,17 @@ export const sites: Site[] = [
   { site: 'https://vegancocotte.com/', nom: 'Vegan Cocotte', theme: 'vegetarien', ajoute: '2026-11-07' },
   { site: 'https://gateauetcuisinerachida.com/', nom: 'Gâteau et cuisine Rachida', theme: 'cuisine', ajoute: '2026-11-07' },
   { site: 'https://www.amourdecuisine.fr/', nom: 'Amour de cuisine', theme: 'cuisine', ajoute: '2026-11-07' },
+  { site: 'https://1repas1euro.com/', nom: '1 repas 1 euro', theme: 'budget', ajoute: '2026-11-08' },
+  { site: 'https://unevegetariennepresqueparfaite.com/', nom: 'Une végétarienne presque parfaite', theme: 'vegetarien', ajoute: '2026-11-08' },
+  { site: 'https://www.cuisineculinaire.com/', nom: 'Cuisine Culinaire', theme: 'cuisine', ajoute: '2026-11-08' },
+  { site: 'https://www.carnetsparisiens.com/', nom: 'Carnets Parisiens', theme: 'cuisine', ajoute: '2026-11-08' },
+  { site: 'https://alcuinfonds.be/', nom: 'Alcuin Fonds', theme: 'famille', ajoute: '2026-11-08' },
+  { site: 'https://ileauxepices.com/', nom: 'Île aux épices', theme: 'cuisine', ajoute: '2026-11-08' },
+  { site: 'https://perleensucre.com/', nom: 'Perle en Sucre', theme: 'vegetarien', ajoute: '2026-11-08' },
+  { site: 'https://www.familinparis.fr/', nom: 'Familin’Paris', theme: 'famille', ajoute: '2026-11-08' },
+  { site: 'https://easydelice.net/', nom: 'Easy Délice', theme: 'cuisine', ajoute: '2026-11-08' },
+  { site: 'https://leschatsgourmets.com/', nom: 'Les Chats Gourmets', theme: 'cuisine', ajoute: '2026-11-08' },
+  { site: 'https://aftouch-cuisine.com/', nom: 'A.F.Touch cuisine', theme: 'cuisine', ajoute: '2026-11-08' },
+  { site: 'https://www.quiveutdufromage.com/', nom: 'Qui veut du fromage', theme: 'cuisine', ajoute: '2026-11-08' },
+  { site: 'https://kissmychef.com/', nom: 'Kiss My Chef', theme: 'cuisine', ajoute: '2026-11-08' },
 ];
