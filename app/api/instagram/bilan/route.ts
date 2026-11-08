@@ -19,5 +19,6 @@ export async function GET() { try {
   // Carrousels « infos végé » pas encore publiés : la tâche de Claude en ajoute quand il en reste moins de 7.
   const reserve = infos.filter(i => !done[i.slug]).map(i => i.slug);
   const erreur = await readSetting<{ at: string; slug: string; message: string } | null>('instagram_erreur', null);
-  return json({ compte: c ? `@${c.username}` : null, erreur, abonnes: stats?.followers ?? null, releve: stats ? new Date(stats.at).toISOString() : null, posts, reserve, visitesInstagram: visites });
+  const quota = await readSetting<{ at: string; usage: string } | null>('instagram_quota', null);
+  return json({ compte: c ? `@${c.username}` : null, erreur, quota, abonnes: stats?.followers ?? null, releve: stats ? new Date(stats.at).toISOString() : null, posts, reserve, visitesInstagram: visites });
 } catch (e) { return failure(e); } }

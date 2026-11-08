@@ -9,7 +9,7 @@ import { infos } from '@/content/instagram/carrousels';
 import sitemap from '@/app/sitemap';
 import { readSetting, writeSetting } from './server';
 import { slideFrame, videoBand } from './instagram-image';
-import { findPost, freshConnection, graph, parisNow, publications, ready, type Publication } from './instagram';
+import { enPauseQuota, findPost, freshConnection, graph, parisNow, publications, ready, type Publication } from './instagram';
 
 // Diffusion sans publicité (demande de louis du 20/10/2026, volet acquisition de la loop) :
 // 1. chaque carrousel « infos végé » devient une vidéo verticale (les images du carrousel l'une après l'autre),
@@ -161,7 +161,7 @@ export async function videoDuJour(origin: string) {
   const pfmSlug = !process.env.POSTFORME_API_KEY || !comptes().length || today(envoisDone) ? null : await nextVideo(envoisDone);
   if (!reelSlug && !pfmSlug) return { rien: 'Rien à publier en vidéo.' };
   await writeSetting('diffusion_essai', { at: Date.now() });
-  if (reelSlug && await freshConnection()) {
+  if (reelSlug && !await enPauseQuota() && await freshConnection()) {
     try { out.reel = { slug: reelSlug, ...(await publishReel(origin, reelSlug)) }; } catch (e) { out.reel = { slug: reelSlug, erreur: e instanceof Error ? e.message : String(e) }; }
   }
   if (pfmSlug) {
