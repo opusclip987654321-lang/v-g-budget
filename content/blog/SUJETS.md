@@ -7,7 +7,6 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 ## À faire
 
 - [ ] liste de courses pas chère pour la semaine | Budget | une liste type pour 5 dîners, paquets entiers vs portions, le placard d'abord (attention : /blog/menu-semaine-pas-cher a déjà une liste de courses de la semaine, choisir un angle différent)
-- [ ] comparer le prix au kilo | Budget | comment lire l'étiquette, pièges des formats, exemples
 - [ ] marques distributeur ou grandes marques | Budget | ce qui change vraiment, où ça vaut le coup
 - [ ] batch cooking pas cher | Recettes | préparer plusieurs dîners d'un coup, organisation, recettes qui se gardent
 - [ ] cuisiner les restes | Budget | idées pour finir riz, pâtes, légumes, pain ; anti-gaspi
@@ -44,3 +43,4 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [x] légumes surgelés : moins chers que le frais ? (légumes surgelés moins cher que frais) | Budget | publié 2026-10-22 → /blog/legumes-surgeles-prix
 - [x] fruits et légumes de novembre | Saisons | publié 2026-11-06 → /blog/fruits-legumes-novembre
 - [x] soupe maison pas chère | Recettes | publié 2026-11-07 → /blog/soupe-maison-pas-chere
+- [x] comparer le prix au kilo (comment comparer les prix au kilo, calculer le prix au kilo) | Budget | publié 2026-11-08 → /blog/comparer-prix-au-kilo
