@@ -1,4 +1,4 @@
-import { exclus, sites as liste, themes, type Site, type Theme } from '@/content/affiliation/sites';
+import { exclus, plateformes, sites as liste, themes, type Site, type Theme } from '@/content/affiliation/sites';
 import { adresseDuSite, extraireEmails } from './prospection';
 import { db } from './server';
 
@@ -34,7 +34,15 @@ export function racine(url: string) {
 }
 const domaine = (url: string) => new URL(url).hostname.replace(/^www\./, '');
 const cle = (u: URL) => u.host.replace(/^www\./, '');
-export const exclu = (url: string) => { const d = domaine(url); return exclus.some(x => d === x || d.endsWith(`.${x}`)); };
+// Un blog hébergé sur une plateforme (un seul sous-domaine, ex. petitbudget.canalblog.com) n'est pas exclu ; le site de
+// la plateforme et ses adresses techniques (fr., img., p0.storage.…) le restent.
+const RESERVES = new Set(['fr', 'en', 'de', 'es', 'it', 'nl', 'ca', 'be', 'ch', 'blog', 'blogs', 'admin', 'api', 'public-api', 'static', 'media', 'img', 'images', 'cdn', 'files', 'storage', 'stats', 'help', 'support', 'mail', 'shop', 'store', 'dashboard', 'login', 'subscribe', 'wordpress', 'overblog', 'canalblog', 'theme', 'themes', 'widgets', 'pixel']);
+const blogHeberge = (d: string, x: string) => {
+  if (!plateformes.includes(x) || !d.endsWith(`.${x}`)) return false;
+  const sous = d.slice(0, -x.length - 1);
+  return !sous.includes('.') && sous.length >= 3 && !RESERVES.has(sous);
+};
+export const exclu = (url: string) => { const d = domaine(url); return exclus.some(x => d === x || (d.endsWith(`.${x}`) && !blogHeberge(d, x))); };
 
 // Lecture d'une page : titre, langue, part de vocabulaire de cuisine, thème, adresses mail publiées, lien vers la
 // page contact et liens vers d'autres sites.
