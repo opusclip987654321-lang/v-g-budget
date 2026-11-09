@@ -181,12 +181,21 @@ export async function graph<T>(path: string, params: Record<string, string>, met
   const res = await fetch(url, init);
   // Consommation du quota de l'appli Meta (en %), gardée pour le bilan : l'erreur « Application request limit
   // reached » a bloqué la publication du 25/10 au 08/11/2026 sans qu'on sache qui consommait le quota.
-  const usage = res.headers.get('x-app-usage') ?? res.headers.get('x-business-use-case-usage');
-  if (usage) await writeSetting('instagram_quota', { at: new Date().toISOString(), usage }).catch(() => {});
-  const data = await res.json().catch(() => ({})) as T & { error?: { message?: string; code?: number } };
-  if (!res.ok || data.error) {
-    const err = new Error(`Instagram : ${data.error?.message ?? `erreur ${res.status}`}`) as Error & { code?: number };
-    err.code = data.error?.code;
+  // 09/11 : x-app-usage restait à 0 % alors que l'erreur continuait ; on garde donc aussi le quota « par compte »
+  // (x-business-use-case-usage) et l'étape appelée, pour savoir quel compteur bloque.
+  const usage = res.headers.get('x-app-usage');
+  const compte = res.headers.get('x-business-use-case-usage');
+  const etape = `${method} ${path.replace(/\d{6,}/g, ':id')}`;
+  const data = await res.json().catch(() => ({})) as T & { error?: { message?: string; code?: number; error_subcode?: number } };
+  const echec = !res.ok || !!data.error;
+  const releve = { at: new Date().toISOString(), usage, compte, etape, echec, code: data.error?.code ?? null };
+  if (usage || compte) await writeSetting('instagram_quota', releve).catch(() => {});
+  // Le relevé d'un échec est gardé à part : sinon le relevé suivant (réussi) l'efface avant qu'on le lise.
+  if (echec) await writeSetting('instagram_quota_echec', releve).catch(() => {});
+  if (echec) {
+    const e = data.error;
+    const err = new Error(`Instagram : ${e?.message ?? `erreur ${res.status}`} (${etape}${e?.code ? `, code ${e.code}` : ''}${e?.error_subcode ? `/${e.error_subcode}` : ''})`) as Error & { code?: number };
+    err.code = e?.code;
     throw err;
   }
   return data;
