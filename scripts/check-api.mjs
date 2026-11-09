@@ -95,6 +95,19 @@ try{
  const reserved=await api('waitlist',member,{plan:'founder'});check(reserved.body.founderLeft,100,'a free reservation takes no founder seat');await api('waitlist',member,{});
  const after=await api('bootstrap',member);check([after.body.founder,after.body.founderLeft],[true,100],'founder request kept after a premium request');check((await api('admin',owner)).body.waitlist.find(w=>w.email===member.email).plan,'founder','founder visible to administrator');
  { const usual=structuredClone((await api('bootstrap',owner)).body.state);usual.profile.usualSpend=45;const saved=await api('state',owner,{state:usual,revision:(await api('bootstrap',owner)).body.revision});check(saved.status,200,'usual spending saved');usual.profile.usualSpend=0;check((await api('state',owner,{state:usual,revision:saved.body.revision})).status,400,'usual spending validated'); }
+ { // Pinterest : flux RSS public (aperçu de 3 épingles avant le premier passage du robot, qui démarre le calendrier),
+  // images 1000 x 1500 hors de /api/ (robots.txt), bilan public.
+  const before=await request('/api/pinterest');check([before.status,before.body.debut,before.body.sorties,before.body.prochaines?.length,before.body.visitesPinterest?.total],[200,null,0,6,0],'pinterest report before start');
+  const preview=await fetch(origin+'/pinterest/flux.xml');const xml=await preview.text();check([preview.status,preview.headers.get('content-type'),(xml.match(/<item>/g)||[]).length],[200,'application/rss+xml; charset=utf-8',3],'pinterest feed preview has 3 pins');
+  check([/<rss version="2.0"/.test(xml),/utm_source=pinterest&amp;utm_medium=epingle/.test(xml),/<enclosure url="[^"]+\/pinterest\/image\/info-[a-z0-9-]+\.jpg"/.test(xml)],[true,true,true],'pinterest feed is rss 2.0 with utm links and images');
+  check((await request('/api/pinterest')).body.debut,null,'a human reading the feed does not start the calendar');
+  const bot=await fetch(origin+'/pinterest/flux.xml',{headers:{'User-Agent':'Pinterest/0.2 (+https://www.pinterest.com/bot.html)'}});const botXml=await bot.text();check([bot.status,(botXml.match(/<item>/g)||[]).length],[200,1],'pinterest robot starts the calendar with the first pin');
+  const started=await request('/api/pinterest');check([started.body.passagesPinterest,started.body.sorties,typeof started.body.debut,typeof started.body.fin],[1,1,'string','string'],'pinterest calendar started');
+  const ids=[...xml.matchAll(/\/pinterest\/image\/([a-z0-9-]+)\.jpg/g)].map(m=>m[1]);check(new Set(ids.map(i=>i.split('-')[0])).size,3,'pinterest pins alternate carousel, recipe and menu');
+  for(const id of [...new Set(ids)]){const r=await fetch(origin+'/pinterest/image/'+id+'.jpg');const m=await sharp(Buffer.from(await r.arrayBuffer())).metadata();check([r.status,m.format,m.width,m.height],[200,'jpeg',1000,1500],'pinterest image '+id+' is 1000x1500');}
+  for(const id of ['article-recettes-lentilles-pas-cheres','info-vegetarien-vegetalien-vegan']){const r=await fetch(origin+'/pinterest/image/'+id+'.jpg');check([r.status,r.headers.get('content-type')],[200,'image/jpeg'],'pinterest image '+id);}
+  check((await fetch(origin+'/pinterest/image/recette-inconnue.jpg')).status,404,'unknown pinterest image refused');
+ }
  { // Instagram : images du carrousel publiques, publication réservée à la tâche du serveur et au propriétaire.
   const img=await fetch(origin+'/api/instagram/image/recettes-lentilles-pas-cheres/1.jpg');check([img.status,img.headers.get('content-type')],[200,'image/jpeg'],'instagram slide is a jpeg');
   const meta=await sharp(Buffer.from(await img.arrayBuffer())).metadata();check([meta.format,meta.width,meta.height],['jpeg',1080,1350],'instagram slide is 1080x1350');

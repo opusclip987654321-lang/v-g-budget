@@ -2,9 +2,18 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { HOME_DESCRIPTION, HOME_TITLE, HREFLANG, publicOrigin } from "@/lib/seo";
 import { ServiceWorkerRegister } from "@/components/app-installable";
+import { pinterestVerification } from "@/lib/pinterest";
 
 // Couleur de la barre du téléphone (et de l'appli installée, voir app/manifest.ts).
 export const viewport: Viewport = { themeColor: "#174c38" };
+
+function verification(): Pick<Metadata, "verification"> {
+  const other: Record<string, string> = {};
+  if (process.env.BING_SITE_VERIFICATION) other["msvalidate.01"] = process.env.BING_SITE_VERIFICATION;
+  if (pinterestVerification()) other["p:domain_verify"] = pinterestVerification();
+  if (!process.env.GOOGLE_SITE_VERIFICATION && !Object.keys(other).length) return {};
+  return { verification: { google: process.env.GOOGLE_SITE_VERIFICATION, other: Object.keys(other).length ? other : undefined } };
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -18,7 +27,8 @@ export async function generateMetadata(): Promise<Metadata> {
     robots: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
     icons: { icon: "/favicon.svg", shortcut: "/favicon.svg", apple: "/icons/apple-touch-icon.png" },
     appleWebApp: { capable: true, title: "VégéBudget", statusBarStyle: "default" },
-    ...(process.env.GOOGLE_SITE_VERIFICATION || process.env.BING_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION, other: process.env.BING_SITE_VERIFICATION ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION } : undefined } } : {}),
+    // Balises de propriété du site : Google, Bing et Pinterest (lib/pinterest.ts).
+    ...verification(),
   };
 }
 
