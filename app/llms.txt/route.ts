@@ -1,6 +1,7 @@
 import { recipes } from '@/lib/catalog';
 import { blogPath, sortedArticles } from '@/lib/blog';
 import { money } from '@/lib/planner';
+import { FOYERS, foyerPath, menuFoyer } from '@/lib/menu-foyer';
 import { faq, HOME_DESCRIPTION, portionCost, publicOrigin, recipePath } from '@/lib/seo';
 export const dynamic = 'force-dynamic';
 // Résumé du site pour les assistants IA (format llms.txt : https://llmstxt.org).
@@ -18,6 +19,9 @@ export async function GET() {
     `- [Comment ça marche, prix et questions fréquentes](${origin}/comment-ca-marche)`,
     `- [Les ${recipes.length} recettes avec leur coût par portion](${origin}/recettes)`,
     `- [Le blog : bio, circuit court, saisons, bien-être animal, budget](${origin}/blog)`,
+    '',
+    '## Menus végétariens de la semaine, avec liste de courses chiffrée',
+    ...FOYERS.map(f => { const m = menuFoyer(f); return `- [Menu de la semaine ${f.pour}](${origin}${foyerPath(f)}): 5 dîners, ${money(m.achat)} de courses, ${money(m.parPortion)} la portion`; }),
     '',
     '## Questions fréquentes',
     ...faq.flatMap(f => [`### ${f.q}`, f.a, '']),

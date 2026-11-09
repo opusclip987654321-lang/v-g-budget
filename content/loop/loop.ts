@@ -6,9 +6,9 @@ export type Question = { id: string; moment: 'menus' | 'offre'; question: string
 export type Entree = { version: number; date: string; changements: string[]; pourquoi: string; mesure: string };
 
 export const loop = {
-  version: 1,
-  depuis: '2026-10-19',
-  essai: 'Point de départ : page d’accueil, appli et offre telles qu’elles sont le 19/10 ; on demande aux visiteurs ce qu’ils cherchent et ce qui les retient de payer.',
+  version: 2,
+  depuis: '2026-11-09',
+  essai: 'Pages « menu végétarien de la semaine » chiffrées pour 1, 2 et 4 personnes : attirer depuis Google et les IA les gens qui cherchent un menu pas cher avec sa liste de courses. Accueil, appli et offre inchangés.',
   // Une question au plus par moment ; un visiteur ne voit chaque question qu'une fois.
   questions: [
     {
@@ -33,6 +33,13 @@ export const loop = {
       changements: ['Mise en place de la loop : version du site, deux questions courtes aux visiteurs, revue chaque lundi.'],
       pourquoi: 'Demande de louis : une loop d’apprentissage qui comprend ce que veulent les visiteurs et repositionne VégéBudget, avec le maximum de liberté.',
       mesure: 'Point de départ, chiffres du 7 au 19/10 dans le cerveau.',
+    },
+    {
+      version: 2,
+      date: '2026-11-09',
+      changements: ['Nouvelles pages /menu-vegetarien-semaine pour 1, 2 et 4 personnes : 5 dîners, liste de courses chiffrée, prix par plat et par portion (calculés par le planificateur), FAQ et données structurées ; ajoutées au plan du site, à llms.txt et au pied de page.'],
+      pourquoi: 'Action validée par Walid (Loop Agent, 07/11) : les requêtes « menu végétarien pas cher semaine liste de courses » sont tenues par des sites qui donnent des fourchettes ; VégéBudget peut donner le prix réel de chaque plat.',
+      mesure: 'Pages indexées dans les 3 semaines (Search Console, Bing), puis visites venues de Google ou d’une IA sur ces pages.',
     },
   ] as Entree[],
 };
