@@ -107,6 +107,7 @@ try{
   for(const id of [...new Set(ids)]){const r=await fetch(origin+'/pinterest/image/'+id+'.jpg');const m=await sharp(Buffer.from(await r.arrayBuffer())).metadata();check([r.status,m.format,m.width,m.height],[200,'jpeg',1000,1500],'pinterest image '+id+' is 1000x1500');}
   for(const id of ['article-recettes-lentilles-pas-cheres','info-vegetarien-vegetalien-vegan']){const r=await fetch(origin+'/pinterest/image/'+id+'.jpg');check([r.status,r.headers.get('content-type')],[200,'image/jpeg'],'pinterest image '+id);}
   check((await fetch(origin+'/pinterest/image/recette-inconnue.jpg')).status,404,'unknown pinterest image refused');
+  check(/<meta name="p:domain_verify" content="[0-9a-f]{32}"/.test(await (await fetch(origin+'/')).text()),true,'pinterest domain claim tag on the home page');
  }
  { // Instagram : images du carrousel publiques, publication réservée à la tâche du serveur et au propriétaire.
   const img=await fetch(origin+'/api/instagram/image/recettes-lentilles-pas-cheres/1.jpg');check([img.status,img.headers.get('content-type')],[200,'image/jpeg'],'instagram slide is a jpeg');
