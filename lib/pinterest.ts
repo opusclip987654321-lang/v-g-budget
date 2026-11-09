@@ -18,7 +18,7 @@ import { readSetting, writeSetting } from './server';
 
 // Code de revendication du site donné par Pinterest (balise <meta name="p:domain_verify">). Public par nature :
 // il est affiché dans la page. La variable PINTEREST_VERIFICATION du .env le remplace si besoin.
-export const PINTEREST_VERIFICATION_CODE = '';
+export const PINTEREST_VERIFICATION_CODE = 'ce1bc1f103652eb9372a12687bdce8de';
 export const pinterestVerification = () => process.env.PINTEREST_VERIFICATION || PINTEREST_VERIFICATION_CODE;
 
 export const PAR_JOUR = 3;
