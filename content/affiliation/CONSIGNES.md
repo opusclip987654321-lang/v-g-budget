@@ -22,6 +22,9 @@ la liste.
    `{ site: 'https://domaine.fr/', nom: 'Nom du blog', theme: 'vegetarien', ajoute: 'AAAA-MM-JJ' },`
    - `site` : la page d'accueil en https (pas une page d'article).
    - `nom` : le nom du blog ou du site, **jamais un nom de personne seul ni une adresse mail** (dépôt public).
+   - Les blogs hébergés en sous-domaine d'une plateforme (`*.canalblog.com`, `*.over-blog.com`, `*.wordpress.com`,
+     `*.blogspot.com`, `*.eklablog.com`) comptent comme des sites à part entière (liste `plateformes` dans `sites.ts`).
+     Une recherche web filtrée sur ces plateformes donne beaucoup plus de blogs que la recherche ouverte (09/11/2026).
    - `theme` : un de `vegetarien`, `budget`, `etudiant`, `anti-gaspi`, `famille`, `batch-cooking`, `cuisine`.
 5. Objectif : 30 à 80 sites nouveaux par jour par la recherche web (elle donne surtout des médias : il faut des
    requêtes précises). Le gros du volume vient du site lui-même, qui suit les liens des blogs retenus (voir plus
