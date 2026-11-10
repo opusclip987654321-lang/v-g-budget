@@ -64,6 +64,19 @@ un carrousel « menu de la semaine » chaque vendredi, transformer de temps en t
 
 ## Journal des bilans
 
+### 10/11/2026 (bilan 4)
+
+- Chiffres : rien de nouveau publié depuis le 25/10 (carrousels) et le 26/10 (Reels). Les 11 carrousels déjà en ligne
+  restent à 1 compte touché au total. Abonnés : 0. 17 carrousels en réserve. Visites du site venues d'Instagram : 1 (27/10).
+- Cause du blocage : chaque jour à 18h, Instagram refuse la mise en ligne de « fin-de-mois-il-reste-10-euros » avec
+  le code 4, sous-code 2207051. Le message dit « Application request limit reached », mais notre volume d'appels est à 0.
+  Plusieurs outils de publication lisent ce sous-code comme un blocage anti-spam du compte, pas comme un quota
+  ([ContentStudio](https://docs.contentstudio.io/article/693-instagram-errors-while-publishing),
+  [Limber](https://limber.io/en/documentation-2/faq/instagram-publishing-errors)). Le vrai quota de publication
+  renvoie un autre code (9 / 2207042, [Meta](https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/error-codes)).
+- Décision : aucun changement de format, rien n'a pu être publié pour le juger. Le fil de la loop a demandé à louis
+  de regarder « Statut du compte » dans l'appli et de contester la restriction (10/11). Question Reels seuls toujours ouverte.
+
 ### 07/11/2026 (bilan 3)
 
 - Bilans du 25/10 au 04/11 non faits : la tâche programmée n'avait plus accès (« no access » de Claude Code).
