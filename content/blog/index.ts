@@ -20,6 +20,7 @@ import fruitsLegumesNovembre from './articles/fruits-legumes-novembre';
 import soupeMaisonPasChere from './articles/soupe-maison-pas-chere';
 import comparerPrixAuKilo from './articles/comparer-prix-au-kilo';
 import batchCookingPasCher from './articles/batch-cooking-pas-cher';
+import recetteChouBlancPasCher from './articles/recette-chou-blanc-pas-cher';
 
 // Articles du blog : un fichier par article dans ./articles (les 9 premiers datent du 7 octobre 2026),
 // illustration dans public/images/blog/<slug>.svg et .jpg. Ajouter chaque nouvel article à la fin de la liste.
@@ -47,4 +48,5 @@ export const dailyArticles: Article[] = [
   soupeMaisonPasChere,
   comparerPrixAuKilo,
   batchCookingPasCher,
+  recetteChouBlancPasCher,
 ];
