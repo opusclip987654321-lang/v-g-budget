@@ -9,7 +9,6 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [ ] liste de courses pas chère pour la semaine | Budget | une liste type pour 5 dîners, paquets entiers vs portions, le placard d'abord (attention : /blog/menu-semaine-pas-cher a déjà une liste de courses de la semaine, choisir un angle différent)
 - [ ] marques distributeur ou grandes marques | Budget | ce qui change vraiment, où ça vaut le coup
 - [ ] cuisiner les restes | Budget | idées pour finir riz, pâtes, légumes, pain ; anti-gaspi
-- [ ] chou recettes pas chères | Saisons | chou de saison, recettes du site | novembre-février
 - [ ] légumes secs : trempage, cuisson, conservation | Nutrition | guide pratique, temps de cuisson, sources officielles
 - [ ] courses étudiant pas cher | Budget | budget serré, dîners simples, peu d'ustensiles
 - [ ] repas végétarien pour une famille de 4 pas cher | Budget | dîners qui plaisent aux enfants, coût par portion
@@ -44,3 +43,4 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [x] soupe maison pas chère | Recettes | publié 2026-11-07 → /blog/soupe-maison-pas-chere
 - [x] comparer le prix au kilo (comment comparer les prix au kilo, calculer le prix au kilo) | Budget | publié 2026-11-08 → /blog/comparer-prix-au-kilo
 - [x] batch cooking pas cher (batch cooking végétarien pas cher) | Recettes | publié 2026-11-09 → /blog/batch-cooking-pas-cher
+- [x] recette chou blanc pas chère (chou recettes pas chères, que faire avec un chou blanc) | Saisons | publié 2026-11-10 → /blog/recette-chou-blanc-pas-cher
