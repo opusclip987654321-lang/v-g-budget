@@ -186,7 +186,7 @@ export async function graph<T>(path: string, params: Record<string, string>, met
   const usage = res.headers.get('x-app-usage');
   const compte = res.headers.get('x-business-use-case-usage');
   const etape = `${method} ${path.replace(/\d{6,}/g, ':id')}`;
-  const data = await res.json().catch(() => ({})) as T & { error?: { message?: string; code?: number; error_subcode?: number } };
+  const data = await res.json().catch(() => ({})) as T & { error?: { message?: string; code?: number; error_subcode?: number; error_user_title?: string; error_user_msg?: string } };
   const echec = !res.ok || !!data.error;
   const releve = { at: new Date().toISOString(), usage, compte, etape, echec, code: data.error?.code ?? null };
   if (usage || compte) await writeSetting('instagram_quota', releve).catch(() => {});
@@ -194,7 +194,7 @@ export async function graph<T>(path: string, params: Record<string, string>, met
   if (echec) await writeSetting('instagram_quota_echec', releve).catch(() => {});
   if (echec) {
     const e = data.error;
-    const err = new Error(`Instagram : ${e?.message ?? `erreur ${res.status}`} (${etape}${e?.code ? `, code ${e.code}` : ''}${e?.error_subcode ? `/${e.error_subcode}` : ''})`) as Error & { code?: number };
+    const err = new Error(`Instagram : ${e?.message ?? `erreur ${res.status}`} (${etape}${e?.code ? `, code ${e.code}` : ''}${e?.error_subcode ? `/${e.error_subcode}` : ''})${e?.error_user_title || e?.error_user_msg ? ` : ${[e.error_user_title, e.error_user_msg].filter(Boolean).join(' – ')}` : ''}`) as Error & { code?: number };
     err.code = e?.code;
     throw err;
   }
