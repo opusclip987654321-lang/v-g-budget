@@ -49,10 +49,13 @@ export async function statistics(days = 30, now = new Date()) {
   const signups = byParisDay((await db().prepare('SELECT created_at FROM members WHERE created_at>=?').bind(since).all<{ created_at: string }>()).results);
   const reservations = byParisDay((await db().prepare('SELECT created_at FROM waitlist WHERE created_at>=?').bind(since).all<{ created_at: string }>()).results);
   const sources = (await db().prepare("SELECT IFNULL(detail,'direct') AS source,COUNT(DISTINCT day||visitor) AS n FROM events WHERE name='visite' AND day>=? GROUP BY 1 ORDER BY n DESC LIMIT 10").bind(first).all<{ source: string; n: number }>()).results;
+  // Origine des visites jour par jour (Google, Pinterest, Instagram…), pour suivre chaque canal dans Loop Agent.
+  const daySources = (await db().prepare("SELECT day,IFNULL(detail,'direct') AS source,COUNT(DISTINCT visitor) AS n FROM events WHERE name='visite' AND day>=? GROUP BY day,2").bind(first).all<{ day: string; source: string; n: number }>()).results;
   const count = (day: string, name: EventName) => rows.filter(r => r.day === day && r.name === name).reduce((s, r) => s + r.n, 0);
   const jours = list.map(day => ({
     jour: day,
     visiteurs: count(day, 'visite'),
+    sources: Object.fromEntries(daySources.filter(r => r.day === day).map(r => [r.source, r.n])),
     semaines: count(day, 'semaine'),
     offreVue: count(day, 'offre_vue'),
     connexionsDemandees: count(day, 'connexion_demandee'),
