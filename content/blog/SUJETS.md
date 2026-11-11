@@ -12,7 +12,6 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [ ] légumes secs : trempage, cuisson, conservation | Nutrition | guide pratique, temps de cuisson, sources officielles
 - [ ] courses étudiant pas cher | Budget | budget serré, dîners simples, peu d'ustensiles
 - [ ] repas végétarien pour une famille de 4 pas cher | Budget | dîners qui plaisent aux enfants, coût par portion
-- [ ] riz : idées de dîners pas chers | Recettes | riz sauté, bols, curry ; coût par portion
 - [ ] tofu : prix et comment le cuisiner | Recettes | où l'acheter, comment le rendre bon, recettes du site
 - [ ] fer et alimentation végétarienne | Nutrition | sources de fer végétal (Anses), aliments pas chers
 - [ ] congeler ses aliments pour économiser | Budget | ce qui se congèle, durées (source officielle), organisation
@@ -44,3 +43,4 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [x] comparer le prix au kilo (comment comparer les prix au kilo, calculer le prix au kilo) | Budget | publié 2026-11-08 → /blog/comparer-prix-au-kilo
 - [x] batch cooking pas cher (batch cooking végétarien pas cher) | Recettes | publié 2026-11-09 → /blog/batch-cooking-pas-cher
 - [x] recette chou blanc pas chère (chou recettes pas chères, que faire avec un chou blanc) | Saisons | publié 2026-11-10 → /blog/recette-chou-blanc-pas-cher
+- [x] recette riz végétarien pas cher (recette riz pas cher, que faire avec du riz, combien de riz par personne) | Recettes | publié 2026-11-11 → /blog/riz-vegetarien-pas-cher
