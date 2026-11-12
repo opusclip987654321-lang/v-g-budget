@@ -8,7 +8,6 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 
 - [ ] liste de courses pas chère pour la semaine | Budget | une liste type pour 5 dîners, paquets entiers vs portions, le placard d'abord (attention : /blog/menu-semaine-pas-cher a déjà une liste de courses de la semaine, choisir un angle différent)
 - [ ] marques distributeur ou grandes marques | Budget | ce qui change vraiment, où ça vaut le coup
-- [ ] cuisiner les restes | Budget | idées pour finir riz, pâtes, légumes, pain ; anti-gaspi
 - [ ] légumes secs : trempage, cuisson, conservation | Nutrition | guide pratique, temps de cuisson, sources officielles
 - [ ] courses étudiant pas cher | Budget | budget serré, dîners simples, peu d'ustensiles
 - [ ] repas végétarien pour une famille de 4 pas cher | Budget | dîners qui plaisent aux enfants, coût par portion
@@ -44,3 +43,4 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [x] batch cooking pas cher (batch cooking végétarien pas cher) | Recettes | publié 2026-11-09 → /blog/batch-cooking-pas-cher
 - [x] recette chou blanc pas chère (chou recettes pas chères, que faire avec un chou blanc) | Saisons | publié 2026-11-10 → /blog/recette-chou-blanc-pas-cher
 - [x] recette riz végétarien pas cher (recette riz pas cher, que faire avec du riz, combien de riz par personne) | Recettes | publié 2026-11-11 → /blog/riz-vegetarien-pas-cher
+- [x] que faire avec des restes (recette avec des restes, reste de riz, pâtes cuites, pain dur) | Budget | publié 2026-11-12 → /blog/que-faire-avec-des-restes
