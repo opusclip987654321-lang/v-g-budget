@@ -24,6 +24,7 @@ import recetteChouBlancPasCher from './articles/recette-chou-blanc-pas-cher';
 import rizVegetarienPasCher from './articles/riz-vegetarien-pas-cher';
 import queFaireAvecDesRestes from './articles/que-faire-avec-des-restes';
 import listeCoursesEtudiant from './articles/liste-courses-etudiant';
+import planifierMenusSemaine from './articles/planifier-menus-semaine';
 
 // Articles du blog : un fichier par article dans ./articles (les 9 premiers datent du 7 octobre 2026),
 // illustration dans public/images/blog/<slug>.svg et .jpg. Ajouter chaque nouvel article à la fin de la liste.
@@ -55,4 +56,5 @@ export const dailyArticles: Article[] = [
   rizVegetarienPasCher,
   queFaireAvecDesRestes,
   listeCoursesEtudiant,
+  planifierMenusSemaine,
 ];

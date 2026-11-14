@@ -19,7 +19,6 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [ ] AMAP : prix et fonctionnement | Bio et local | combien coûte un panier, pour qui c'est adapté
 - [ ] flexitarien : manger moins de viande | Budget | commencer par quelques dîners, effet sur le budget
 - [ ] repas sans four, à la poêle | Recettes | dîners faciles avec une poêle et une casserole
-- [ ] planifier ses menus de la semaine | Budget | méthode pas à pas, éviter le gaspillage, outils
 - [ ] manger pas cher en Belgique | Budget | prix belges du site (voir /belgique), dire « souper » comme la page Belgique | Belgique
 - [ ] manger pas cher en Suisse | Budget | prix en CHF du site (voir /suisse), dire « souper » comme la page Suisse | Suisse
 - [ ] épicerie pas chère au Québec | Budget | prix en dollars du site (voir /quebec), « souper » | Québec
@@ -44,3 +43,4 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [x] recette riz végétarien pas cher (recette riz pas cher, que faire avec du riz, combien de riz par personne) | Recettes | publié 2026-11-11 → /blog/riz-vegetarien-pas-cher
 - [x] que faire avec des restes (recette avec des restes, reste de riz, pâtes cuites, pain dur) | Budget | publié 2026-11-12 → /blog/que-faire-avec-des-restes
 - [x] liste de courses étudiant pas chère (courses étudiant pas cher, budget courses étudiant, repas Crous 1 euro) | Budget | publié 2026-11-13 → /blog/liste-courses-etudiant
+- [x] planifier ses menus de la semaine (comment faire ses menus de la semaine, planning repas semaine, organiser ses repas de la semaine) | Budget | publié 2026-11-14 → /blog/planifier-menus-semaine
