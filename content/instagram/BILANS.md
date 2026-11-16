@@ -64,6 +64,18 @@ un carrousel « menu de la semaine » chaque vendredi, transformer de temps en t
 
 ## Journal des bilans
 
+### 16/11/2026 (bilan 5)
+
+- Chiffres : la publication a repris le 13 et le 14/11 (« Fin de mois », « Placard de base »), puis s'est de nouveau
+  arrêtée le 15/11 au soir. Instagram demande de se reconnecter sur instagram.com (code 190) ; le fil de la loop a
+  posé la demande à louis. Les 2 carrousels ont touché 0 compte. Les Reels faits des mêmes images ont touché 53 et 45
+  comptes. Au total, 13 carrousels ont touché 1 compte et 9 Reels en ont touché 335. Abonnés : 0. Visites du site venues d'Instagram : 1 (13/11).
+- Veille : sur les petits comptes, les Reels touchent environ 3 fois plus de non-abonnés que les carrousels
+  ([Fanpage Karma](https://www.fanpagekarma.com/insights/instagram-format-reach/)). Sous 1 000 abonnés, la portée médiane
+  est de 134 pour un Reel contre 56 pour un carrousel ([Contentdrips](https://contentdrips.com/blog/2026/06/instagram-reels-vs-carousels-2026-guide/)).
+- Décision : aucun changement de format. Le 0 vient de l'absence d'abonnés, pas du dessin des slides. La question
+  « Reels seuls » posée le 07/11 reste ouverte ; tant qu'elle l'est, carrousel et Reel continuent ensemble.
+
 ### 10/11/2026 (bilan 4)
 
 - Chiffres : rien de nouveau publié depuis le 25/10 (carrousels) et le 26/10 (Reels). Les 11 carrousels déjà en ligne
