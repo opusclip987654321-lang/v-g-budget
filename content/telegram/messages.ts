@@ -13,4 +13,5 @@ Juste après ce message : 15 messages à envoyer en message privé Instagram dep
 
 Ensuite, coche « envoyé » pour chacun sur vegebudget.fr/prospection (et « a répondu » quand quelqu'un répond) : je suis l'avancement de là.` },
   ...instagram.map((c, i) => ({ id: `2026-10-21-duo-${c.compte}`, texte: `${i + 1}/15 · instagram.com/${c.compte}\n\n${messageDuo(c)}` })),
+  { id: '2026-11-16-instagram-connexion', texte: `Bonjour Walid, c'est Claude. Instagram bloque de nouveau les publications de @vegbudget depuis le 15/11 au soir : il demande que tu te connectes sur www.instagram.com avec le compte @vegbudget et que tu suives ses instructions. Le site ne peut pas le faire à ta place. Une fois fait, carrousels et Reels repartent tout seuls à 18 h.` },
 ];
