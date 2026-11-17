@@ -8,7 +8,6 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 
 - [ ] liste de courses pas chère pour la semaine | Budget | une liste type pour 5 dîners, paquets entiers vs portions, le placard d'abord (attention : /blog/menu-semaine-pas-cher a déjà une liste de courses de la semaine, choisir un angle différent)
 - [ ] marques distributeur ou grandes marques | Budget | ce qui change vraiment, où ça vaut le coup
-- [ ] tofu : prix et comment le cuisiner | Recettes | où l'acheter, comment le rendre bon, recettes du site
 - [ ] fer et alimentation végétarienne | Nutrition | sources de fer végétal (Anses), aliments pas chers
 - [ ] congeler ses aliments pour économiser | Budget | ce qui se congèle, durées (source officielle), organisation
 - [ ] menu de Noël végétarien pas cher | Recettes | entrée, plat, dessert, budget | début décembre
@@ -44,3 +43,4 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [x] planifier ses menus de la semaine (comment faire ses menus de la semaine, planning repas semaine, organiser ses repas de la semaine) | Budget | publié 2026-11-14 → /blog/planifier-menus-semaine
 - [x] légumes secs : trempage, cuisson, conservation (temps de cuisson légumes secs, trempage légumes secs, cuisson pois chiches secs) | Nutrition | publié 2026-11-15 → /blog/cuisson-legumes-secs
 - [x] repas végétarien famille pas cher (repas pas cher pour 4 personnes, repas végétarien enfant, idée repas du soir en famille pas cher) | Budget | publié 2026-11-16 → /blog/repas-vegetarien-famille-pas-cher
+- [x] comment cuisiner le tofu (tofu prix au kilo, comment rendre le tofu bon, tofu ferme ou soyeux, recette tofu pas cher) | Recettes | publié 2026-11-17 → /blog/comment-cuisiner-le-tofu
