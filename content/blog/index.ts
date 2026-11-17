@@ -26,6 +26,7 @@ import queFaireAvecDesRestes from './articles/que-faire-avec-des-restes';
 import listeCoursesEtudiant from './articles/liste-courses-etudiant';
 import cuissonLegumesSecs from './articles/cuisson-legumes-secs';
 import repasVegetarienFamillePasCher from './articles/repas-vegetarien-famille-pas-cher';
+import commentCuisinerLeTofu from './articles/comment-cuisiner-le-tofu';
 import planifierMenusSemaine from './articles/planifier-menus-semaine';
 
 // Articles du blog : un fichier par article dans ./articles (les 9 premiers datent du 7 octobre 2026),
@@ -61,4 +62,5 @@ export const dailyArticles: Article[] = [
   planifierMenusSemaine,
   cuissonLegumesSecs,
   repasVegetarienFamillePasCher,
+  commentCuisinerLeTofu,
 ];
