@@ -13,8 +13,8 @@ const forTwo = (id: string) => {
 export default {
   slug: 'repas-pas-cher-pour-2',
   title: 'Repas pas cher pour 2 : 7 dîners sans viande et leur coût réel',
-  seoTitle: 'Repas pas cher pour 2 : 7 dîners et leur coût réel',
-  description: 'Repas pas cher pour 2 : 7 idées de dîners sans viande, de 20 à 30 min, avec le coût des ingrédients pour deux et 5 astuces pour cuisiner à deux sans gaspiller.',
+  seoTitle: `Repas pas cher pour 2 : 7 dîners sans viande dès ${forTwo('riz-saute')}`,
+  description: `Repas pas cher pour 2 : 7 dîners sans viande prêts en 20 à 30 min, de ${forTwo('riz-saute')} à ${forTwo('curry-corail')} d’ingrédients pour deux, et 5 astuces anti-gaspillage.`,
   lead: `Un repas pas cher pour 2 repose sur le riz, les pâtes, les légumes secs et les surgelés : le riz sauté aux petits pois revient à ${forTwo('riz-saute')} d’ingrédients pour deux, la soupe de petits pois avec ses tartines à ${forTwo('soupe-petits-pois')}. Voici 7 dîners, avec le coût de chacun et les astuces pour ne rien gaspiller à deux.`,
   category: 'Budget',
   keywords: ['repas pas cher pour 2', 'idée repas pas cher pour 2', 'dîner pas cher pour 2', 'repas végétarien pas cher pour 2', 'repas pas cher à deux', 'cuisiner pour deux'],

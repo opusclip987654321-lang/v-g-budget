@@ -36,10 +36,12 @@ export function menuFoyer(f: Foyer) {
 export type MenuFoyer = ReturnType<typeof menuFoyer>;
 
 export function menuTitle(m: MenuFoyer) {
+  // Pour 4 : des gens cherchent « 50 euros la semaine pour 4 personnes pdf » (Search Console, 18/11/2026).
+  if (m.foyer.people === 4 && m.achat < 50) return `Menu pour 4 à moins de 50 € : 5 dîners à ${Math.round(m.achat)} € en PDF`;
   return `Menu végétarien de la semaine ${m.foyer.pour} : 5 dîners pour ${Math.round(m.achat)} € (liste de courses)`;
 }
 export function menuDescription(m: MenuFoyer) {
-  return `5 dîners sans viande ${m.foyer.pour}, avec la liste de courses chiffrée : ${money(m.achat)} de courses, ${money(m.parPortion)} la portion. Recettes simples, prix réels par plat.`;
+  return `5 dîners sans viande ${m.foyer.pour}, avec la liste de courses chiffrée : ${money(m.achat)} de courses, ${money(m.parPortion)} la portion. Recettes simples, prix réels par plat, PDF gratuit à imprimer.`;
 }
 export function menuFaq(m: MenuFoyer) {
   const f = m.foyer;

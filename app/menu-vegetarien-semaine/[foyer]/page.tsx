@@ -6,6 +6,7 @@ import { PRICE_SOURCE } from '@/lib/pricing';
 import { FOYERS, findFoyer, foyerPath, MENU_PATH, menuDescription, menuFaq, menuFoyer, menuTitle } from '@/lib/menu-foyer';
 import { ldScript, organizationLd, publicOrigin, recipeImage, recipePath } from '@/lib/seo';
 import { Cta, CtaInline, PublicShell } from '@/components/public-shell';
+import { MenuPdfForm } from '@/components/menu-pdf-form';
 
 type Props = { params: Promise<{ foyer: string }> };
 export const generateStaticParams = () => FOYERS.map(f => ({ foyer: f.slug }));
@@ -45,7 +46,7 @@ export default async function MenuFoyerPage({ params }: Props) {
     <article className="pub-recipe">
       <p className="pub-eyebrow">Menu de la semaine · 100 % végétal · {f.label}</p>
       <h1>Menu végétarien de la semaine {f.pour} : 5 dîners pour {money(m.achat)}</h1>
-      <p className="pub-lead">Cinq dîners sans viande, du lundi au vendredi, avec la liste de courses et le prix de chaque plat. Pas de fourchette approximative : chaque montant est calculé ingrédient par ingrédient.</p>
+      <p className="pub-lead">Cinq dîners sans viande, du lundi au vendredi, avec la liste de courses et le prix de chaque plat. Pas de fourchette approximative : chaque montant est calculé ingrédient par ingrédient. <a href="#pdf" data-track="Lien vers le menu PDF">Recevoir ce menu en PDF à imprimer</a>.</p>
       <ul className="pub-facts">
         <li><strong>{money(m.achat)}</strong> de courses (paquets entiers)</li>
         <li><strong>{money(m.parPortion)}</strong> la portion</li>
@@ -62,6 +63,8 @@ export default async function MenuFoyerPage({ params }: Props) {
         <ul className="pub-ingredients">{m.courses.map(c => <li key={c.id}><span>{c.nom} · {c.quantite}</span><span>{money(c.prix)}</span></li>)}<li><span><strong>Total</strong></span><span><strong>{money(m.achat)}</strong></span></li></ul>
         <p className="pub-note">Il vous restera environ {money(m.reste)} de produits entamés (huile, sel, oignons…) pour les semaines suivantes. Si vous avez déjà certains produits, vos courses coûteront moins cher.</p>
       </section>
+
+      <MenuPdfForm foyer={f.slug} label={f.pour} />
 
       <CtaInline lead="Adaptez ce menu à votre budget et à votre placard." />
 

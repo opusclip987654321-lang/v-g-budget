@@ -3,8 +3,8 @@ import type { Article } from '@/lib/blog-articles';
 export default {
     slug: 'code-oeufs',
     title: 'Code des œufs 0, 1, 2, 3 : comment le lire',
-    seoTitle: 'Code des œufs 0, 1, 2, 3 : comment le lire sur la coquille',
-    description: 'Code des œufs : le premier chiffre sur la coquille indique le mode d’élevage, de 0 (bio) à 3 (cage). Comment lire tout le code et comparer les prix.',
+    seoTitle: 'Code œuf 0, 1, 2 ou 3 : que veut dire le premier chiffre ?',
+    description: 'Code œuf : 0 bio, 1 plein air, 2 au sol, 3 cage. Le sens des lettres FR et des chiffres suivants, et l’écart de prix réel entre un œuf 3 et un œuf 1.',
     lead: 'Le code inscrit sur la coquille renseigne notamment sur le mode d’élevage. Voici comment le repérer et comprendre les informations qu’il contient.',
     category: 'Bien-être animal', keywords: ['code oeuf', 'code oeuf 0 1 2 3', 'oeuf code 0', 'oeuf plein air', 'oeuf poule en cage', 'signification code oeuf'],
     date: '2026-10-07',

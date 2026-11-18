@@ -81,7 +81,8 @@ const source = `${PRICE_SOURCE.charAt(0).toLowerCase()}${PRICE_SOURCE.slice(1)}`
 export default {
     slug: 'menu-semaine-pas-cher',
     title: 'Menu de la semaine végétarien pas cher pour 2 : 7 jours et la liste de courses',
-    description: `Une semaine sans viande pour 2 : 7 dîners, les midis avec les restes, les petits-déjeuners, la liste de courses par rayon. ${money(w.used)} consommés, ${money(w.purchase)} en caisse.`,
+    seoTitle: `Menu de la semaine pas cher pour 2 : ${money(w.purchase)} les 7 jours`,
+    description: `Menu végétarien de la semaine pour 2 : 7 dîners, les midis avec les restes et les petits-déjeuners pour ${money(w.purchase)} en caisse, avec la liste de courses par rayon.`,
     lead: 'Voici une semaine complète pour deux adultes : sept dîners, les midis avec les restes et des petits-déjeuners simples, le tout 100 % végétal. Vous avez la liste de courses par rayon et deux montants : ce que vous mangez, et ce que vous payez en caisse.',
     category: 'Budget', keywords: ['menu de la semaine pas cher', 'menu semaine végétarien', 'menu sans viande pour 2', 'menu semaine petit budget', 'liste de courses semaine', 'repas de la semaine avec les restes'],
     date: '2026-10-07',
