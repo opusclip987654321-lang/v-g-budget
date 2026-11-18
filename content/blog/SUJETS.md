@@ -7,7 +7,6 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 ## À faire
 
 - [ ] liste de courses pas chère pour la semaine | Budget | une liste type pour 5 dîners, paquets entiers vs portions, le placard d'abord (attention : /blog/menu-semaine-pas-cher a déjà une liste de courses de la semaine, choisir un angle différent)
-- [ ] marques distributeur ou grandes marques | Budget | ce qui change vraiment, où ça vaut le coup
 - [ ] fer et alimentation végétarienne | Nutrition | sources de fer végétal (Anses), aliments pas chers
 - [ ] congeler ses aliments pour économiser | Budget | ce qui se congèle, durées (source officielle), organisation
 - [ ] menu de Noël végétarien pas cher | Recettes | entrée, plat, dessert, budget | début décembre
@@ -21,6 +20,16 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [ ] épicerie pas chère au Québec | Budget | prix en dollars du site (voir /quebec), « souper » | Québec
 - [ ] fruits et légumes de janvier | Saisons | calendrier du mois | fin décembre-janvier
 - [ ] résolutions : manger mieux sans dépenser plus | Budget | idées simples pour janvier | fin décembre-janvier
+- [ ] recettes de haricots rouges pas chères | Recettes | chili, wraps, salade, coût par portion
+- [ ] pois cassés : recettes pas chères | Recettes | soupe et purée, prix au kilo, cuisson sans trempage | hiver
+- [ ] gratin de légumes sans viande pas cher | Recettes | légumes d'hiver, béchamel simple, coût par portion | hiver
+- [ ] recettes de pâtes pas chères pour le soir | Recettes | 5 sauces sans viande, coût par portion
+- [ ] soupe de lentilles corail | Recettes | recette de base, variantes, prix de la portion | hiver
+- [ ] budget courses pour un couple par mois | Budget | repères officiels (Insee), méthode, dîners chiffrés
+- [ ] dîner léger et pas cher | Recettes | soupes, salades complètes, tartines, coût par portion
+- [ ] menu végétarien d'hiver pour la semaine | Recettes | 5 dîners de saison, liste de courses chiffrée | décembre-février
+- [ ] cuisiner sans gaspiller le pain dur | Budget | pain perdu salé, croûtons, chapelure, coût
+- [ ] protéines végétales pas chères | Nutrition | prix pour 20 g de protéines selon la source (source officielle des teneurs), lien avec /blog/proteines-vegetales
 
 ## Publiés
 
@@ -44,3 +53,4 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [x] légumes secs : trempage, cuisson, conservation (temps de cuisson légumes secs, trempage légumes secs, cuisson pois chiches secs) | Nutrition | publié 2026-11-15 → /blog/cuisson-legumes-secs
 - [x] repas végétarien famille pas cher (repas pas cher pour 4 personnes, repas végétarien enfant, idée repas du soir en famille pas cher) | Budget | publié 2026-11-16 → /blog/repas-vegetarien-famille-pas-cher
 - [x] comment cuisiner le tofu (tofu prix au kilo, comment rendre le tofu bon, tofu ferme ou soyeux, recette tofu pas cher) | Recettes | publié 2026-11-17 → /blog/comment-cuisiner-le-tofu
+- [x] marque distributeur ou grande marque (marques distributeur moins cher, différence MDD et premier prix, qui fabrique les MDD) | Budget | publié 2026-11-18 → /blog/marque-distributeur-ou-grande-marque
