@@ -31,8 +31,8 @@ export const FLUX_PATH = '/pinterest/flux.xml';
 export const imagePath = (id: string) => `/pinterest/image/${id}.jpg`;
 
 export type Epingle = {
-  id: string;           // info-<slug>, recette-<id>, menu-<foyer>, article-<slug>
-  kind: 'info' | 'recette' | 'menu' | 'article';
+  id: string;           // info-<slug>, recette-<id>, menu-<foyer>, pdf-<foyer>, article-<slug>
+  kind: 'info' | 'recette' | 'menu' | 'pdf' | 'article';
   title: string;        // 100 caractères au plus (limite de Pinterest)
   description: string;  // 500 caractères au plus
   pill: string;
@@ -67,6 +67,15 @@ function fromFoyer(f: Foyer): Epingle {
     pill: 'Menu + liste de courses', sub: `${money(m.parPortion)} la portion · ${f.label}`, image: m.diners[0] ? recipeImage(m.diners[0].recipe) : null, path: foyerPath(f),
   };
 }
+// Menu en PDF gratuit à imprimer (action validée par Walid le 18/11/2026) : l'épingle mène au formulaire de la page menu.
+function fromPdf(f: Foyer): Epingle {
+  const m = menuFoyer(f);
+  return {
+    id: `pdf-${f.slug}`, kind: 'pdf', title: cut(`Menu de la semaine ${f.pour} à imprimer : PDF gratuit, 5 dîners pour ${Math.round(m.achat)} €`, 100),
+    description: cut(`Le menu végétarien de la semaine ${f.pour} en PDF gratuit à imprimer : 5 dîners, la liste de courses à cocher avec les prix (${money(m.achat)} au total) et les recettes. ${m.diners.map(d => d.recipe.title).join(', ')}.`, 500),
+    pill: 'PDF gratuit à imprimer', sub: `Liste de courses + recettes · ${f.label}`, image: m.diners[1] ? recipeImage(m.diners[1].recipe) : null, path: foyerPath(f),
+  };
+}
 function fromArticle(a: Article): Epingle {
   return { id: `article-${a.slug}`, kind: 'article', title: cut(a.title, 100), description: cut(`${a.description} ${FIN}`, 500), pill: a.category, image: blogCoverJpg(a), path: blogPath(a) };
 }
@@ -77,7 +86,7 @@ function familles() {
     info: infos.map(fromInfo),
     recette: recipes.map(fromRecipe),
     // Les menus d'abord (ce que la proposition visait : « menu végé de la semaine à X € »), puis les articles récents.
-    autre: [...FOYERS.map(fromFoyer), ...sortedArticles().map(fromArticle)],
+    autre: [...['4-personnes', '2-personnes', '1-personne'].map(s => fromPdf(FOYERS.find(f => f.slug === s)!)), ...FOYERS.map(fromFoyer), ...sortedArticles().map(fromArticle)],
   };
 }
 
@@ -86,6 +95,7 @@ export function findEpingle(id: string): Epingle | null {
   if (kind === 'info') { const i = infos.find(x => x.slug === key); return i ? fromInfo(i) : null; }
   if (kind === 'recette') { const r = findRecipe(key); return r ? fromRecipe(r) : null; }
   if (kind === 'menu') { const f = FOYERS.find(x => x.slug === key); return f ? fromFoyer(f) : null; }
+  if (kind === 'pdf') { const f = FOYERS.find(x => x.slug === key); return f ? fromPdf(f) : null; }
   if (kind === 'article') { const a = sortedArticles().find(x => x.slug === key); return a ? fromArticle(a) : null; }
   return null;
 }

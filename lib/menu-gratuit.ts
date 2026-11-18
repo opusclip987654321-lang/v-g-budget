@@ -52,5 +52,7 @@ export async function menuDuVendredi(origin: string) {
 export async function bilanMenu() {
   const row = await db().prepare('SELECT COUNT(*) AS demandes, SUM(confirmed_at IS NOT NULL AND stopped_at IS NULL) AS abonnes, SUM(stopped_at IS NOT NULL) AS desinscrits FROM menu_abonnes').first<{ demandes: number; abonnes: number | null; desinscrits: number | null }>();
   const sources = (await db().prepare("SELECT IFNULL(source,'inconnue') AS source, COUNT(*) AS n FROM menu_abonnes WHERE confirmed_at IS NOT NULL GROUP BY 1 ORDER BY n DESC LIMIT 10").all<{ source: string; n: number }>()).results;
-  return { demandes: row?.demandes ?? 0, abonnes: row?.abonnes ?? 0, desinscrits: row?.desinscrits ?? 0, sources };
+  // Adresses laissées pour recevoir le menu en PDF (components/menu-pdf-form.tsx), confirmées ou non.
+  const pdf = await db().prepare("SELECT COUNT(*) AS n FROM menu_abonnes WHERE source LIKE 'pdf%'").first<{ n: number }>();
+  return { demandes: row?.demandes ?? 0, abonnes: row?.abonnes ?? 0, desinscrits: row?.desinscrits ?? 0, pdf: pdf?.n ?? 0, sources };
 }

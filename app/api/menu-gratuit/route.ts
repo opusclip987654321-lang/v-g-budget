@@ -18,7 +18,10 @@ export async function POST(request: Request) { try {
   if (known && Date.now() - Date.parse(known.created_at) < 3600000) return json({ ok: true });
   const now = new Date().toISOString();
   await db().prepare('INSERT INTO menu_abonnes (email,source,created_at) VALUES (?,?,?) ON CONFLICT(email) DO UPDATE SET created_at=excluded.created_at, source=IFNULL(menu_abonnes.source, excluded.source)').bind(email, source, now).run();
-  await sendMenuConfirm(email, menuLink(siteOrigin(request), 'confirmer', email));
+  // Pour le menu PDF, le PDF s'ouvre même si l'e-mail de confirmation ne part pas (il ne sert qu'au menu du vendredi).
+  const confirm = sendMenuConfirm(email, menuLink(siteOrigin(request), 'confirmer', email));
+  if (source?.startsWith('pdf')) await confirm.catch(e => console.error('Confirmation du menu PDF non envoyée', e));
+  else await confirm;
   return json({ ok: true });
 } catch (e) { return failure(e); } }
 

@@ -4,8 +4,8 @@ import { amountPrice, cost, kiloPrice, packPrice } from '@/lib/blog-cost';
 export default {
   slug: 'recettes-lentilles-pas-cheres',
   title: 'Recettes de lentilles pas chères : 6 dîners faciles et leur coût',
-  seoTitle: 'Recettes de lentilles pas chères : 6 dîners et leur coût',
-  description: 'Recettes de lentilles pas chères pour le dîner : curry, bolognaise, velouté, salade, galettes. Le coût par portion de chacune et 5 astuces pour payer moins.',
+  seoTitle: `Recettes de lentilles pas chères : 6 dîners dès ${cost('salade-lentilles')}`,
+  description: `Recettes de lentilles pas chères pour le soir : curry, bolognaise, velouté, salade, galettes, de ${cost('salade-lentilles')} à ${cost('galettes-lentilles')} la portion, et 5 astuces.`,
   lead: `Pour un dîner sans viande pas cher, les lentilles sèches sont l’un des meilleurs choix : une portion coûte environ ${amountPrice('green-lentils', 70)} en lentilles vertes et ${amountPrice('red-lentils', 70)} en lentilles corail. Voici 6 recettes faciles pour le soir, avec le prix de chacune.`,
   category: 'Recettes',
   keywords: ['recette lentilles pas cher', 'recettes de lentilles pas chères', 'recettes avec des lentilles', 'lentilles corail recette', 'lentilles vertes recette', 'quantité de lentilles par personne', 'dîner pas cher'],
