@@ -23,7 +23,6 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [ ] recettes de haricots rouges pas chères | Recettes | chili, wraps, salade, coût par portion
 - [ ] pois cassés : recettes pas chères | Recettes | soupe et purée, prix au kilo, cuisson sans trempage | hiver
 - [ ] gratin de légumes sans viande pas cher | Recettes | légumes d'hiver, béchamel simple, coût par portion | hiver
-- [ ] recettes de pâtes pas chères pour le soir | Recettes | 5 sauces sans viande, coût par portion
 - [ ] soupe de lentilles corail | Recettes | recette de base, variantes, prix de la portion | hiver
 - [ ] budget courses pour un couple par mois | Budget | repères officiels (Insee), méthode, dîners chiffrés
 - [ ] dîner léger et pas cher | Recettes | soupes, salades complètes, tartines, coût par portion
@@ -54,3 +53,4 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [x] repas végétarien famille pas cher (repas pas cher pour 4 personnes, repas végétarien enfant, idée repas du soir en famille pas cher) | Budget | publié 2026-11-16 → /blog/repas-vegetarien-famille-pas-cher
 - [x] comment cuisiner le tofu (tofu prix au kilo, comment rendre le tofu bon, tofu ferme ou soyeux, recette tofu pas cher) | Recettes | publié 2026-11-17 → /blog/comment-cuisiner-le-tofu
 - [x] marque distributeur ou grande marque (marques distributeur moins cher, différence MDD et premier prix, qui fabrique les MDD) | Budget | publié 2026-11-18 → /blog/marque-distributeur-ou-grande-marque
+- [x] recettes de pâtes pas chères (recette pâtes pas chère, pâtes sans viande, quantité de pâtes par personne, bolognaise de lentilles) | Recettes | publié 2026-11-19 → /blog/recettes-pates-pas-cheres
