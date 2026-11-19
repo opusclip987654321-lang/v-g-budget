@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675"><rect width="1200" height="675" fill="#f1f6ee"/><rect x="90" y="150" width="1020" height="470" rx="40" fill="#e8f0e9"/>
+<rect x="120" y="470" width="960" height="26" rx="8" fill="#c98a4b"/><rect x="120" y="496" width="960" height="14" fill="#a8713a"/>
+<ellipse cx="600" cy="610" rx="420" ry="18" fill="#174c38" opacity=".08"/>
+<g transform="translate(200 230)"><rect width="170" height="240" rx="16" fill="#fff" stroke="#dbe5dd" stroke-width="4"/><rect width="170" height="60" rx="16" fill="#27ae60"/><rect y="40" width="170" height="20" fill="#27ae60"/><rect x="25" y="90" width="120" height="110" rx="14" fill="#fbe7b0"/>
+<g fill="#f2c27a" stroke="#d9a24f" stroke-width="3"><path d="M45 110 l20 -6 l6 20 l-20 6 Z"/><path d="M85 104 l20 -6 l6 20 l-20 6 Z"/><path d="M60 150 l20 -6 l6 20 l-20 6 Z"/><path d="M100 146 l20 -6 l6 20 l-20 6 Z"/></g></g>
+<g transform="translate(600 400)"><ellipse cx="0" cy="40" rx="250" ry="56" fill="#174c38" opacity=".1"/><ellipse cx="0" cy="20" rx="240" ry="70" fill="#fff" stroke="#dbe5dd" stroke-width="5"/><ellipse cx="0" cy="14" rx="170" ry="46" fill="#f6efe2"/>
+<g fill="none" stroke="#f2c27a" stroke-width="12" stroke-linecap="round"><path d="M-130 10 q40 -40 80 0 t80 0 t80 0"/><path d="M-120 30 q40 -30 80 0 t80 0 t80 0"/><path d="M-100 -8 q35 -30 70 0 t70 0 t70 0"/></g>
+<ellipse cx="-10" cy="4" rx="80" ry="26" fill="#eb5757" opacity=".85"/>
+<g fill="#27ae60"><circle cx="-90" cy="-14" r="18"/><circle cx="-72" cy="-24" r="16"/><circle cx="-106" cy="-26" r="14"/><circle cx="80" cy="-10" r="18"/><circle cx="98" cy="-22" r="15"/><circle cx="64" cy="-24" r="14"/></g>
+<g fill="#e7c27d" stroke="#c98a4b" stroke-width="2"><circle cx="-20" cy="-6" r="10"/><circle cx="6" cy="2" r="10"/><circle cx="26" cy="-10" r="10"/><circle cx="-40" cy="10" r="10"/></g></g>
+<g transform="translate(900 290)"><rect width="110" height="180" rx="14" fill="#eb5757"/><rect x="14" y="40" width="82" height="70" rx="10" fill="#fff" opacity=".9"/><circle cx="55" cy="75" r="22" fill="#eb5757"/><rect x="40" y="-14" width="30" height="20" rx="6" fill="#c94545"/></g>
+<g transform="translate(835 440)"><circle cx="0" cy="0" r="30" fill="#d7f369" stroke="#b5cf4a" stroke-width="3"/><circle cx="-6" cy="-8" r="8" fill="#fff" opacity=".5"/></g>
+<g><rect x="60" y="56" rx="22" height="44" width="136" fill="#174c38"/><text x="82" y="86" font-family="system-ui,-apple-system,Segoe UI,Roboto,sans-serif" font-size="22" font-weight="700" fill="#d7f369">Recettes</text></g></svg>
