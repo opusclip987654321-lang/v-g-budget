@@ -10,7 +10,6 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [ ] fer et alimentation végétarienne | Nutrition | sources de fer végétal (Anses), aliments pas chers
 - [ ] congeler ses aliments pour économiser | Budget | ce qui se congèle, durées (source officielle), organisation
 - [ ] menu de Noël végétarien pas cher | Recettes | entrée, plat, dessert, budget | début décembre
-- [ ] fruits et légumes de décembre | Saisons | calendrier du mois | fin novembre-décembre
 - [ ] faire ses courses au marché ou au supermarché | Bio et local | comparer les prix, quand le marché est intéressant
 - [ ] AMAP : prix et fonctionnement | Bio et local | combien coûte un panier, pour qui c'est adapté
 - [ ] flexitarien : manger moins de viande | Budget | commencer par quelques dîners, effet sur le budget
@@ -54,3 +53,4 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [x] comment cuisiner le tofu (tofu prix au kilo, comment rendre le tofu bon, tofu ferme ou soyeux, recette tofu pas cher) | Recettes | publié 2026-11-17 → /blog/comment-cuisiner-le-tofu
 - [x] marque distributeur ou grande marque (marques distributeur moins cher, différence MDD et premier prix, qui fabrique les MDD) | Budget | publié 2026-11-18 → /blog/marque-distributeur-ou-grande-marque
 - [x] recettes de pâtes pas chères (recette pâtes pas chère, pâtes sans viande, quantité de pâtes par personne, bolognaise de lentilles) | Recettes | publié 2026-11-19 → /blog/recettes-pates-pas-cheres
+- [x] fruits et légumes de décembre (légumes de saison décembre, fruits de saison décembre, que manger en décembre) | Saisons | publié 2026-11-20 → /blog/fruits-legumes-decembre
