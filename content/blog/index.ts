@@ -30,6 +30,7 @@ import commentCuisinerLeTofu from './articles/comment-cuisiner-le-tofu';
 import marqueDistributeurOuGrandeMarque from './articles/marque-distributeur-ou-grande-marque';
 import recettesPatesPasCheres from './articles/recettes-pates-pas-cheres';
 import fruitsLegumesDecembre from './articles/fruits-legumes-decembre';
+import recettesHaricotsBlancs from './articles/recettes-haricots-blancs';
 import planifierMenusSemaine from './articles/planifier-menus-semaine';
 
 // Articles du blog : un fichier par article dans ./articles (les 9 premiers datent du 7 octobre 2026),
@@ -69,4 +70,5 @@ export const dailyArticles: Article[] = [
   marqueDistributeurOuGrandeMarque,
   recettesPatesPasCheres,
   fruitsLegumesDecembre,
+  recettesHaricotsBlancs,
 ];
