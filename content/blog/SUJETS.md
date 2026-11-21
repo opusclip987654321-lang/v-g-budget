@@ -19,7 +19,7 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [ ] épicerie pas chère au Québec | Budget | prix en dollars du site (voir /quebec), « souper » | Québec
 - [ ] fruits et légumes de janvier | Saisons | calendrier du mois | fin décembre-janvier
 - [ ] résolutions : manger mieux sans dépenser plus | Budget | idées simples pour janvier | fin décembre-janvier
-- [ ] recettes de haricots rouges pas chères | Recettes | chili, wraps, salade, coût par portion
+- [ ] recettes de haricots rouges pas chères | Recettes | chili, wraps, salade, coût par portion (seulement 2 recettes aux haricots rouges au catalogue : attendre d'en avoir plus ; ne pas reprendre la requête « haricots blancs », déjà publiée)
 - [ ] pois cassés : recettes pas chères | Recettes | soupe et purée, prix au kilo, cuisson sans trempage | hiver
 - [ ] gratin de légumes sans viande pas cher | Recettes | légumes d'hiver, béchamel simple, coût par portion | hiver
 - [ ] soupe de lentilles corail | Recettes | recette de base, variantes, prix de la portion | hiver
@@ -54,3 +54,4 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [x] marque distributeur ou grande marque (marques distributeur moins cher, différence MDD et premier prix, qui fabrique les MDD) | Budget | publié 2026-11-18 → /blog/marque-distributeur-ou-grande-marque
 - [x] recettes de pâtes pas chères (recette pâtes pas chère, pâtes sans viande, quantité de pâtes par personne, bolognaise de lentilles) | Recettes | publié 2026-11-19 → /blog/recettes-pates-pas-cheres
 - [x] fruits et légumes de décembre (légumes de saison décembre, fruits de saison décembre, que manger en décembre) | Saisons | publié 2026-11-20 → /blog/fruits-legumes-decembre
+- [x] recette haricots blancs en conserve (que faire avec des haricots blancs en boîte, faut-il rincer les haricots en conserve, haricots blancs froids) | Recettes | publié 2026-11-21 → /blog/recettes-haricots-blancs
