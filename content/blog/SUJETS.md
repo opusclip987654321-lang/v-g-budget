@@ -13,7 +13,6 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [ ] faire ses courses au marché ou au supermarché | Bio et local | comparer les prix, quand le marché est intéressant
 - [ ] AMAP : prix et fonctionnement | Bio et local | combien coûte un panier, pour qui c'est adapté
 - [ ] flexitarien : manger moins de viande | Budget | commencer par quelques dîners, effet sur le budget
-- [ ] repas sans four, à la poêle | Recettes | dîners faciles avec une poêle et une casserole
 - [ ] manger pas cher en Belgique | Budget | prix belges du site (voir /belgique), dire « souper » comme la page Belgique | Belgique
 - [ ] manger pas cher en Suisse | Budget | prix en CHF du site (voir /suisse), dire « souper » comme la page Suisse | Suisse
 - [ ] épicerie pas chère au Québec | Budget | prix en dollars du site (voir /quebec), « souper » | Québec
@@ -55,3 +54,4 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [x] recettes de pâtes pas chères (recette pâtes pas chère, pâtes sans viande, quantité de pâtes par personne, bolognaise de lentilles) | Recettes | publié 2026-11-19 → /blog/recettes-pates-pas-cheres
 - [x] fruits et légumes de décembre (légumes de saison décembre, fruits de saison décembre, que manger en décembre) | Saisons | publié 2026-11-20 → /blog/fruits-legumes-decembre
 - [x] recette haricots blancs en conserve (que faire avec des haricots blancs en boîte, faut-il rincer les haricots en conserve, haricots blancs froids) | Recettes | publié 2026-11-21 → /blog/recettes-haricots-blancs
+- [x] repas sans four (idée repas sans four, repas sans four pas cher, recette à la poêle facile, repas sans four étudiant) | Recettes | publié 2026-11-22 → /blog/repas-sans-four
