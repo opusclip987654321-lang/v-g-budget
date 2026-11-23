@@ -8,7 +8,6 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 
 - [ ] liste de courses pas chère pour la semaine | Budget | une liste type pour 5 dîners, paquets entiers vs portions, le placard d'abord (attention : /blog/menu-semaine-pas-cher a déjà une liste de courses de la semaine, choisir un angle différent)
 - [ ] fer et alimentation végétarienne | Nutrition | sources de fer végétal (Anses), aliments pas chers
-- [ ] congeler ses aliments pour économiser | Budget | ce qui se congèle, durées (source officielle), organisation
 - [ ] menu de Noël végétarien pas cher | Recettes | entrée, plat, dessert, budget | début décembre
 - [ ] faire ses courses au marché ou au supermarché | Bio et local | comparer les prix, quand le marché est intéressant
 - [ ] AMAP : prix et fonctionnement | Bio et local | combien coûte un panier, pour qui c'est adapté
@@ -55,3 +54,4 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [x] fruits et légumes de décembre (légumes de saison décembre, fruits de saison décembre, que manger en décembre) | Saisons | publié 2026-11-20 → /blog/fruits-legumes-decembre
 - [x] recette haricots blancs en conserve (que faire avec des haricots blancs en boîte, faut-il rincer les haricots en conserve, haricots blancs froids) | Recettes | publié 2026-11-21 → /blog/recettes-haricots-blancs
 - [x] repas sans four (idée repas sans four, repas sans four pas cher, recette à la poêle facile, repas sans four étudiant) | Recettes | publié 2026-11-22 → /blog/repas-sans-four
+- [x] que peut-on congeler (congeler ses aliments pour économiser, aliments qui ne se congèlent pas, durée de conservation congélateur, recongeler un aliment décongelé) | Budget | publié 2026-11-23 → /blog/que-peut-on-congeler

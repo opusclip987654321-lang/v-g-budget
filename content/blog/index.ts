@@ -32,6 +32,7 @@ import recettesPatesPasCheres from './articles/recettes-pates-pas-cheres';
 import fruitsLegumesDecembre from './articles/fruits-legumes-decembre';
 import recettesHaricotsBlancs from './articles/recettes-haricots-blancs';
 import repasSansFour from './articles/repas-sans-four';
+import quePeutOnCongeler from './articles/que-peut-on-congeler';
 import planifierMenusSemaine from './articles/planifier-menus-semaine';
 
 // Articles du blog : un fichier par article dans ./articles (les 9 premiers datent du 7 octobre 2026),
@@ -73,4 +74,5 @@ export const dailyArticles: Article[] = [
   fruitsLegumesDecembre,
   recettesHaricotsBlancs,
   repasSansFour,
+  quePeutOnCongeler,
 ];
