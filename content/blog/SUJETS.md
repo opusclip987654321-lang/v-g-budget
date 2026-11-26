@@ -21,7 +21,6 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [ ] pois cassés : recettes pas chères | Recettes | soupe et purée, prix au kilo, cuisson sans trempage | hiver
 - [ ] gratin de légumes sans viande pas cher | Recettes | légumes d'hiver, béchamel simple, coût par portion | hiver
 - [ ] soupe de lentilles corail | Recettes | recette de base, variantes, prix de la portion | hiver
-- [ ] menu végétarien d'hiver pour la semaine | Recettes | 5 dîners de saison, liste de courses chiffrée | décembre-février
 - [ ] cuisiner sans gaspiller le pain dur | Budget | pain perdu salé, croûtons, chapelure, coût
 - [ ] protéines végétales pas chères | Nutrition | prix pour 20 g de protéines selon la source (source officielle des teneurs), lien avec /blog/proteines-vegetales
 
@@ -55,3 +54,4 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [x] que peut-on congeler (congeler ses aliments pour économiser, aliments qui ne se congèlent pas, durée de conservation congélateur, recongeler un aliment décongelé) | Budget | publié 2026-11-23 → /blog/que-peut-on-congeler
 - [x] repas léger du soir pas cher (dîner léger pas cher, idée repas léger soir sans viande, une soupe suffit-elle pour le dîner, féculents le soir) | Recettes | publié 2026-11-24 → /blog/diner-leger-pas-cher
 - [x] budget courses pour un couple par mois (budget courses 2 personnes par mois, budget alimentaire couple, 300 euros de courses par mois pour 2) | Budget | publié 2026-11-25 → /blog/budget-courses-couple-par-mois
+- [x] menu végétarien d'hiver (menu végétarien semaine hiver, menu hiver pas cher, repas végétarien hiver, idée repas hiver végétarien) | Recettes | publié 2026-11-26 → /blog/menu-vegetarien-hiver
