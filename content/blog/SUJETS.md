@@ -8,10 +8,9 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 
 - [ ] liste de courses pas chère pour la semaine | Budget | une liste type pour 5 dîners, paquets entiers vs portions, le placard d'abord (attention : /blog/menu-semaine-pas-cher a déjà une liste de courses de la semaine, choisir un angle différent)
 - [ ] fer et alimentation végétarienne | Nutrition | sources de fer végétal (Anses), aliments pas chers
-- [ ] menu de Noël végétarien pas cher | Recettes | entrée, plat, dessert, budget | début décembre
+- [ ] menu de Noël végétarien pas cher | Recettes | entrée, plat, dessert, budget (attention : le catalogue n’a ni dessert ni plat de fête au 27/11 ; attendre des recettes de fête ou se limiter aux plats) | début décembre
 - [ ] faire ses courses au marché ou au supermarché | Bio et local | comparer les prix, quand le marché est intéressant
 - [ ] AMAP : prix et fonctionnement | Bio et local | combien coûte un panier, pour qui c'est adapté
-- [ ] flexitarien : manger moins de viande | Budget | commencer par quelques dîners, effet sur le budget
 - [ ] manger pas cher en Belgique | Budget | prix belges du site (voir /belgique), dire « souper » comme la page Belgique | Belgique
 - [ ] manger pas cher en Suisse | Budget | prix en CHF du site (voir /suisse), dire « souper » comme la page Suisse | Suisse
 - [ ] épicerie pas chère au Québec | Budget | prix en dollars du site (voir /quebec), « souper » | Québec
@@ -55,3 +54,4 @@ Format : `- [ ] requête visée | catégorie | angle | période (facultatif)`. P
 - [x] repas léger du soir pas cher (dîner léger pas cher, idée repas léger soir sans viande, une soupe suffit-elle pour le dîner, féculents le soir) | Recettes | publié 2026-11-24 → /blog/diner-leger-pas-cher
 - [x] budget courses pour un couple par mois (budget courses 2 personnes par mois, budget alimentaire couple, 300 euros de courses par mois pour 2) | Budget | publié 2026-11-25 → /blog/budget-courses-couple-par-mois
 - [x] menu végétarien d'hiver (menu végétarien semaine hiver, menu hiver pas cher, repas végétarien hiver, idée repas hiver végétarien) | Recettes | publié 2026-11-26 → /blog/menu-vegetarien-hiver
+- [x] devenir flexitarien (flexitarien, régime flexitarien c'est quoi, menu flexitarien semaine, différence flexitarien végétarien) | Budget | publié 2026-11-27 → /blog/devenir-flexitarien
