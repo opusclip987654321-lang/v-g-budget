@@ -37,6 +37,7 @@ import dinerLegerPasCher from './articles/diner-leger-pas-cher';
 import budgetCoursesCoupleParMois from './articles/budget-courses-couple-par-mois';
 import menuVegetarienHiver from './articles/menu-vegetarien-hiver';
 import devenirFlexitarien from './articles/devenir-flexitarien';
+import listeCoursesDeBase from './articles/liste-courses-de-base';
 import planifierMenusSemaine from './articles/planifier-menus-semaine';
 
 // Articles du blog : un fichier par article dans ./articles (les 9 premiers datent du 7 octobre 2026),
@@ -83,4 +84,5 @@ export const dailyArticles: Article[] = [
   budgetCoursesCoupleParMois,
   menuVegetarienHiver,
   devenirFlexitarien,
+  listeCoursesDeBase,
 ];
